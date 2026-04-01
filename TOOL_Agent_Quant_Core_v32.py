@@ -312,8 +312,13 @@ def run_quant_agent(tickers_input, macro_query):
     
     print("⏳ [4/4] Tổng hợp dữ liệu & Kích hoạt AI viết báo cáo...")
     
+    # Lấy ngày hiện tại chuẩn từ hệ thống Python
+    today_str = datetime.now().strftime('%d/%m/%Y')
+
     master_prompt = f"""
     ĐÓNG VAI: GIÁM ĐỐC QUẢN TRỊ RỦI RO QUỸ ĐẦU TƯ (HỆ THỐNG 3D MATRIX)
+    
+    BÁO CÁO NGÀY: {today_str}  <-- (BẮT BUỘC DÙNG NGÀY NÀY, KHÔNG ĐƯỢC TỰ Ý CHẾ NGÀY)
     
     Hệ thống đã tự động LỌC BỎ các mã thiếu thanh khoản (< 50 tỷ). Dưới đây là các mã đạt chuẩn:
     [CHIỀU 1: LƯỢNG TỬ MARKOWITZ]
