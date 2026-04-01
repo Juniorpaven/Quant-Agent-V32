@@ -22,11 +22,11 @@ if not API_KEY:
     exit(1)
 genai.configure(api_key=API_KEY)
 
-TAVILY_API_KEY = "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"
-SERPER_API_KEY = "e5a3776fd940299175df0793de5379900477d291f5422b6cc48441d6b43336ec"
+TAVILY_API_KEY = os.environ.get("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")
+SERPER_API_KEY = os.environ.get("e5a3776fd940299175df0793de5379900477d291f5422b6cc48441d6b43336ec")
 
-EMAIL_USER = "tranbaotrung.iqi@gmail.com" 
-EMAIL_PASS = "ecvrljrsxigijpqd"            
+EMAIL_USER = os.environ.get("tranbaotrung.iqi@gmail.com") 
+EMAIL_PASS = os.environ.get("ecvrljrsxigijpqd")            
 RECEIVER_EMAIL = "tranbaotrung2703@gmail.com"
 
 # ==========================================
