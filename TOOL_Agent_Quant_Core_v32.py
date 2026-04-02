@@ -252,6 +252,8 @@ def generate_ai_report_with_fallback(prompt):
 # 5. LUỒNG THỰC THI CHÍNH (MAIN AGENT LOOP)
 # ==========================================
 def run_quant_agent(tickers_input, macro_query):
+    # Lấy ngày hiện tại chuẩn từ hệ thống máy tính
+    today_str = datetime.now().strftime('%d/%m/%Y')
     print("\n=========================================")
     print(f"🚀 KHỞI ĐỘNG AGENT QUANT TRADING (V32) LÚC {datetime.now().strftime('%H:%M:%S')}")
     print("=========================================\n")
@@ -353,7 +355,7 @@ def run_quant_agent(tickers_input, macro_query):
     print("\n=========================================")
     
     # GỬI EMAIL CHỐT HẠ
-    email_subject = f"[Quant 3D Matrix] Lệnh Điều Động Vốn Ngày {datetime.now().strftime('%d/%m/%Y')}"
+    email_subject = f"[Quant 3D Matrix] Lệnh Điều Động Vốn Ngày {today_str}"
     send_email(email_subject, final_report)
     
     return final_report
