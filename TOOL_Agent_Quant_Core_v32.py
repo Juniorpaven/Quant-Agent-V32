@@ -22,14 +22,13 @@ if not API_KEY:
     exit(1)
 genai.configure(api_key=API_KEY)
 
-# LẤY TỪ KÉT SẮT GITHUB (Dùng TÊN BIẾN bạn đã đặt trong mục Secrets)
+# LẤY TỪ .ENV HOẶC GITHUB SECRETS
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 TAVILY_API_KEY = os.environ.get("TAVILY_API_KEY", "")
 SERPER_API_KEY = os.environ.get("SERPER_API_KEY", "")
 
-# LẤY TỪ KÉT SẮT GITHUB (Sử dụng TÊN BIẾN, không sử dụng giá trị trực tiếp)
-EMAIL_USER = os.environ.get("EMAIL_USER") 
-EMAIL_PASS = os.environ.get("EMAIL_PASS")
-SERPER_API_KEY = os.environ.get("SERPER_API_KEY") 
+EMAIL_USER = os.environ.get("EMAIL_USER", "") 
+EMAIL_PASS = os.environ.get("EMAIL_PASS", "")
 
 # Đã nâng cấp: Cấu trúc danh sách nhiều Email nhận
 RECEIVER_EMAILS = [
