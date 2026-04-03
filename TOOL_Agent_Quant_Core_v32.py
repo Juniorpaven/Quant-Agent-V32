@@ -29,8 +29,13 @@ SERPER_API_KEY = os.environ.get("SERPER_API_KEY", "")
 # LẤY TỪ KÉT SẮT GITHUB (Sử dụng TÊN BIẾN, không sử dụng giá trị trực tiếp)
 EMAIL_USER = os.environ.get("EMAIL_USER") 
 EMAIL_PASS = os.environ.get("EMAIL_PASS")
-SERPER_API_KEY = os.environ.get("SERPER_API_KEY")           
-RECEIVER_EMAIL = "tranbaotrung2703@gmail.com"
+SERPER_API_KEY = os.environ.get("SERPER_API_KEY") 
+
+# Đã nâng cấp: Cấu trúc danh sách nhiều Email nhận
+RECEIVER_EMAILS = [
+    "tranbaotrung2703@gmail.com",
+    "trung.tran@saigontel.vn"
+]
 
 # ==========================================
 # 2. CÁC HÀM LẤY DỮ LIỆU CÓ CƠ CHẾ RETRY & KIỂM TRA LỖI
@@ -176,15 +181,13 @@ def agentic_web_search(query):
 import markdown # Thêm dòng này ở đầu file cùng các lệnh import khác
 
 def send_email(subject, body):
-    """Hàm gửi báo cáo V32 hiển thị trực tiếp nội dung đẹp trên Email"""
+    """Hàm gửi báo cáo V32 hiển thị trực tiếp nội dung đẹp trên nhiều Email"""
     if not EMAIL_USER or not EMAIL_PASS:
         print("⚠️ Bỏ qua gửi Email vì chưa cấu hình tài khoản.")
         return
         
-    # Chuyển đổi nội dung báo cáo từ Markdown sang HTML để hiển thị đẹp trên Mail
     html_content = markdown.markdown(body, extensions=['tables', 'fenced_code'])
     
-    # Tạo lớp vỏ HTML chuyên nghiệp
     email_style = """
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
@@ -214,10 +217,12 @@ def send_email(subject, body):
 
     msg = MIMEMultipart("alternative")
     msg['From'] = EMAIL_USER
-    msg['To'] = RECEIVER_EMAIL
+    
+    # ĐÃ SỬA: Gộp danh sách email thành chuỗi cách nhau bằng dấu phẩy
+    msg['To'] = ", ".join(RECEIVER_EMAILS)
+    
     msg['Subject'] = subject
     
-    # Gắn cả bản Text và bản HTML (Nếu Mail khách không đọc được HTML sẽ tự hiện Text)
     msg.attach(MIMEText(body, 'plain'))
     msg.attach(MIMEText(final_html, 'html'))
     
@@ -227,7 +232,8 @@ def send_email(subject, body):
         server.login(EMAIL_USER, EMAIL_PASS)
         server.send_message(msg)
         server.quit()
-        print(f"📧 [THÀNH CÔNG] Báo cáo V32 đã hiển thị trực tiếp trong hòm thư: {RECEIVER_EMAIL}")
+        # ĐÃ SỬA: Báo cáo số lượng email gửi thành công
+        print(f"📧 [THÀNH CÔNG] Báo cáo V32 đã được gửi đến {len(RECEIVER_EMAILS)} địa chỉ email.")
     except Exception as e:
         print(f"❌ Lỗi gửi Email: {str(e)}")
 
