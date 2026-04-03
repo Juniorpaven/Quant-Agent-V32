@@ -1,7 +1,7 @@
 name: Run Quant Bot Daily
 on:
   schedule:
-    - cron: '30 9 * * *' # 9:30 UTC tương đương 16:00 giờ Việt Nam
+    - cron: '0 9 * * *' # 9:00 UTC tương đương 16:00 giờ Việt Nam
   workflow_dispatch: # Cho phép bấm nút chạy thủ công khi cần
 
 jobs:
