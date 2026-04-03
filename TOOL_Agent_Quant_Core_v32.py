@@ -370,6 +370,8 @@ if __name__ == "__main__":
     # GỘP 48 MÃ TỪ CẨM NANG V32
     FULL_WATCHLIST = "VCB, BID, CTG, TCB, MBB, SSI, VND, VHM, VIC, VRE, HPG, HSG, PVD, PVS, DGC, DCM, DPM, VHC, ANV, PTB, MWG, PNJ, FPT, REE, GAS, NT2, VSH, VNM, SAB, KBC, SZC, IDC, VGC, DIG, NVL, PDR, DXG, KDH, NKG, VGS, SMC, VCI, HCM, SIP, DTD, NTC, PHR, GVR"
     
-    MACRO_KEYWORDS = "Lãi suất Fed, Tỷ giá USD VND, Chiến tranh, Giá thép, Giá Dầu, Lãi suất ngân hàng nhà nước SBV, Bất động sản Việt Nam khủng hoảng, Tin tức chính trị kinh tế Việt Nam mới nhất"
+    # BỘ TỪ KHÓA VĨ MÔ TỐI ƯU (Tránh lỗi API và Tràn Token)
+    # Dùng cú pháp nhóm (A và B) để AI Search tự động tổng hợp bức tranh toàn cảnh
+    MACRO_KEYWORDS = "Tổng hợp tin tức Vĩ mô Việt Nam (Lãi suất, Tỷ giá, Đầu tư công) VÀ Điểm nóng kinh tế, rủi ro địa chính trị thế giới mới nhất hôm nay"
     
     run_quant_agent(FULL_WATCHLIST, MACRO_KEYWORDS)
