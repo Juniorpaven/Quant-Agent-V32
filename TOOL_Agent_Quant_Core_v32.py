@@ -172,15 +172,25 @@ def get_macro_quant():
 
 def agentic_web_search(query):
     if not query.strip(): return ""
+    out_text = ""
+    # Lớp 1: Ưu tiên Tavily (AI Search Agent)
+    if TAVILY_API_KEY:
+        try:
+            res = requests.post("https://api.tavily.com/search", json={"api_key": TAVILY_API_KEY, "query": query, "max_results": 3}, timeout=10)
+            if res.status_code == 200:
+                out = [f"- [{item['title']}] {item['content']}" for item in res.json().get('results', [])]
+                return "🔍 [Tavily API]\n" + "\n".join(out)
+        except: pass
+    # Lớp 2: Dự phòng DuckDuckGo Lite
     try:
         res = DDGS().text(query, max_results=3, backend="lite")
         return "🔍 [DuckDuckGo]\n" + "\n".join([f"- [{r.get('title')}] {r.get('body')}" for r in res]) if res else ""
-    except: return "Lỗi Web Search"
+    except: return "❌ Lỗi toàn bộ Web Search"
 
 import markdown # Thêm dòng này ở đầu file cùng các lệnh import khác
 
 def send_email(subject, body):
-    """Hàm gửi báo cáo V32 hiển thị trực tiếp nội dung đẹp trên nhiều Email"""
+    """Hàm gửi báo cáo V33 hiển thị trực tiếp nội dung đẹp trên nhiều Email"""
     if not EMAIL_USER or not EMAIL_PASS:
         print("⚠️ Bỏ qua gửi Email vì chưa cấu hình tài khoản.")
         return
@@ -206,7 +216,7 @@ def send_email(subject, body):
         <div style="max-width: 800px; margin: auto;">
             {html_content}
             <div class="footer">
-                <p>Báo cáo này được tạo tự động bởi Hệ thống <b>Quant 3D Matrix V32</b>.</p>
+                <p>Báo cáo này được tạo tự động bởi Hệ thống <b>Quant 3D Matrix V33</b>.</p>
                 <p>Thời gian thực thi: {datetime.now().strftime('%H:%M:%S %d/%m/%Y')}</p>
             </div>
         </div>
@@ -232,7 +242,7 @@ def send_email(subject, body):
         server.send_message(msg)
         server.quit()
         # ĐÃ SỬA: Báo cáo số lượng email gửi thành công
-        print(f"📧 [THÀNH CÔNG] Báo cáo V32 đã được gửi đến {len(RECEIVER_EMAILS)} địa chỉ email.")
+        print(f"📧 [THÀNH CÔNG] Báo cáo V33 đã được gửi đến {len(RECEIVER_EMAILS)} địa chỉ email.")
     except Exception as e:
         print(f"❌ Lỗi gửi Email: {str(e)}")
 
@@ -260,7 +270,7 @@ def run_quant_agent(tickers_input, macro_query):
     # Lấy ngày hiện tại chuẩn từ hệ thống máy tính
     today_str = datetime.now().strftime('%d/%m/%Y')
     print("\n=========================================")
-    print(f"🚀 KHỞI ĐỘNG AGENT QUANT TRADING (V32) LÚC {datetime.now().strftime('%H:%M:%S')}")
+    print(f"🚀 KHỞI ĐỘNG AGENT QUANT TRADING (V33) LÚC {datetime.now().strftime('%H:%M:%S')}")
     print("=========================================\n")
     
     tickers = [t.strip().upper() for t in tickers_input.split(',') if t.strip()]
@@ -270,7 +280,7 @@ def run_quant_agent(tickers_input, macro_query):
     df_pulse = get_ohlcv_data("E1VFVN30", days=40, max_retries=3)
     if df_pulse is None:
         error_msg = "❌ TỰ HỦY: Lỗi API lấy dữ liệu E1VFVN30 (Proxy Dòng tiền). Hệ thống dừng để bảo toàn an toàn."
-        print(error_msg); send_email("[BÁO ĐỘNG LỖI] Quant V32", error_msg); return
+        print(error_msg); send_email("[BÁO ĐỘNG LỖI] Quant V33", error_msg); return
         
     deviation = ((df_pulse['Close'].iloc[-1] - df_pulse['Close'].tail(20).mean()) / df_pulse['Close'].tail(20).mean()) * 100
     market_status = f"GREED (+{deviation:.2f}%)" if deviation > 1.0 else f"FEAR ({deviation:.2f}%)" if deviation < -1.0 else f"NEUTRAL ({deviation:.2f}%)"
@@ -278,7 +288,7 @@ def run_quant_agent(tickers_input, macro_query):
     df_bench = get_ohlcv_data("VNINDEX", days=time_window, max_retries=3)
     if df_bench is None:
         error_msg = "❌ TỰ HỦY: Lỗi API lấy dữ liệu VNINDEX. Hệ thống dừng để bảo toàn an toàn."
-        print(error_msg); send_email("[BÁO ĐỘNG LỖI] Quant V32", error_msg); return
+        print(error_msg); send_email("[BÁO ĐỘNG LỖI] Quant V33", error_msg); return
     bench_prices = df_bench['Close'].values
     
     print(f"⏳ [1/4] Cào & Lọc Thanh khoản cho {len(tickers)} mã (Nghỉ 0.5s mỗi mã để né Block IP)...")
@@ -325,7 +335,7 @@ def run_quant_agent(tickers_input, macro_query):
             print(f"🎯 [BẮT ĐÁY] {t}: {vsa_signal_text}")
             
         pe, roe = get_fundamentals(t)
-        prices = df_ohlcv['Close'].values
+        prices = df_ohlcv['Close']
         raw_price_dict[t] = prices
         micro_insights.append(extract_micro_timing_insights(df_ohlcv, t))
         x, y, quad, mdd = calculate_rrg_and_drawdown(prices, bench_prices)
@@ -336,7 +346,7 @@ def run_quant_agent(tickers_input, macro_query):
     # RÀO CHẮN 3: KIỂM TRA SỐ LƯỢNG MÃ CÒN LẠI SAU KHI LỌC
     if len(data_list) < 3:
         error_msg = "❌ TỰ HỦY: Số lượng mã đạt chuẩn thanh khoản (< 3 mã) không đủ để thuật toán Markowitz chạy tối ưu hóa danh mục."
-        print(error_msg); send_email("[CẢNH BÁO BỎ QUA BƯỚC 2] Quant V32", error_msg); return
+        print(error_msg); send_email("[CẢNH BÁO BỎ QUA BƯỚC 2] Quant V33", error_msg); return
 
     df_quant = pd.DataFrame(data_list)
     print("⏳ [2/4] Chạy Toán học Markowitz...")
@@ -379,7 +389,7 @@ def run_quant_agent(tickers_input, macro_query):
     final_report = generate_ai_report_with_fallback(master_prompt)
     
     print("\n=========================================")
-    print("📑 BÁO CÁO NỘI TẠI (AGENT SKILL V32)")
+    print("📑 BÁO CÁO NỘI TẠI (AGENT SKILL V33)")
     print("=========================================\n")
     print(final_report)
     print("\n=========================================")
@@ -391,7 +401,7 @@ def run_quant_agent(tickers_input, macro_query):
     return final_report
 
 if __name__ == "__main__":
-    # GỘP 48 MÃ TỪ CẨM NANG V32
+    # GỘP 48 MÃ TỪ CẨM NANG V33
     FULL_WATCHLIST = "VCB, BID, CTG, TCB, MBB, SSI, VND, VHM, VIC, VRE, HPG, HSG, PVD, PVS, DGC, DCM, DPM, VHC, ANV, PTB, MWG, PNJ, FPT, REE, GAS, NT2, VSH, VNM, SAB, KBC, SZC, IDC, VGC, DIG, NVL, PDR, DXG, KDH, NKG, VGS, SMC, VCI, HCM, SIP, DTD, NTC, PHR, GVR"
     
     # BỘ TỪ KHÓA VĨ MÔ TỐI ƯU (Tránh lỗi API và Tràn Token)
