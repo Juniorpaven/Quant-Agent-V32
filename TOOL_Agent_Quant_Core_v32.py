@@ -288,22 +288,48 @@ def run_quant_agent(tickers_input, macro_query):
         df_ohlcv = get_ohlcv_data(t, days=time_window, max_retries=3)
         if df_ohlcv is None: continue # Skip nếu API lỗi sau 3 lần retry
         
-        # RÀO CHẮN 2: LỌC THANH KHOẢN (VOLUME > 50 TỶ/PHIÊN)
-        # Giả định Giá DNSE trả về là giá trị x1000 VNĐ. Khối lượng là số Cổ phiếu.
-        avg_vol_20 = df_ohlcv['Volume'].tail(20).mean()
-        avg_price_20 = df_ohlcv['Close'].tail(20).mean() * 1000 
-        avg_value_vnd = avg_vol_20 * avg_price_20
-        
-        if avg_value_vnd < 50_000_000_000:
-            print(f"⏭️ BỎ QUA [{t}]: Thanh khoản quá bé ({avg_value_vnd/1e9:.1f} Tỷ). Cấm đưa vào Markowitz.")
+        # ==========================================
+        # KHỐI PHÂN TÍCH VSA & CẠN CUNG (VERSION 33)
+        # ==========================================
+        # 1. Tính toán Tiền & Trung bình lịch sử
+        df_ohlcv['Gia_Tri_GD'] = df_ohlcv['Close'] * df_ohlcv['Volume'] * 1000  # Nhân 1000 vì giá của ENTRADE thường chia ngàn
+        df_ohlcv['Vol_MA20'] = df_ohlcv['Gia_Tri_GD'].rolling(window=20).mean()
+
+        # 2. LỚP LỌC 1: CHẶN PENNY RÁC (Trung bình 20 phiên phải >= 50 tỷ)
+        avg_20d_val = df_ohlcv['Vol_MA20'].iloc[-1]
+        if pd.isna(avg_20d_val) or avg_20d_val < 50_000_000_000:
+            print(f"⏭️ Bỏ qua {t}: Thanh khoản trung bình 20 phiên không đạt chuẩn (< 50 tỷ).")
             continue
+
+        # 3. LỚP LỌC 2: PHÁT HIỆN CẠN CUNG TỪNG PHIÊN (VSA No Supply Bar)
+        df_ohlcv['Price_Range'] = (df_ohlcv['High'] - df_ohlcv['Low']) / df_ohlcv['Close']
+        df_ohlcv['is_low_vol'] = df_ohlcv['Gia_Tri_GD'] < (df_ohlcv['Vol_MA20'] * 0.6)
+        df_ohlcv['is_tight_price'] = df_ohlcv['Price_Range'] < (df_ohlcv['Price_Range'].rolling(20).mean() * 0.8)
+        
+        # Sửa lỗi NaN cho MA50 bằng cách lấp đầy dữ liệu thiếu
+        df_ohlcv['MA50'] = df_ohlcv['Close'].rolling(50).mean().bfill()
+        df_ohlcv['is_above_trend'] = df_ohlcv['Close'] > df_ohlcv['MA50']
+
+        df_ohlcv['Can_Cung_Daily'] = df_ohlcv['is_low_vol'] & df_ohlcv['is_tight_price'] & df_ohlcv['is_above_trend']
+
+        # 4. XÁC THỰC CỤM LỊCH SỬ (CLUSTER VALIDATION) - Kiểm tra 5 phiên gần nhất
+        df_ohlcv['Can_Cung_Cluster'] = df_ohlcv['Can_Cung_Daily'].rolling(window=5).sum()
+
+        # 5. TRÍCH XUẤT TÍN HIỆU CHO PHIÊN HIỆN TẠI
+        latest_status = df_ohlcv.iloc[-1]
+        vsa_signal_text = "Thanh khoản ở mức bình thường."
+
+        # Kích hoạt Cảnh báo nếu phiên hôm nay thỏa mãn VÀ cụm 5 phiên có ít nhất 2 phiên cạn cung
+        if latest_status['Can_Cung_Daily'] == True and latest_status['Can_Cung_Cluster'] >= 2:
+            vsa_signal_text = f"🔥 VSA KHẨN CẤP: Đạt trạng thái Cạn cung (No Supply Bar). Cổ phiếu siết chặt nền trên MA50, lực bán đã kiệt quệ hoàn toàn (GTGD hôm nay chỉ đạt {latest_status['Gia_Tri_GD']/1e9:.1f} tỷ)."
+            print(f"🎯 [BẮT ĐÁY] {t}: {vsa_signal_text}")
             
         pe, roe = get_fundamentals(t)
         prices = df_ohlcv['Close'].values
         raw_price_dict[t] = prices
         micro_insights.append(extract_micro_timing_insights(df_ohlcv, t))
         x, y, quad, mdd = calculate_rrg_and_drawdown(prices, bench_prices)
-        data_list.append({"Mã": t, "RRG": quad, "P/E": pe, "ROE%": roe, "MaxDD%": mdd})
+        data_list.append({"Mã": t, "RRG": quad, "P/E": pe, "ROE%": roe, "MaxDD%": mdd, "VSA": vsa_signal_text})
         
         time.sleep(0.5)
 
@@ -328,12 +354,10 @@ def run_quant_agent(tickers_input, macro_query):
     master_prompt = f"""
     ĐÓNG VAI: GIÁM ĐỐC QUẢN TRỊ RỦI RO QUỸ ĐẦU TƯ (HỆ THỐNG 3D MATRIX)
     
-    BÁO CÁO NGÀY: {today_str}  <-- (BẮT BUỘC DÙNG NGÀY NÀY, KHÔNG ĐƯỢC TỰ Ý CHẾ NGÀY)
-    
     Hệ thống đã tự động LỌC BỎ các mã thiếu thanh khoản (< 50 tỷ). Dưới đây là các mã đạt chuẩn:
-    [CHIỀU 1: LƯỢNG TỬ MARKOWITZ]
+    [CHIỀU 1: LƯỢNG TỬ MARKOWITZ & VSA]
     - Tín hiệu Dòng tiền: {market_status}
-    - Bảng Cơ bản & RRG: {df_quant.to_string()}
+    - Bảng Cơ bản, RRG & VSA Cạn cung: {df_quant.to_string()}
     - Tỷ trọng Giải ngân an toàn đề xuất: {opt_weights}
     
     [CHIỀU 2: MICRO-TIMING (WYCKOFF & POC)]
@@ -346,7 +370,8 @@ def run_quant_agent(tickers_input, macro_query):
     NHIỆM VỤ (TRÌNH BÀY BÁO CÁO NHƯ MỘT FILE PDF CHUYÊN NGHIỆP DÙNG MARKDOWN):
     Tạo Báo cáo gồm các mục rõ ràng:
     1. TỔNG QUAN VĨ MÔ & THỊ TRƯỜNG: Đánh giá Market Pulse và Vĩ mô thế giới. Có Thiên nga đen không?
-    2. BẢNG TỔNG HỢP DANH MỤC: Tạo 1 bảng Markdown đẹp mắt gộp chung kết quả của 3-5 mã tốt nhất gồm các cột: (Mã | Tỷ trọng Đề xuất | Vị thế RRG | Vùng Mua POC | Tín hiệu Wyckoff).
+    2. BẢNG TỔNG HỢP DANH MỤC: Tạo 1 bảng Markdown đẹp mắt gộp chung kết quả của 3-5 mã tốt nhất gồm các cột: (Mã | Tỷ trọng Đề xuất | Vị thế RRG | Vùng Mua POC | Tín hiệu Wyckoff & VSA).
+    * LƯU Ý ĐẶC BIỆT: Nếu thấy mã nào có cột VSA báo "VSA KHẨN CẤP", hãy tự động nâng tỷ trọng ưu tiên mua cho mã đó vì lực bán đã cạn.
     3. CẢNH BÁO RỦI RO: Điểm mặt gọi tên những mã nào có rủi ro cao (Đang thủng đáy, Phân phối UTAD, Max Drawdown sâu) yêu cầu tránh xa.
     4. CHỈ ĐẠO CỦA GIÁM ĐỐC QUỸ: Kết luận dứt khoát: Giữ tiền mặt hay Cho phép giải ngân theo tỷ trọng bảng trên?
     """
