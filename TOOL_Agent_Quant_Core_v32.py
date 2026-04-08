@@ -427,7 +427,9 @@ def run_quant_agent(tickers_input, macro_query):
     
     3. CẢNH BÁO RỦI RO ĐỎ: Chỉ đích danh mã thủng đáy, dính UTAD, hoặc ROE quá thấp so với P/E. Khuyến nghị HỦY LỆNH.
     
-    4. LỆNH ĐIỀU ĐỘNG TỪ GIÁM ĐỐC QUỸ: Kết luận dứt khoát 3 dòng. Market Pulse đang Fear/Greed thì cầm bao nhiêu % Tiền mặt? Cài lệnh mua đuổi hay chờ giá rớt về đúng POC mới khớp?
+    4. LỆNH ĐIỀU ĐỘNG TỪ GIÁM ĐỐC QUỸ: Kết luận dứt khoát 3 dòng.
+    * LUẬT TÍNH TIỀN MẶT BẮT BUỘC: Phần trăm Tiền mặt = 100% - (Tổng % của các mã trong Bảng Lệnh Giải Ngân ở Mục 2). Bạn BẮT BUỘC phải thực hiện phép tính trừ này và in ra con số % Tiền mặt chính xác. 
+    * Market Pulse đang Neutral/Fear/Greed thì chiến lược đi vốn là gì? Cài lệnh mua đuổi hay chờ giá rớt về đúng POC mới khớp?
     """
     
     final_report = generate_ai_report_with_fallback(master_prompt)
