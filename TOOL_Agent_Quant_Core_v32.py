@@ -307,7 +307,7 @@ def run_quant_agent(tickers_input, macro_query):
     if df_bench is None:
         error_msg = "❌ TỰ HỦY: Lỗi API lấy dữ liệu VNINDEX. Hệ thống dừng để bảo toàn an toàn."
         print(error_msg); send_email("[BÁO ĐỘNG LỖI] Quant V33", error_msg); return
-    bench_prices = df_bench['Close'].values
+    bench_prices = df_bench['Close']
     
     print(f"⏳ [1/4] Cào & Lọc Thanh khoản cho {len(tickers)} mã (Nghỉ 0.5s mỗi mã để né Block IP)...")
     data_list, raw_price_dict, micro_insights = [], {}, []
