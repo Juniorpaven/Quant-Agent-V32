@@ -339,7 +339,19 @@ def run_quant_agent(tickers_input, macro_query):
         raw_price_dict[t] = prices
         micro_insights.append(extract_micro_timing_insights(df_ohlcv, t))
         x, y, quad, mdd = calculate_rrg_and_drawdown(prices, bench_prices)
-        data_list.append({"Mã": t, "RRG": quad, "P/E": pe, "ROE%": roe, "MaxDD%": mdd, "VSA": vsa_signal_text})
+        data_list.append({
+                    "Mã": t, 
+                    "Giá Hiện Tại": round(current_price, 2), 
+                    "Vị thế RRG": quad, 
+                    "Vùng Mua POC": round(poc, 2),  # BƠM TRỰC TIẾP SỐ LIỆU POC VÀO BẢNG
+                    "Tín hiệu VSA": vsa_signal_text,
+                    "P/E": pe, 
+                    "ROE (%)": roe, 
+                    "Max DD (%)": mdd,
+                    "RRG_X": x, 
+                    "RRG_Y": y
+                })
+            time.sleep(0.1)
         
         time.sleep(0.5)
 
@@ -363,27 +375,34 @@ def run_quant_agent(tickers_input, macro_query):
 
     master_prompt = f"""
     ĐÓNG VAI: GIÁM ĐỐC QUẢN TRỊ RỦI RO QUỸ ĐẦU TƯ (HỆ THỐNG 3D MATRIX)
+    THỜI GIAN THỰC TẾ HÔM NAY LÀ: {datetime.now().strftime('%Y-%m-%d')}
     
     Hệ thống đã tự động LỌC BỎ các mã thiếu thanh khoản (< 50 tỷ). Dưới đây là các mã đạt chuẩn:
-    [CHIỀU 1: LƯỢNG TỬ MARKOWITZ & VSA]
-    - Tín hiệu Dòng tiền: {market_status}
-    - Bảng Cơ bản, RRG & VSA Cạn cung: {df_quant.to_string()}
-    - Tỷ trọng Giải ngân an toàn đề xuất: {opt_weights}
     
-    [CHIỀU 2: MICRO-TIMING (WYCKOFF & POC)]
+    [CHIỀU 1: LƯỢNG TỬ MARKOWITZ & VSA CHÍNH XÁC]
+    - Tín hiệu Dòng tiền: {market_status}
+    - Bảng Cơ bản, RRG, POC & VSA: {df_quant.to_string()}
+    - Tỷ trọng Giải ngân Markowitz ban đầu: {opt_weights}
+    
+    [CHIỀU 2: MICRO-TIMING WYCKOFF]
     {chr(10).join(micro_insights)}
     
     [CHIỀU 3: CẦU DAO VĨ MÔ QUỐC TẾ]
     - Vĩ mô 1 tháng qua: {df_macro.to_string()}
     - Tin tức AI cào được: {search_res}
     
-    NHIỆM VỤ (TRÌNH BÀY BÁO CÁO NHƯ MỘT FILE PDF CHUYÊN NGHIỆP DÙNG MARKDOWN):
-    Tạo Báo cáo gồm các mục rõ ràng:
-    1. TỔNG QUAN VĨ MÔ & THỊ TRƯỜNG: Đánh giá Market Pulse và Vĩ mô thế giới. Có Thiên nga đen không?
-    2. BẢNG TỔNG HỢP DANH MỤC: Tạo 1 bảng Markdown đẹp mắt gộp chung kết quả của 3-5 mã tốt nhất gồm các cột: (Mã | Tỷ trọng Đề xuất | Vị thế RRG | Vùng Mua POC | Tín hiệu Wyckoff & VSA).
-    * LƯU Ý ĐẶC BIỆT: Nếu thấy mã nào có cột VSA báo "VSA KHẨN CẤP", hãy tự động nâng tỷ trọng ưu tiên mua cho mã đó vì lực bán đã cạn.
-    3. CẢNH BÁO RỦI RO: Điểm mặt gọi tên những mã nào có rủi ro cao (Đang thủng đáy, Phân phối UTAD, Max Drawdown sâu) yêu cầu tránh xa.
-    4. CHỈ ĐẠO CỦA GIÁM ĐỐC QUỸ: Kết luận dứt khoát: Giữ tiền mặt hay Cho phép giải ngân theo tỷ trọng bảng trên?
+    NHIỆM VỤ CẤP BÁCH: Trình bày Báo cáo Dành cho Trader dưới dạng Markdown.
+    
+    1. TỔNG QUAN VĨ MÔ & THỊ TRƯỜNG: Đánh giá Market Pulse và Vĩ mô. Chốt lại: Rủi ro Cao hay Thấp?
+    
+    2. BẢNG LỆNH GIẢI NGÂN THỰC CHIẾN (QUAN TRỌNG NHẤT):
+    Tạo 1 bảng Markdown gộp 3-5 mã tốt nhất. Cột bắt buộc: Mã | Tỷ trọng Mới (%) | Vùng Giá Mua (Ghi đúng con số ở cột 'Vùng Mua POC' trong bảng dữ liệu, CẤM dùng từ 'Gần POC') | Tín hiệu VSA & Wyckoff | Lý do.
+    
+    * LUẬT ĐIỀU CHỈNH TỶ TRỌNG (CẤM LÀM TRÁI): Nếu mã nào báo "🔥 VSA KHẨN CẤP", BẠN PHẢI TỰ ĐỘNG NÂNG TỶ TRỌNG MÃ ĐÓ. Bạn phải cắt bớt % của mã kém hơn và cộng vào mã VSA. Tổng tỷ trọng các mã được chọn phải bằng mức Giải ngân an toàn. Bắt buộc ghi ra con số % cụ thể, tuyệt đối không dùng từ "tùy tâm lý".
+    
+    3. CẢNH BÁO RỦI RO ĐỎ: Chỉ đích danh mã thủng đáy, dính UTAD, hoặc ROE quá thấp so với P/E. Khuyến nghị HỦY LỆNH.
+    
+    4. LỆNH ĐIỀU ĐỘNG TỪ GIÁM ĐỐC QUỸ: Kết luận dứt khoát 3 dòng. Market Pulse đang Fear/Greed thì cầm bao nhiêu % Tiền mặt? Cài lệnh mua đuổi hay chờ giá rớt về đúng POC mới khớp?
     """
     
     final_report = generate_ai_report_with_fallback(master_prompt)
