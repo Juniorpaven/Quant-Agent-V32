@@ -421,7 +421,9 @@ def run_quant_agent(tickers_input, macro_query):
     1. TỔNG QUAN VĨ MÔ & THỊ TRƯỜNG: Đánh giá Market Pulse và Vĩ mô. Chốt lại: Rủi ro Cao hay Thấp?
     
     2. BẢNG LỆNH GIẢI NGÂN THỰC CHIẾN (QUAN TRỌNG NHẤT):
-    Tạo 1 bảng Markdown gộp 3-5 mã tốt nhất. Cột bắt buộc: Mã | Tỷ trọng Mới (%) | Vùng Giá Mua (Ghi đúng con số ở cột 'Vùng Mua POC' trong bảng dữ liệu, CẤM dùng từ 'Gần POC') | Tín hiệu VSA & Wyckoff | Lý do.
+    Tạo 1 bảng Markdown gộp 3-5 mã tốt nhất. 
+    * LUẬT ĐỊNH GIÁ: Nếu mã có "VSA KHẨN CẤP", vùng giá mua BẮT BUỘC là "Giá Hiện Tại". Mức giá ở cột POC trong dữ liệu thô sẽ đóng vai trò là "Target Chốt Lời" (Kháng cự) HOẶC "Hỗ trợ cứng" tùy thuộc vào việc nó cao hay thấp hơn Giá Hiện Tại.
+    * Các cột bắt buộc: Mã | Tỷ trọng Mới (%) | Vùng Mua Đề Xuất (Ghi Giá Hiện Tại) | Target POC (Ghi con số POC) | Tín hiệu VSA & Wyckoff | Lý do.
     
     * LUẬT ĐIỀU CHỈNH TỶ TRỌNG (CẤM LÀM TRÁI): Nếu mã nào báo "🔥 VSA KHẨN CẤP", BẠN PHẢI TỰ ĐỘNG NÂNG TỶ TRỌNG MÃ ĐÓ. Bạn phải cắt bớt % của mã kém hơn và cộng vào mã VSA. Tổng tỷ trọng các mã được chọn phải bằng mức Giải ngân an toàn. Bắt buộc ghi ra con số % cụ thể, tuyệt đối không dùng từ "tùy tâm lý".
     
@@ -429,7 +431,7 @@ def run_quant_agent(tickers_input, macro_query):
     
     4. LỆNH ĐIỀU ĐỘNG TỪ GIÁM ĐỐC QUỸ: Kết luận dứt khoát 3 dòng.
     * LUẬT TÍNH TIỀN MẶT BẮT BUỘC: Phần trăm Tiền mặt = 100% - (Tổng % của các mã trong Bảng Lệnh Giải Ngân ở Mục 2). Bạn BẮT BUỘC phải thực hiện phép tính trừ này và in ra con số % Tiền mặt chính xác. 
-    * Market Pulse đang Neutral/Fear/Greed thì chiến lược đi vốn là gì? Cài lệnh mua đuổi hay chờ giá rớt về đúng POC mới khớp?
+    * Market Pulse đang Neutral/Fear/Greed thì chiến lược đi vốn là gì? Cài lệnh mua đuổi hay Chờ giá test lại quanh Vùng Mua Đề Xuất mới khớp?
     """
     
     final_report = generate_ai_report_with_fallback(master_prompt)
