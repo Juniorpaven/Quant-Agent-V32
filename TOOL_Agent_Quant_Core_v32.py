@@ -279,18 +279,32 @@ def send_email(subject, body):
 # 4. BỘ NÃO TỰ ĐẢO MODEL (FALLBACK AI)
 # ==========================================
 def generate_ai_report_with_fallback(prompt):
-    fallback_models = ["gemini-2.5-flash", "gemini-3.1-flash-lite", "gemini-3.0-flash", "gemini-1.5-pro", "gemini-2.0-flash-exp"]
+    # CẬP NHẬT DANH SÁCH BĂNG ĐẠN MODEL (TỪ MỚI NHẤT ĐẾN CŨ NHẤT)
+    fallback_models = [
+        "gemini-3.1-pro",          # Ưu tiên 1: Dòng Pro thông minh nhất (Sẽ tự skip nếu quota 0/0)
+        "gemini-3.1-flash-lite",   # Ưu tiên 2: Dòng Flash Lite mới nhất, phản hồi siêu tốc
+        "gemini-3.0-flash",        # Ưu tiên 3: Tương ứng với Gemini 3 Flash trên Dashboard
+        "gemini-3-flash",          # (Mã dự phòng alias cho bản 3.0)
+        "gemini-2.5-flash",        # Ưu tiên 4: Bản 2.5 cực kỳ ổn định và thông minh
+        "gemini-2.5-flash-lite",   # Ưu tiên 5: Bản nhẹ của 2.5
+        "gemini-1.5-pro",          # Cứu cánh 1: Khi toàn bộ dòng 2 và 3 sập mạng
+        "gemini-1.5-flash"         # Cứu cánh 2: Trâu bò nhất, dùng để vét đáy
+    ]
+    
     for model_name in fallback_models:
         try:
             print(f"🤖 Kích hoạt não bộ: [{model_name}]...")
-            response = genai.GenerativeModel(model_name).generate_content(prompt)
+            model = genai.GenerativeModel(model_name)
+            response = model.generate_content(prompt)
             print(f"✅ THÀNH CÔNG từ [{model_name}]")
             return response.text
         except Exception as e:
-            print(f"⚠️ Model [{model_name}] lỗi ({type(e).__name__}). Đảo model...")
-            time.sleep(2)
+            # IN RA MÃ LỖI GỐC ĐỂ BÁT BỆNH (Vd: 403 Quota, 404 Not Found...)
+            print(f"⚠️ Model [{model_name}] thất bại. Lỗi: {str(e)}")
+            time.sleep(1) # Nghỉ 1 giây rồi đổi súng bắn tiếp
             continue
-    return "❌ LỖI NGHIÊM TRỌNG: Toàn bộ danh sách Model Gemini đều cạn Quota."
+            
+    return "❌ LỖI NGHIÊM TRỌNG: Toàn bộ băng đạn Model đều đã thử và thất bại. Hãy kiểm tra Terminal để đọc mã lỗi gốc!"
 
 # ==========================================
 # 5. LUỒNG THỰC THI CHÍNH (MAIN AGENT LOOP)
