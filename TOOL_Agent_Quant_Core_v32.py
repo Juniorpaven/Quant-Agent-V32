@@ -91,14 +91,32 @@ def get_fundamentals(ticker):
 def calculate_rrg_and_drawdown(stock_prices, benchmark_prices):
     if len(stock_prices) < 20 or len(benchmark_prices) < 20: return np.nan, np.nan, "N/A", np.nan
     min_len = min(len(stock_prices), len(benchmark_prices))
-    rs = (stock_prices[-min_len:] / benchmark_prices[-min_len:]) * 100
-    rs_ma10 = pd.Series(rs).rolling(window=10).mean().values
-    if np.isnan(rs_ma10[-1]) or np.isnan(rs_ma10[-2]): return np.nan, np.nan, "N/A", np.nan
-    rs_ratio = (rs[-1] / rs_ma10[-1]) * 100
-    rs_mom = (rs_ratio / ((rs[-2] / rs_ma10[-2]) * 100)) * 100
-    quad = "Leading" if rs_ratio > 100 and rs_mom > 100 else "Weakening" if rs_ratio > 100 else "Improving" if rs_mom > 100 else "Lagging"
-    mdd = ((pd.Series(stock_prices[-min_len:]) - pd.Series(stock_prices[-min_len:]).cummax()) / pd.Series(stock_prices[-min_len:]).cummax()).min() * 100
-    return round(rs_ratio, 2), round(rs_mom, 2), quad, round(mdd, 2)
+    
+    # Lấy dữ liệu với độ dài bằng nhau
+    s_prices = stock_prices.iloc[-min_len:]
+    b_prices = benchmark_prices.iloc[-min_len:]
+    
+    # Tính Relative Strength
+    rs = (s_prices.values / b_prices.values) * 100
+    rs_series = pd.Series(rs)
+    rs_ma10 = rs_series.rolling(window=10).mean()
+    
+    # Chuẩn hóa cách gọi phần tử cuối bằng .iloc[-1] thay vì [-1]
+    if pd.isna(rs_ma10.iloc[-1]) or pd.isna(rs_ma10.iloc[-2]): return np.nan, np.nan, "N/A", np.nan
+    
+    rs_ratio_current = (rs_series.iloc[-1] / rs_ma10.iloc[-1]) * 100
+    rs_ratio_prev = (rs_series.iloc[-2] / rs_ma10.iloc[-2]) * 100
+    rs_mom = (rs_ratio_current / rs_ratio_prev) * 100
+    
+    # Xác định Góc phần tư
+    quad = "Leading" if rs_ratio_current > 100 and rs_mom > 100 else "Weakening" if rs_ratio_current > 100 else "Improving" if rs_mom > 100 else "Lagging"
+    
+    # Tính Max Drawdown
+    peaks = s_prices.cummax()
+    drawdowns = (s_prices - peaks) / peaks
+    mdd = drawdowns.min() * 100
+    
+    return round(rs_ratio_current, 2), round(rs_mom, 2), quad, round(mdd, 2)
 
 def optimize_portfolio_monte_carlo(raw_price_dict, max_weight_pct):
     df = pd.DataFrame(raw_price_dict)
