@@ -153,7 +153,7 @@ def extract_micro_timing_insights(df, ticker, lookback=20, bins=50):
     elif recent['UTAD'].any(): w_event = f"UTAD tại {recent[recent['UTAD']]['High'].iloc[-1]:.2f}"
     elif recent['SOS'].any(): w_event = "SOS Xác nhận"
 
-    return f"- {ticker}: Giá {cp:.2f} | POC {poc_price:.2f} | {phase_est} | {w_event}"
+    return f"- {ticker}: Giá {cp:.2f} | POC {poc_price:.2f} | {phase_est} | {w_event}", poc_price
 
 # ==========================================
 # 3. CÁC HÀM CÀO DỮ LIỆU VĨ MÔ & EMAIL
@@ -337,23 +337,30 @@ def run_quant_agent(tickers_input, macro_query):
         pe, roe = get_fundamentals(t)
         prices = df_ohlcv['Close']
         raw_price_dict[t] = prices
-        micro_insights.append(extract_micro_timing_insights(df_ohlcv, t))
-        x, y, quad, mdd = calculate_rrg_and_drawdown(prices, bench_prices)
-        data_list.append({
-                    "Mã": t, 
-                    "Giá Hiện Tại": round(current_price, 2), 
-                    "Vị thế RRG": quad, 
-                    "Vùng Mua POC": round(poc, 2),  # BƠM TRỰC TIẾP SỐ LIỆU POC VÀO BẢNG
-                    "Tín hiệu VSA": vsa_signal_text,
-                    "P/E": pe, 
-                    "ROE (%)": roe, 
-                    "Max DD (%)": mdd,
-                    "RRG_X": x, 
-                    "RRG_Y": y
-                })
-            time.sleep(0.1)
         
-        time.sleep(0.5)
+        # 1. Hứng cả Văn bản (insight_text) và Số liệu Toán học (poc) từ hàm
+        insight_text, poc = extract_micro_timing_insights(df_ohlcv, t)
+        micro_insights.append(insight_text)
+        
+        # 2. Khai báo biến giá hiện tại
+        current_price = df_ohlcv['Close'].iloc[-1]
+        x, y, quad, mdd = calculate_rrg_and_drawdown(prices, bench_prices)
+        
+        # 3. Đẩy vào Bảng dữ liệu
+        data_list.append({
+            "Mã": t, 
+            "Giá Hiện Tại": round(current_price, 2), 
+            "Vị thế RRG": quad, 
+            "Vùng Mua POC": round(poc, 2),
+            "Tín hiệu VSA": vsa_signal_text,
+            "P/E": pe, 
+            "ROE (%)": roe, 
+            "Max DD (%)": mdd,
+            "RRG_X": x, 
+            "RRG_Y": y
+        })
+        
+        time.sleep(0.5) # Chỉ giữ 1 lệnh sleep 0.5s để chống sập API Entrade
 
     # RÀO CHẮN 3: KIỂM TRA SỐ LƯỢNG MÃ CÒN LẠI SAU KHI LỌC
     if len(data_list) < 3:
