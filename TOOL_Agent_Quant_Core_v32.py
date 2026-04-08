@@ -118,11 +118,10 @@ def calculate_rrg_and_drawdown(stock_prices, benchmark_prices):
     
     return round(rs_ratio_current, 2), round(rs_mom, 2), quad, round(mdd, 2)
 
-def optimize_portfolio_monte_carlo(raw_price_dict, max_weight_pct):
+def optimize_portfolio_monte_carlo(raw_price_dict, ticker_caps):
     df = pd.DataFrame(raw_price_dict)
     returns = df.pct_change().dropna()
-    num_assets, max_w = len(df.columns), max_weight_pct / 100.0
-    if max_w * num_assets < 1.0: return None
+    num_assets = len(df.columns)
     
     results, weights_record = np.zeros((3, 2000)), []
     mean_ret, cov_mat = returns.mean() * 252, returns.cov() * 252
@@ -130,12 +129,13 @@ def optimize_portfolio_monte_carlo(raw_price_dict, max_weight_pct):
     for i in range(2000):
         w = np.random.random(num_assets)
         w /= np.sum(w)
-        while np.any(w > max_w):
-            excess = np.sum(w[w > max_w] - max_w)
-            w[w > max_w] = max_w
-            mask = w < max_w
-            if not np.any(mask): break
-            w[mask] += excess * (w[mask] / np.sum(w[mask]))
+        # Ép trần tỷ trọng từng mã (Cap Weight)
+        for j, ticker in enumerate(df.columns):
+            cap = ticker_caps.get(ticker, 0.4) # Mặc định tối đa 40% nếu không cấu hình
+            if w[j] > cap: w[j] = cap
+        
+        # Tái chuẩn hóa sau khi ép trần
+        w /= np.sum(w)
         weights_record.append(w)
         results[0,i] = np.sum(mean_ret * w)
         results[1,i] = np.sqrt(np.dot(w.T, np.dot(cov_mat, w)))
@@ -145,12 +145,22 @@ def optimize_portfolio_monte_carlo(raw_price_dict, max_weight_pct):
     return {df.columns[i]: round(opt_w[i]*100, 2) for i in range(num_assets)}
 
 def extract_micro_timing_insights(df, ticker, lookback=20, bins=50):
-    if df is None or len(df) < lookback: return f"- {ticker}: Không đủ dữ liệu."
+    if df is None or len(df) < lookback: return f"- {ticker}: Không đủ dữ liệu.", df['Close'].iloc[-1], 0
     cp = df['Close'].iloc[-1]
     
-    price_bins = np.linspace(df['Low'].min(), df['High'].max(), bins)
-    vp_data = [{'Price': (price_bins[i] + price_bins[i+1])/2, 'Vol': df.loc[(df['Close'] >= price_bins[i]) & (df['Close'] < price_bins[i+1]), 'Volume'].sum()} for i in range(len(price_bins)-1)]
-    poc_price = pd.DataFrame(vp_data).loc[pd.DataFrame(vp_data)['Vol'].idxmax(), 'Price'] if vp_data else cp
+    # 1. TÍNH ATR 14 NGÀY (Biến động thực tế)
+    high_low = df['High'] - df['Low']
+    high_close = np.abs(df['High'] - df['Close'].shift())
+    low_close = np.abs(df['Low'] - df['Close'].shift())
+    ranges = pd.concat([high_low, high_close, low_close], axis=1)
+    atr = np.max(ranges, axis=1).rolling(14).mean().iloc[-1]
+    if pd.isna(atr) or atr == 0: atr = cp * 0.02 # Dự phòng 2% nếu lỗi
+    
+    # 2. TÍNH LOCAL POC (Nền giá 30 ngày gần nhất)
+    df_local = df.tail(30)
+    price_bins = np.linspace(df_local['Low'].min(), df_local['High'].max(), bins)
+    vp_data = [{'Price': (price_bins[i] + price_bins[i+1])/2, 'Vol': df_local.loc[(df_local['Close'] >= price_bins[i]) & (df_local['Close'] < price_bins[i+1]), 'Volume'].sum()} for i in range(len(price_bins)-1)]
+    local_poc = pd.DataFrame(vp_data).loc[pd.DataFrame(vp_data)['Vol'].idxmax(), 'Price'] if vp_data else cp
 
     df['Sup'], df['Res'] = df['Low'].rolling(lookback).min().shift(1), df['High'].rolling(lookback).max().shift(1)
     df['Avg_Vol'] = df['Volume'].rolling(lookback).mean()
@@ -171,13 +181,14 @@ def extract_micro_timing_insights(df, ticker, lookback=20, bins=50):
     elif recent['UTAD'].any(): w_event = f"UTAD tại {recent[recent['UTAD']]['High'].iloc[-1]:.2f}"
     elif recent['SOS'].any(): w_event = "SOS Xác nhận"
 
-    return f"- {ticker}: Giá {cp:.2f} | POC {poc_price:.2f} | {phase_est} | {w_event}", poc_price
+    return f"- {ticker}: Giá {cp:.2f} | Local POC {local_poc:.2f} | ATR {atr:.2f} | {phase_est} | {w_event}", local_poc, atr
 
 # ==========================================
 # 3. CÁC HÀM CÀO DỮ LIỆU VĨ MÔ & EMAIL
 # ==========================================
 def get_macro_quant():
-    tickers = {"DXY (Chỉ số USD)": "DX-Y.NYB", "US10Y (Lợi suất TP Mỹ)": "^TNX", "Crude Oil (Dầu thô)": "CL=F", "Gold (Vàng)": "GC=F"}
+    # Thêm VIX vào danh sách cào dữ liệu
+    tickers = {"DXY (Chỉ số USD)": "DX-Y.NYB", "US10Y (Lợi suất TP Mỹ)": "^TNX", "Crude Oil (Dầu thô)": "CL=F", "Gold (Vàng)": "GC=F", "VIX (Chỉ số Sợ hãi)": "^VIX"}
     macro_data = {}
     for name, sym in tickers.items():
         try:
@@ -309,8 +320,9 @@ def run_quant_agent(tickers_input, macro_query):
         print(error_msg); send_email("[BÁO ĐỘNG LỖI] Quant V33", error_msg); return
     bench_prices = df_bench['Close']
     
-    print(f"⏳ [1/4] Cào & Lọc Thanh khoản cho {len(tickers)} mã (Nghỉ 0.5s mỗi mã để né Block IP)...")
+    print(f"⏳ [1/4] Cào & Lọc Thanh khoản cho {len(tickers)} mã...")
     data_list, raw_price_dict, micro_insights = [], {}, []
+    ticker_caps = {}  # <--- BƯỚC 1: BỔ SUNG DÒNG KHOẢNG TRẮNG NÀY Ở ĐÂY
     
     for t in tickers:
         df_ohlcv = get_ohlcv_data(t, days=time_window, max_retries=3)
@@ -343,33 +355,42 @@ def run_quant_agent(tickers_input, macro_query):
         # 4. XÁC THỰC CỤM LỊCH SỬ (CLUSTER VALIDATION) - Kiểm tra 5 phiên gần nhất
         df_ohlcv['Can_Cung_Cluster'] = df_ohlcv['Can_Cung_Daily'].rolling(window=5).sum()
 
-        # 5. TRÍCH XUẤT TÍN HIỆU CHO PHIÊN HIỆN TẠI
+       # 5. LẤY BIẾN SỐ VSA & ĐO KHOẢNG CÁCH ATR
+        insight_text, local_poc, atr = extract_micro_timing_insights(df_ohlcv, t)
+        current_price = df_ohlcv['Close'].iloc[-1]
+        
+        distance_from_poc = abs(current_price - local_poc)
+        atr_boundary = atr * 1.5  # Chấp nhận sai số dao động 1.5 lần ATR quanh POC
+        
         latest_status = df_ohlcv.iloc[-1]
         vsa_signal_text = "Thanh khoản ở mức bình thường."
-
-        # Kích hoạt Cảnh báo nếu phiên hôm nay thỏa mãn VÀ cụm 5 phiên có ít nhất 2 phiên cạn cung
+        
         if latest_status['Can_Cung_Daily'] == True and latest_status['Can_Cung_Cluster'] >= 2:
-            vsa_signal_text = f"🔥 VSA KHẨN CẤP: Đạt trạng thái Cạn cung (No Supply Bar). Cổ phiếu siết chặt nền trên MA50, lực bán đã kiệt quệ hoàn toàn (GTGD hôm nay chỉ đạt {latest_status['Gia_Tri_GD']/1e9:.1f} tỷ)."
-            print(f"🎯 [BẮT ĐÁY] {t}: {vsa_signal_text}")
-            
+            if distance_from_poc <= atr_boundary:
+                vsa_signal_text = "🔥 VSA KHẨN CẤP (CẠN CUNG): Lực bán kiệt quệ quanh nền Local POC. Điểm mua tuyệt vời."
+            elif (current_price - local_poc) > (atr * 3):
+                vsa_signal_text = "⚠️ BÁO ĐỘNG ĐỎ (THIẾU CẦU): Giá kéo quá xa nền POC nhưng Volume tắt lịm. CẤM MUA ĐUỔI."
+            else:
+                vsa_signal_text = "⚡ VSA TIỀM NĂNG: Thanh khoản cạn nhưng nền giá hơi lỏng."
+
+        # 6. THIẾT LẬP TRẦN TỶ TRỌNG (CAP WEIGHT) CHỐNG ĐU ĐỈNH
+        # (Đã xóa dòng if t not in...)
+        if (current_price - local_poc) > (atr * 3):
+            ticker_caps[t] = 0.05  # Phạt trần tỷ trọng tối đa chỉ 5%
+        else:
+            ticker_caps[t] = max_weight_limit / 100.0  # Bình thường cho phép Max Weight
+
         pe, roe = get_fundamentals(t)
         prices = df_ohlcv['Close']
         raw_price_dict[t] = prices
-        
-        # 1. Hứng cả Văn bản (insight_text) và Số liệu Toán học (poc) từ hàm
-        insight_text, poc = extract_micro_timing_insights(df_ohlcv, t)
         micro_insights.append(insight_text)
-        
-        # 2. Khai báo biến giá hiện tại
-        current_price = df_ohlcv['Close'].iloc[-1]
         x, y, quad, mdd = calculate_rrg_and_drawdown(prices, bench_prices)
         
-        # 3. Đẩy vào Bảng dữ liệu
         data_list.append({
             "Mã": t, 
             "Giá Hiện Tại": round(current_price, 2), 
             "Vị thế RRG": quad, 
-            "Vùng Mua POC": round(poc, 2),
+            "Vùng Mua POC": round(local_poc, 2), # Cập nhật hiển thị Local POC
             "Tín hiệu VSA": vsa_signal_text,
             "P/E": pe, 
             "ROE (%)": roe, 
@@ -377,8 +398,7 @@ def run_quant_agent(tickers_input, macro_query):
             "RRG_X": x, 
             "RRG_Y": y
         })
-        
-        time.sleep(0.5) # Chỉ giữ 1 lệnh sleep 0.5s để chống sập API Entrade
+        time.sleep(0.5)
 
     # RÀO CHẮN 3: KIỂM TRA SỐ LƯỢNG MÃ CÒN LẠI SAU KHI LỌC
     if len(data_list) < 3:
@@ -402,36 +422,38 @@ def run_quant_agent(tickers_input, macro_query):
     ĐÓNG VAI: GIÁM ĐỐC QUẢN TRỊ RỦI RO QUỸ ĐẦU TƯ (HỆ THỐNG 3D MATRIX)
     THỜI GIAN THỰC TẾ HÔM NAY LÀ: {datetime.now().strftime('%Y-%m-%d')}
     
-    Hệ thống đã tự động LỌC BỎ các mã thiếu thanh khoản (< 50 tỷ). Dưới đây là các mã đạt chuẩn:
-    
-    [CHIỀU 1: LƯỢNG TỬ MARKOWITZ & VSA CHÍNH XÁC]
+    [CHIỀU 1: LƯỢNG TỬ MARKOWITZ & VSA]
     - Tín hiệu Dòng tiền: {market_status}
-    - Bảng Cơ bản, RRG, POC & VSA: {df_quant.to_string()}
-    - Tỷ trọng Giải ngân Markowitz ban đầu: {opt_weights}
+    - Bảng Cơ bản, RRG, Local POC & VSA: {df_quant.to_string()}
+    - Tỷ trọng Giải ngân Markowitz (Đã ép trần chống đu đỉnh): {opt_weights}
     
     [CHIỀU 2: MICRO-TIMING WYCKOFF]
     {chr(10).join(micro_insights)}
     
-    [CHIỀU 3: CẦU DAO VĨ MÔ QUỐC TẾ]
+    [CHIỀU 3: CẦU DAO VĨ MÔ QUỐC TẾ & CHỈ SỐ VIX]
     - Vĩ mô 1 tháng qua: {df_macro.to_string()}
     - Tin tức AI cào được: {search_res}
     
-    NHIỆM VỤ CẤP BÁCH: Trình bày Báo cáo Dành cho Trader dưới dạng Markdown.
+    * LUẬT ĐÁNH GIÁ VĨ MÔ NGHỊCH LÝ (BẮT BUỘC TUÂN THỦ):
+    - KHÔNG kết luận Vĩ mô tốt/xấu chỉ bằng tin tức (như Thất nghiệp, Suy thoái). Phải dùng Toán học:
+    - Nếu Tin xấu + Lợi suất US10Y GIẢM + VIX < 25: Đây là TIN TỐT (Kỳ vọng FED bơm tiền). Vĩ mô: TÍCH CỰC.
+    - Nếu Tin xấu + Lợi suất US10Y GIẢM + VIX BÙNG NỔ (> 25): Đây là ĐỨT GÃY TÍN DỤNG. Vĩ mô: CỰC KỲ XẤU. Bán tháo mọi thứ.
     
-    1. TỔNG QUAN VĨ MÔ & THỊ TRƯỜNG: Đánh giá Market Pulse và Vĩ mô. Chốt lại: Rủi ro Cao hay Thấp?
+    NHIỆM VỤ: Trình bày Báo cáo Dành cho Trader dưới dạng Markdown.
     
-    2. BẢNG LỆNH GIẢI NGÂN THỰC CHIẾN (QUAN TRỌNG NHẤT):
-    Tạo 1 bảng Markdown gộp 3-5 mã tốt nhất. 
-    * LUẬT ĐỊNH GIÁ: Nếu mã có "VSA KHẨN CẤP", vùng giá mua BẮT BUỘC là "Giá Hiện Tại". Mức giá ở cột POC trong dữ liệu thô sẽ đóng vai trò là "Target Chốt Lời" (Kháng cự) HOẶC "Hỗ trợ cứng" tùy thuộc vào việc nó cao hay thấp hơn Giá Hiện Tại.
-    * Các cột bắt buộc: Mã | Tỷ trọng Mới (%) | Vùng Mua Đề Xuất (Ghi Giá Hiện Tại) | Target POC (Ghi con số POC) | Tín hiệu VSA & Wyckoff | Lý do.
+    1. TỔNG QUAN VĨ MÔ & THỊ TRƯỜNG: Đánh giá theo đúng "Luật Đánh Giá Vĩ Mô Nghịch Lý". Chốt: Rủi ro Cao/Thấp?
     
-    * LUẬT ĐIỀU CHỈNH TỶ TRỌNG (CẤM LÀM TRÁI): Nếu mã nào báo "🔥 VSA KHẨN CẤP", BẠN PHẢI TỰ ĐỘNG NÂNG TỶ TRỌNG MÃ ĐÓ. Bạn phải cắt bớt % của mã kém hơn và cộng vào mã VSA. Tổng tỷ trọng các mã được chọn phải bằng mức Giải ngân an toàn. Bắt buộc ghi ra con số % cụ thể, tuyệt đối không dùng từ "tùy tâm lý".
+    2. BẢNG LỆNH GIẢI NGÂN THỰC CHIẾN:
+    Tạo 1 bảng gộp 3-5 mã tốt nhất. 
+    * LUẬT ĐỊNH GIÁ: Vùng Giá Mua phải là "Giá Hiện Tại". Mức giá ở cột 'Vùng Mua POC' đóng vai trò là "Target Chốt Lời" (nếu POC > Giá) HOẶC "Hỗ trợ cắt lỗ" (nếu POC < Giá).
+    * Các cột bắt buộc: Mã | Tỷ trọng Mới (%) | Vùng Mua (Giá Hiện Tại) | Target POC (Số POC) | Tín hiệu | Lý do.
+    * LUẬT LOẠI BỎ: TUYỆT ĐỐI KHÔNG giải ngân vào các mã có Tín hiệu VSA là "BÁO ĐỘNG ĐỎ (THIẾU CẦU)".
     
-    3. CẢNH BÁO RỦI RO ĐỎ: Chỉ đích danh mã thủng đáy, dính UTAD, hoặc ROE quá thấp so với P/E. Khuyến nghị HỦY LỆNH.
+    3. CẢNH BÁO RỦI RO ĐỎ: Gọi tên mã bị Thiếu Cầu vùng đỉnh, thủng đáy, dính UTAD, hoặc ROE quá thấp. Khuyến nghị HỦY LỆNH.
     
     4. LỆNH ĐIỀU ĐỘNG TỪ GIÁM ĐỐC QUỸ: Kết luận dứt khoát 3 dòng.
-    * LUẬT TÍNH TIỀN MẶT BẮT BUỘC: Phần trăm Tiền mặt = 100% - (Tổng % của các mã trong Bảng Lệnh Giải Ngân ở Mục 2). Bạn BẮT BUỘC phải thực hiện phép tính trừ này và in ra con số % Tiền mặt chính xác. 
-    * Market Pulse đang Neutral/Fear/Greed thì chiến lược đi vốn là gì? Cài lệnh mua đuổi hay Chờ giá test lại quanh Vùng Mua Đề Xuất mới khớp?
+    * LUẬT TÍNH TIỀN MẶT BẮT BUỘC: % Tiền mặt = 100% - (Tổng % các mã ở Mục 2). BẮT BUỘC thực hiện tính toán và in kết quả.
+    * Đưa ra hướng dẫn đặt lệnh (Vd: Mua ngay tại Giá Hiện Tại với Target tại POC).
     """
     
     final_report = generate_ai_report_with_fallback(master_prompt)
