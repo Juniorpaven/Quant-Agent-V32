@@ -421,7 +421,7 @@ def run_quant_agent(tickers_input, macro_query):
 
     df_quant = pd.DataFrame(data_list)
     print("⏳ [2/4] Chạy Toán học Markowitz...")
-    opt_weights = optimize_portfolio_monte_carlo(raw_price_dict, max_weight_limit)
+    opt_weights = optimize_portfolio_monte_carlo(raw_price_dict, ticker_caps) # <--- ĐÃ SỬA CHUẨN
 
     print("⏳ [3/4] Quét Bảng điện Vĩ mô...")
     df_macro = get_macro_quant()
