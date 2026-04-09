@@ -349,50 +349,55 @@ def run_quant_agent(tickers_input, macro_query):
         df_ohlcv['Gia_Tri_GD'] = df_ohlcv['Close'] * df_ohlcv['Volume'] * 1000  # Nhân 1000 vì giá của ENTRADE thường chia ngàn
         df_ohlcv['Vol_MA20'] = df_ohlcv['Gia_Tri_GD'].rolling(window=20).mean()
 
-        # 2. LỚP LỌC 1: CHẶN PENNY RÁC (Trung bình 20 phiên phải >= 50 tỷ)
-        avg_20d_val = df_ohlcv['Vol_MA20'].iloc[-1]
-        if pd.isna(avg_20d_val) or avg_20d_val < 50_000_000_000:
-            print(f"⏭️ Bỏ qua {t}: Thanh khoản trung bình 20 phiên không đạt chuẩn (< 50 tỷ).")
-            continue
-
-        # 3. LỚP LỌC 2: PHÁT HIỆN CẠN CUNG TỪNG PHIÊN (VSA No Supply Bar)
+        # 3. LỚP LỌC 2: PHÂN BIỆT RÕ RÀNG "CẠN CUNG" VÀ "THIẾU CẦU" (CHỐNG MÙ MÀU)
         df_ohlcv['Price_Range'] = (df_ohlcv['High'] - df_ohlcv['Low']) / df_ohlcv['Close']
         df_ohlcv['is_low_vol'] = df_ohlcv['Gia_Tri_GD'] < (df_ohlcv['Vol_MA20'] * 0.6)
         df_ohlcv['is_tight_price'] = df_ohlcv['Price_Range'] < (df_ohlcv['Price_Range'].rolling(20).mean() * 0.8)
         
-        # Sửa lỗi NaN cho MA50 bằng cách lấp đầy dữ liệu thiếu
-        df_ohlcv['MA50'] = df_ohlcv['Close'].rolling(50).mean().bfill()
-        df_ohlcv['is_above_trend'] = df_ohlcv['Close'] > df_ohlcv['MA50']
-
-        df_ohlcv['Can_Cung_Daily'] = df_ohlcv['is_low_vol'] & df_ohlcv['is_tight_price'] & df_ohlcv['is_above_trend']
-
-        # 4. XÁC THỰC CỤM LỊCH SỬ (CLUSTER VALIDATION) - Kiểm tra 5 phiên gần nhất
-        df_ohlcv['Can_Cung_Cluster'] = df_ohlcv['Can_Cung_Daily'].rolling(window=5).sum()
-
-       # 5. LẤY BIẾN SỐ VSA & ĐO KHOẢNG CÁCH ATR
+        # Chìa khóa VSA: Nến Tăng vs Nến Giảm
+        df_ohlcv['is_down_candle'] = df_ohlcv['Close'] <= df_ohlcv['Close'].shift(1)
+        df_ohlcv['is_up_candle'] = df_ohlcv['Close'] > df_ohlcv['Close'].shift(1)
+        
+        # No Supply (Cạn cung): Nến GIẢM + Vol thấp + Biên hẹp
+        df_ohlcv['No_Supply'] = df_ohlcv['is_low_vol'] & df_ohlcv['is_tight_price'] & df_ohlcv['is_down_candle']
+        # No Demand (Thiếu cầu): Nến TĂNG + Vol thấp + Biên hẹp
+        df_ohlcv['No_Demand'] = df_ohlcv['is_low_vol'] & df_ohlcv['is_tight_price'] & df_ohlcv['is_up_candle']
+        
+        # 4. XÁC THỰC CỤM LỊCH SỬ
+        df_ohlcv['Can_Cung_Cluster'] = df_ohlcv['No_Supply'].rolling(window=5).sum()
+        
+        # 5. TRÍCH XUẤT TÍN HIỆU VÀ ĐỊNH VỊ POC
         insight_text, local_poc, atr = extract_micro_timing_insights(df_ohlcv, t)
         current_price = df_ohlcv['Close'].iloc[-1]
-        
-        distance_from_poc = abs(current_price - local_poc)
-        atr_boundary = atr * 1.5  # Chấp nhận sai số dao động 1.5 lần ATR quanh POC
+        distance_to_poc = current_price - local_poc 
         
         latest_status = df_ohlcv.iloc[-1]
         vsa_signal_text = "Thanh khoản ở mức bình thường."
         
-        if latest_status['Can_Cung_Daily'] == True and latest_status['Can_Cung_Cluster'] >= 2:
-            if distance_from_poc <= atr_boundary:
-                vsa_signal_text = "🔥 VSA KHẨN CẤP (CẠN CUNG): Lực bán kiệt quệ quanh nền Local POC. Điểm mua tuyệt vời."
-            elif (current_price - local_poc) > (atr * 3):
-                vsa_signal_text = "⚠️ BÁO ĐỘNG ĐỎ (THIẾU CẦU): Giá kéo quá xa nền POC nhưng Volume tắt lịm. CẤM MUA ĐUỔI."
+        # BẮT BỆNH THIẾU CẦU (CASE DPM)
+        if latest_status['No_Demand'] == True:
+            if distance_to_poc > (atr * 2):
+                vsa_signal_text = "🆘 BÁO ĐỘNG ĐỎ: Thiếu Cầu (No Demand) vùng đỉnh."
+            elif distance_to_poc < 0 and abs(distance_to_poc) <= (atr * 1.5):
+                vsa_signal_text = "🆘 BÁO ĐỘNG ĐỎ: Hồi phục chạm Kháng cự POC nhưng Thiếu Cầu."
+        
+        # XÁC NHẬN CẠN CUNG THỰC SỰ
+        elif latest_status['No_Supply'] == True and latest_status['Can_Cung_Cluster'] >= 2:
+            if abs(distance_to_poc) <= (atr * 1.5):
+                vsa_signal_text = "🔥 VSA CHUẨN: Cạn cung khẩn cấp (Test đáy thành công tại POC)"
             else:
-                vsa_signal_text = "⚡ VSA TIỀM NĂNG: Thanh khoản cạn nhưng nền giá hơi lỏng."
+                vsa_signal_text = "⚡ VSA: Thanh khoản cạn (Cần theo dõi thêm)"
 
-        # 6. THIẾT LẬP TRẦN TỶ TRỌNG (CAP WEIGHT) CHỐNG ĐU ĐỈNH
-        # (Đã xóa dòng if t not in...)
-        if (current_price - local_poc) > (atr * 3):
-            ticker_caps[t] = 0.05  # Phạt trần tỷ trọng tối đa chỉ 5%
+        # 6. THIẾT LẬP TRẦN TỶ TRỌNG (ÁN TỬ CHO MÃ DÍNH BÁO ĐỘNG ĐỎ)
+        if t not in ticker_caps: ticker_caps = {}
+        max_w_decimal = max_weight_limit / 100.0
+        
+        if "BÁO ĐỘNG ĐỎ" in vsa_signal_text:
+            ticker_caps[t] = 0.0  # Ép tỷ trọng Markowitz về 0%, cấm mua tuyệt đối
+        elif distance_to_poc > (atr * 3):
+            ticker_caps[t] = 0.05 # Phạt đu đỉnh: Chỉ cho mua tối đa 5%
         else:
-            ticker_caps[t] = max_weight_limit / 100.0  # Bình thường cho phép Max Weight
+            ticker_caps[t] = max_w_decimal
 
         pe, roe = get_fundamentals(t)
         prices = df_ohlcv['Close']
