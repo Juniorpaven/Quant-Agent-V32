@@ -437,42 +437,67 @@ def run_quant_agent(tickers_input, macro_query):
     # Lấy ngày hiện tại chuẩn từ hệ thống Python
     today_str = datetime.now().strftime('%d/%m/%Y')
 
+    # ==========================================
+    # MASTER PROMPT V33 (STYLED VERSION)
+    # ==========================================
     master_prompt = f"""
     ĐÓNG VAI: GIÁM ĐỐC QUẢN TRỊ RỦI RO QUỸ ĐẦU TƯ (HỆ THỐNG 3D MATRIX)
-    THỜI GIAN THỰC TẾ HÔM NAY LÀ: {datetime.now().strftime('%Y-%m-%d')}
     
-    [CHIỀU 1: LƯỢNG TỬ MARKOWITZ & VSA]
+    [DỮ LIỆU ĐẦU VÀO LƯỢNG TỬ]
     - Tín hiệu Dòng tiền: {market_status}
     - Bảng Cơ bản, RRG, Local POC & VSA: {df_quant.to_string()}
     - Tỷ trọng Giải ngân Markowitz (Đã ép trần chống đu đỉnh): {opt_weights}
-    
-    [CHIỀU 2: MICRO-TIMING WYCKOFF]
-    {chr(10).join(micro_insights)}
-    
-    [CHIỀU 3: CẦU DAO VĨ MÔ QUỐC TẾ & CHỈ SỐ VIX]
+    - Micro-Timing Wyckoff: {chr(10).join(micro_insights)}
     - Vĩ mô 1 tháng qua: {df_macro.to_string()}
     - Tin tức AI cào được: {search_res}
     
-    * LUẬT ĐÁNH GIÁ VĨ MÔ NGHỊCH LÝ (BẮT BUỘC TUÂN THỦ):
-    - KHÔNG kết luận Vĩ mô tốt/xấu chỉ bằng tin tức (như Thất nghiệp, Suy thoái). Phải dùng Toán học:
-    - Nếu Tin xấu + Lợi suất US10Y GIẢM + VIX < 25: Đây là TIN TỐT (Kỳ vọng FED bơm tiền). Vĩ mô: TÍCH CỰC.
-    - Nếu Tin xấu + Lợi suất US10Y GIẢM + VIX BÙNG NỔ (> 25): Đây là ĐỨT GÃY TÍN DỤNG. Vĩ mô: CỰC KỲ XẤU. Bán tháo mọi thứ.
+    [QUY TẮC VĨ MÔ NGHỊCH LÝ BẮT BUỘC]
+    - Nếu Tin xấu + Lợi suất US10Y GIẢM + VIX < 25: TIN TỐT (Kỳ vọng FED bơm tiền). Vĩ mô: TÍCH CỰC.
+    - Nếu Tin xấu + Lợi suất US10Y GIẢM + VIX > 25: ĐỨT GÃY TÍN DỤNG. Vĩ mô: CỰC KỲ XẤU. Bán tháo.
     
-    NHIỆM VỤ: Trình bày Báo cáo Dành cho Trader dưới dạng Markdown.
+    NHIỆM VỤ: Bạn BẮT BUỘC phải sinh ra báo cáo theo ĐÚNG 100% Cấu trúc Markdown dưới đây. Tuyệt đối không thêm bớt các đề mục. Chỉ điền nội dung vào các phần được yêu cầu.
+
+    # BÁO CÁO QUẢN TRỊ RỦI RO & ĐỊNH HƯỚNG ĐẦU TƯ NGÀY {today_str}
+    **Người trình bày:** Giám đốc Quản trị Rủi ro Quỹ Đầu tư
+
+    ## 1. TỔNG QUAN VĨ MÔ & THỊ TRƯỜNG
+    Đánh giá Vĩ mô theo "Luật Đánh Giá Vĩ Mô Nghịch Lý":
+
+    * **Tin tức:** [Chắt lọc và tóm tắt 1-2 câu ngắn gọn từ dữ liệu tin tức]. Các thông tin này nhìn chung là hỗ trợ hay gây áp lực?
+    * **Yếu tố Toán học:**
+      - DXY (Chỉ số USD): [Ghi mức hiện tại và biến động %]
+      - US10Y (Lợi suất TP Mỹ): [Ghi mức hiện tại và biến động %]
+      - VIX (Chỉ số Sợ hãi): [Ghi mức hiện tại và biến động %]
+    * **Dựa trên luật:** [Áp dụng dữ liệu vào luật vĩ mô nghịch lý để suy luận]. Theo luật, đây là tín hiệu [Tích cực / Tiêu cực / Hỗn hợp]...
+    * **Chốt:** Rủi ro [THẤP / TRUNG BÌNH / CAO]. [1 câu tóm tắt định hướng vĩ mô].
+
+    ## 2. BẢNG LỆNH GIẢI NGÂN THỰC CHIẾN
+    Dựa trên phân tích Tín hiệu VSA và Tỷ trọng Giải ngân Markowitz (đã ép trần), chúng tôi lựa chọn các mã tiềm năng nhất.
+
+    [TẠO BẢNG MARKDOWN TẠI ĐÂY: Chọn TỐI ĐA 5 MÃ có Tỷ trọng Markowitz cao nhất (>0%). TUYỆT ĐỐI KHÔNG chọn mã có tín hiệu "BÁO ĐỘNG ĐỎ". Các cột BẮT BUỘC: Mã | Tỷ trọng Mới (%) | Vùng Mua (Giá Hiện Tại) | Target POC (Số POC) | Tín hiệu | Lý do]
+
+    *Lưu ý:* Tỷ trọng Mới (%) được tính dựa trên nguyên tắc ép trần chống đu đỉnh và phân bổ tối ưu từ Markowitz, đã điều chỉnh để phù hợp với tình hình. **Tổng tỷ trọng danh mục giải ngân: [TỰ ĐỘNG CỘNG TỔNG CÁC SỐ Ở CỘT TỶ TRỌNG MỚI BẢNG TRÊN]%.**
+
+    ## 3. CẢNH BÁO RỦI RO ĐỎ
+    Chúng tôi lưu ý các mã sau đây có tín hiệu rủi ro tiêu cực cần được theo dõi chặt chẽ hoặc HỦY LỆNH nếu đã được đưa vào danh mục:
+
+    * [Liệt kê các mã bị "BÁO ĐỘNG ĐỎ (Thiếu Cầu)", dính UTAD, hoặc ROE quá thấp (<8%). Ví dụ định dạng: **MÃ (Tỷ trọng nếu có):** Lý do cảnh báo.]
     
-    1. TỔNG QUAN VĨ MÔ & THỊ TRƯỜNG: Đánh giá theo đúng "Luật Đánh Giá Vĩ Mô Nghịch Lý". Chốt: Rủi ro Cao/Thấp?
-    
-    2. BẢNG LỆNH GIẢI NGÂN THỰC CHIẾN:
-    Tạo 1 bảng gộp 3-5 mã tốt nhất. 
-    * LUẬT ĐỊNH GIÁ: Vùng Giá Mua phải là "Giá Hiện Tại". Mức giá ở cột 'Vùng Mua POC' đóng vai trò là "Target Chốt Lời" (nếu POC > Giá) HOẶC "Hỗ trợ cắt lỗ" (nếu POC < Giá).
-    * Các cột bắt buộc: Mã | Tỷ trọng Mới (%) | Vùng Mua (Giá Hiện Tại) | Target POC (Số POC) | Tín hiệu | Lý do.
-    * LUẬT LOẠI BỎ: TUYỆT ĐỐI KHÔNG giải ngân vào các mã có Tín hiệu VSA là "BÁO ĐỘNG ĐỎ (THIẾU CẦU)".
-    
-    3. CẢNH BÁO RỦI RO ĐỎ: Gọi tên mã bị Thiếu Cầu vùng đỉnh, thủng đáy, dính UTAD, hoặc ROE quá thấp. Khuyến nghị HỦY LỆNH.
-    
-    4. LỆNH ĐIỀU ĐỘNG TỪ GIÁM ĐỐC QUỸ: Kết luận dứt khoát 3 dòng.
-    * LUẬT TÍNH TIỀN MẶT BẮT BUỘC: % Tiền mặt = 100% - (Tổng % các mã ở Mục 2). BẮT BUỘC thực hiện tính toán và in kết quả.
-    * Đưa ra hướng dẫn đặt lệnh (Vd: Mua ngay tại Giá Hiện Tại với Target tại POC).
+    **Khuyến nghị:** HỦY LỆNH đối với các mã trong danh sách cảnh báo, cần theo dõi sát sao và sẵn sàng hành động theo kịch bản xấu.
+
+    ## 4. LỆNH ĐIỀU ĐỘNG TỪ GIÁM ĐỐC QUỸ
+    * Tín hiệu Vĩ mô [Điền Tích cực / Cẩn trọng] và thị trường [ổn định / rủi ro] là cơ hội để [giải ngân có chọn lọc / phòng thủ].
+    * Ưu tiên các mã có tín hiệu VSA CHUẨN (cạn cung) và các mã có SOS Xác nhận, đồng thời P/E, ROE ở mức chấp nhận được.
+    * Tuân thủ chặt chẽ các điểm Stoploss dựa trên POC hoặc ATR để quản lý rủi ro.
+
+    **Tính toán Tỷ lệ Tiền Mặt:**
+    * Tổng tỷ trọng các mã ở Mục 2: [ĐIỀN LẠI TỔNG TỶ TRỌNG ĐÃ TÍNH Ở MỤC 2]%
+    * Tỷ lệ Tiền mặt = 100% - [ĐIỀN TỔNG TỶ TRỌNG]% = [TÍNH: 100 TRỪ ĐI TỔNG TỶ TRỌNG]%
+
+    **Hướng dẫn đặt lệnh:**
+    * Thực hiện giải ngân ngay lập tức các mã trong Bảng Lệnh Giải Ngân tại Giá Hiện Tại.
+    * Đặt Target Chốt Lời tại mức POC (nếu POC > Giá Hiện Tại).
+    * Đặt Hỗ trợ Cắt Lỗ tại mức POC (nếu POC < Giá Hiện Tại) hoặc theo ngưỡng ATR đã tính toán.
     """
     
     final_report = generate_ai_report_with_fallback(master_prompt)
