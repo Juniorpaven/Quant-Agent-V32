@@ -441,11 +441,27 @@ def run_quant_agent(tickers_input, macro_query):
     # ==========================================
     # [BƯỚC MỚI CHÈN VÀO] TRẠM KIỂM ĐỊNH BCTC & INTRADAY
     # ==========================================
-    # Sắp xếp tỷ trọng từ cao xuống thấp và CẮT LẤY ĐÚNG 5 MÃ TOP ĐẦU
+    # Lọc bỏ các mã dính rủi ro VSA/Cơ bản TRƯỚC KHI đem đi chụp X-Quang
+    safe_tickers = {}
+    for index, row in df_quant.iterrows():
+        ticker = row['Mã']
+        vsa_signal = str(row['Tín hiệu VSA']).upper()
+        # Nếu không có Báo Động Đỏ và Không có UTAD, mới được đưa vào danh sách an toàn
+        if "BÁO ĐỘNG ĐỎ" not in vsa_signal and "UTAD" not in vsa_signal and row['ROE (%)'] >= 8.0:
+            safe_tickers[ticker] = True
+
+    # Sắp xếp tỷ trọng Markowitz từ cao xuống thấp
     sorted_weights = {k: v for k, v in sorted(opt_weights.items(), key=lambda item: item[1], reverse=True) if v > 0}
-    top_5_picks = dict(list(sorted_weights.items())[:5]) 
     
-    deep_scan_report = run_deep_scan(top_5_picks) # Chỉ đưa 5 mã vào máy X-Quang
+    # CHỈ chọn 5 mã Top đầu nằm trong danh sách AN TOÀN
+    top_5_clean_picks = {}
+    for t, w in sorted_weights.items():
+        if t in safe_tickers:
+            top_5_clean_picks[t] = w
+        if len(top_5_clean_picks) == 5:
+            break
+            
+    deep_scan_report = run_deep_scan(top_5_clean_picks) # Chỉ đưa 5 mã KHỎE MẠNH vào máy X-Quang
 
     print("⏳ [3/4] Quét Bảng điện Vĩ mô...")
     df_macro = get_macro_quant()
