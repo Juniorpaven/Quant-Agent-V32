@@ -1,19 +1,28 @@
-import pandas as pd
-import numpy as np
-import google.generativeai as genai
-import requests
-import time
+# ==========================================
+# KHAI BÁO THƯ VIỆN (CHUẨN PEP 8)
+# ==========================================
+
+# 1. Thư viện hệ thống Python
 import os
-import yfinance as yf
-from datetime import datetime, timedelta
+import time
 import math
-import markdown # Thêm dòng này ở đầu file cùng các lệnh import khác
-from TOOL_DeepScan_Fundamentals import run_deep_scan # <--- THÊM DÒNG NÀY ĐỂ KÉO FILE VÀO
-from duckduckgo_search import DDGS
-from bs4 import BeautifulSoup
+from datetime import datetime, timedelta
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+
+# 2. Thư viện bên thứ 3 (Third-party)
+import pandas as pd
+import numpy as np
+import requests
+import yfinance as yf
+import google.generativeai as genai
+import markdown 
+from duckduckgo_search import DDGS
+from bs4 import BeautifulSoup
+
+# 3. Thư viện nội bộ (Local Modules)
+from TOOL_DeepScan_Fundamentals import run_deep_scan
 
 # ==========================================
 # 1. CẤU HÌNH HỆ THỐNG & API
@@ -430,10 +439,13 @@ def run_quant_agent(tickers_input, macro_query):
     opt_weights = optimize_portfolio_monte_carlo(raw_price_dict, ticker_caps) # <--- ĐÃ SỬA CHUẨN
 
     # ==========================================
-    # [BƯỚC MỚI] TRẠM KIỂM ĐỊNH NỘI TẠI CHUYÊN SÂU
+    # [BƯỚC MỚI CHÈN VÀO] TRẠM KIỂM ĐỊNH BCTC & INTRADAY
     # ==========================================
-    top_picks = {k: v for k, v in opt_weights.items() if v > 0}
-    deep_scan_report = run_deep_scan(top_picks)
+    # Sắp xếp tỷ trọng từ cao xuống thấp và CẮT LẤY ĐÚNG 5 MÃ TOP ĐẦU
+    sorted_weights = {k: v for k, v in sorted(opt_weights.items(), key=lambda item: item[1], reverse=True) if v > 0}
+    top_5_picks = dict(list(sorted_weights.items())[:5]) 
+    
+    deep_scan_report = run_deep_scan(top_5_picks) # Chỉ đưa 5 mã vào máy X-Quang
 
     print("⏳ [3/4] Quét Bảng điện Vĩ mô...")
     df_macro = get_macro_quant()
@@ -482,10 +494,12 @@ def run_quant_agent(tickers_input, macro_query):
     ## 2. BẢNG LỆNH GIẢI NGÂN THỰC CHIẾN
     Dựa trên phân tích Tín hiệu VSA và Tỷ trọng Giải ngân Markowitz (đã ép trần), chúng tôi lựa chọn các mã tiềm năng nhất.
 
-    [TẠO BẢNG MARKDOWN TẠI ĐÂY: Chọn TỐI ĐA 5 MÃ có Tỷ trọng Markowitz cao nhất (>0%). TUYỆT ĐỐI KHÔNG chọn mã có tín hiệu "BÁO ĐỘNG ĐỎ". Các cột BẮT BUỘC: Mã | Tỷ trọng Mới (%) | Vùng Mua (Giá Hiện Tại) | Target POC (Số POC) | Tín hiệu | Lý do]
+    [TẠO BẢNG MARKDOWN TẠI ĐÂY: Chọn TỐI ĐA 5 MÃ có Tỷ trọng Markowitz cao nhất (>0%). 
+    * LUẬT SINH TỬ 1: TUYỆT ĐỐI KHÔNG chọn mã có tín hiệu "BÁO ĐỘNG ĐỎ" ở bảng VSA.
+    * LUẬT SINH TỬ 2: NẾU TRONG HỒ SƠ X-QUANG BCTC BÁO "🚨 NGUY HIỂM - ĐỀ NGHỊ HỦY LỆNH" CHO MÃ NÀO, BẠN BẮT BUỘC PHẢI GẠCH TÊN NÓ KHỎI BẢNG LỆNH, MÀ PHẢI ĐẨY XUỐNG MỤC 3.
+    Các cột BẮT BUỘC: Mã | Tỷ trọng Mới (%) | Vùng Mua (Giá Hiện Tại) | Target POC (Số POC) | Tín hiệu | Lý do]
 
     *Lưu ý:* Tỷ trọng Mới (%) được tính dựa trên nguyên tắc ép trần chống đu đỉnh và phân bổ tối ưu từ Markowitz, đã điều chỉnh để phù hợp với tình hình. **Tổng tỷ trọng danh mục giải ngân: [TỰ ĐỘNG CỘNG TỔNG CÁC SỐ Ở CỘT TỶ TRỌNG MỚI BẢNG TRÊN]%.**
-    LƯU Ý LUẬT SINH TỬ: Nếu mã nào bị đánh dấu "🚨 NGUY HIỂM - ĐỀ NGHỊ HỦY LỆNH" trong Hồ sơ X-Quang BCTC, BẠN TUYỆT ĐỐI KHÔNG ĐƯỢC CHO VÀO BẢNG LỆNH, mà phải ghi nó vào Mục 3 (CẢNH BÁO RỦI RO ĐỎ).]
 
     ## 3. CẢNH BÁO RỦI RO ĐỎ
     Chúng tôi lưu ý các mã sau đây có tín hiệu rủi ro tiêu cực cần được theo dõi chặt chẽ hoặc HỦY LỆNH nếu đã được đưa vào danh mục:
