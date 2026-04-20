@@ -22,7 +22,7 @@ def check_cash_flow_tcbs(ticker):
         op_cashflow = latest_quarter.get('fromSale', 0) # Dòng tiền từ hoạt động kinh doanh
         
         if op_cashflow < 0:
-            return f"❌ CẢNH BÁO ĐỎ: Dòng tiền Kinh doanh đang ÂM ({op_cashflow} tỷ). Công ty đang bị "chảy máu" tiền mặt."
+            return f"❌ CẢNH BÁO ĐỎ: Dòng tiền Kinh doanh đang ÂM ({op_cashflow} tỷ). Công ty đang bị 'chảy máu' tiền mặt."
         else:
             return "✅ Dòng tiền Kinh doanh DƯƠNG. Mạch máu tài chính khỏe mạnh."
             
