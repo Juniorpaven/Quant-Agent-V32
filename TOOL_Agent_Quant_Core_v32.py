@@ -7,6 +7,8 @@ import os
 import yfinance as yf
 from datetime import datetime, timedelta
 import math
+import markdown # Thêm dòng này ở đầu file cùng các lệnh import khác
+from TOOL_DeepScan_Fundamentals import run_deep_scan # <--- THÊM DÒNG NÀY ĐỂ KÉO FILE VÀO
 from duckduckgo_search import DDGS
 from bs4 import BeautifulSoup
 import smtplib
@@ -216,7 +218,6 @@ def agentic_web_search(query):
         return "🔍 [DuckDuckGo]\n" + "\n".join([f"- [{r.get('title')}] {r.get('body')}" for r in res]) if res else ""
     except: return "❌ Lỗi toàn bộ Web Search"
 
-import markdown # Thêm dòng này ở đầu file cùng các lệnh import khác
 
 def send_email(subject, body):
     """Hàm gửi báo cáo V33 hiển thị trực tiếp nội dung đẹp trên nhiều Email"""
@@ -428,6 +429,12 @@ def run_quant_agent(tickers_input, macro_query):
     print("⏳ [2/4] Chạy Toán học Markowitz...")
     opt_weights = optimize_portfolio_monte_carlo(raw_price_dict, ticker_caps) # <--- ĐÃ SỬA CHUẨN
 
+    # ==========================================
+    # [BƯỚC MỚI] TRẠM KIỂM ĐỊNH NỘI TẠI CHUYÊN SÂU
+    # ==========================================
+    top_picks = {k: v for k, v in opt_weights.items() if v > 0}
+    deep_scan_report = run_deep_scan(top_picks)
+
     print("⏳ [3/4] Quét Bảng điện Vĩ mô...")
     df_macro = get_macro_quant()
     search_res = agentic_web_search(macro_query)
@@ -450,6 +457,7 @@ def run_quant_agent(tickers_input, macro_query):
     - Micro-Timing Wyckoff: {chr(10).join(micro_insights)}
     - Vĩ mô 1 tháng qua: {df_macro.to_string()}
     - Tin tức AI cào được: {search_res}
+    - Hồ sơ X-Quang BCTC & Intraday: {deep_scan_report}
     
     [QUY TẮC VĨ MÔ NGHỊCH LÝ BẮT BUỘC]
     - Nếu Tin xấu + Lợi suất US10Y GIẢM + VIX < 25: TIN TỐT (Kỳ vọng FED bơm tiền). Vĩ mô: TÍCH CỰC.
@@ -477,6 +485,7 @@ def run_quant_agent(tickers_input, macro_query):
     [TẠO BẢNG MARKDOWN TẠI ĐÂY: Chọn TỐI ĐA 5 MÃ có Tỷ trọng Markowitz cao nhất (>0%). TUYỆT ĐỐI KHÔNG chọn mã có tín hiệu "BÁO ĐỘNG ĐỎ". Các cột BẮT BUỘC: Mã | Tỷ trọng Mới (%) | Vùng Mua (Giá Hiện Tại) | Target POC (Số POC) | Tín hiệu | Lý do]
 
     *Lưu ý:* Tỷ trọng Mới (%) được tính dựa trên nguyên tắc ép trần chống đu đỉnh và phân bổ tối ưu từ Markowitz, đã điều chỉnh để phù hợp với tình hình. **Tổng tỷ trọng danh mục giải ngân: [TỰ ĐỘNG CỘNG TỔNG CÁC SỐ Ở CỘT TỶ TRỌNG MỚI BẢNG TRÊN]%.**
+    LƯU Ý LUẬT SINH TỬ: Nếu mã nào bị đánh dấu "🚨 NGUY HIỂM - ĐỀ NGHỊ HỦY LỆNH" trong Hồ sơ X-Quang BCTC, BẠN TUYỆT ĐỐI KHÔNG ĐƯỢC CHO VÀO BẢNG LỆNH, mà phải ghi nó vào Mục 3 (CẢNH BÁO RỦI RO ĐỎ).]
 
     ## 3. CẢNH BÁO RỦI RO ĐỎ
     Chúng tôi lưu ý các mã sau đây có tín hiệu rủi ro tiêu cực cần được theo dõi chặt chẽ hoặc HỦY LỆNH nếu đã được đưa vào danh mục:
