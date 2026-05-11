@@ -44,7 +44,7 @@ EMAIL_PASS = os.environ.get("EMAIL_PASS", "")
 # Đã nâng cấp: Cấu trúc danh sách nhiều Email nhận
 RECEIVER_EMAILS = [
     "tranbaotrung2703@gmail.com",
-    "trung.tran@saigontel.vn"
+    "trungtb@goalcoastholdings.com.vn"
 ]
 
 # ==========================================
