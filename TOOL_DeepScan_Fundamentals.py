@@ -11,21 +11,22 @@ def check_cash_flow_tcbs(ticker):
     url = f"https://apipubaws.tcbs.com.vn/tcanalysis/v1/finance/{ticker}/cashflow?yearly=0&isAll=false"
     try:
         res = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'}, timeout=10)
-        if res.status_code != 200: 
-            return fallback_cash_flow_yfinance(ticker) # Chuyển súng nếu TCBS bảo trì
-            
+        if res.status_code != 200:
+            return fallback_cash_flow_yfinance(ticker)  # Chuyển súng nếu TCBS bảo trì
+
         data = res.json()
-        if not data: return "⚠️ Không có BCTC Quý gần nhất."
-        
+        if not data:
+            return "⚠️ Không có BCTC Quý gần nhất."
+
         # Lấy quý gần nhất
         latest_quarter = data[0]
-        op_cashflow = latest_quarter.get('fromSale', 0) # Dòng tiền từ hoạt động kinh doanh
-        
+        op_cashflow = latest_quarter.get('fromSale', 0)  # Dòng tiền từ hoạt động kinh doanh
+
         if op_cashflow < 0:
             return f"❌ CẢNH BÁO ĐỎ: Dòng tiền Kinh doanh đang ÂM ({op_cashflow} tỷ). Công ty đang bị 'chảy máu' tiền mặt."
         else:
             return "✅ Dòng tiền Kinh doanh DƯƠNG. Mạch máu tài chính khỏe mạnh."
-            
+
     except Exception as e:
         return fallback_cash_flow_yfinance(ticker)
 
@@ -34,8 +35,9 @@ def fallback_cash_flow_yfinance(ticker):
     try:
         stock = yf.Ticker(f"{ticker}.VN")
         cf = stock.cash_flow
-        if cf.empty: return "⚠️ Không cào được dữ liệu BCTC."
-        
+        if cf.empty:
+            return "⚠️ Không cào được dữ liệu BCTC."
+
         op_cashflow = cf.loc['Operating Cash Flow'].iloc[0]
         if op_cashflow < 0:
             return "❌ CẢNH BÁO ĐỎ: Dòng tiền Kinh doanh ÂM (Theo dữ liệu YFinance)."
@@ -48,30 +50,55 @@ def check_intraday_distribution(ticker):
     Tầng 2: Soi Phân phối ngầm Intraday (Dùng Entrade có rào chắn thép)
     """
     end_time = int(time.time())
-    start_time = end_time - (3 * 24 * 60 * 60) # Cắt lớp 3 ngày gần nhất
+    start_time = end_time - (3 * 24 * 60 * 60)  # Cắt lớp 3 ngày gần nhất
+
     url = f"https://services.entrade.com.vn/chart-api/v2/ohlcs/stock?from={start_time}&to={end_time}&symbol={ticker}&resolution=15"
-    
+
     try:
         res = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'}, timeout=5).json()
-        if 'c' not in res or len(res['c']) < 5: 
+        if 'c' not in res or len(res['c']) < 5:
             return "⚠️ API Intraday từ chối trả kết quả. Bỏ qua quét phân phối ngầm."
-            
+
         df = pd.DataFrame({'Close': res['c'], 'Volume': res['v']})
-        
+
         # Đếm Volume của các nến xả (Giá giảm) vs Nến gom (Giá tăng)
         df['is_down'] = df['Close'] < df['Close'].shift(1)
         down_vol = df[df['is_down']]['Volume'].sum()
         up_vol = df[~df['is_down']]['Volume'].sum()
-        
+
         if down_vol > (up_vol * 1.5):
-            return "❌ CẢNH BÁO: Lực BÁN CHỦ ĐỘNG trong phiên áp đảo. Rủi ro Bull-Trap (Kéo xả)."
+            return "❌ CẢNH BÁO: LỰC BÁN CHỦ ĐỘNG trong phiên áp đảo. Rủi ro Bull-Trap (Kéo xả)."
         elif up_vol > (down_vol * 1.2):
             return "✅ Lực CẦU GOM HÀNG chủ động trong phiên rất tốt."
         else:
             return "⏸️ Cung cầu trong phiên giằng co, chưa có dấu hiệu phân phối."
-            
+
     except Exception:
         return "⚠️ Đứt kết nối API Intraday. Tạm bỏ qua."
+
+def pre_screen_hard_cutoff(ticker):
+    """
+    [NÂNG CẤP V33] BỘ LỌC LOẠI TRỪ TUYỆT ĐỐI (HARD PRE-FILTER):
+    Kiểm định rủi ro BCTC và Intraday TRƯỚC KHI nạp mã vào mô hình tối ưu Markowitz.
+    Trả về: (is_passed: bool, reason: str)
+    """
+    # 1. Soi dòng tiền kinh doanh (OCF)
+    try:
+        cf_status = check_cash_flow_tcbs(ticker)
+        if "❌" in cf_status:
+            return False, f"BCTC Báo động đỏ: Dòng tiền kinh doanh (OCF) ÂM ({cf_status})"
+    except Exception:
+        pass
+
+    # 2. Soi áp lực bán xả Intraday 15m (Bull-Trap)
+    try:
+        intra_status = check_intraday_distribution(ticker)
+        if "❌" in intra_status:
+            return False, "Intraday 15m: Lực bán chủ động áp đảo (Nguy cơ Bull-Trap kéo xả)"
+    except Exception:
+        pass
+
+    return True, "HỢP LỆ"
 
 def run_deep_scan(top_tickers_dict):
     """
@@ -79,25 +106,25 @@ def run_deep_scan(top_tickers_dict):
     """
     if not top_tickers_dict:
         return "Không có mã nào trong Bảng Lệnh để soi nội tại."
-        
+
     print(f"\n🕵️ [TRẠM KIỂM ĐỊNH ALPHA VANTAGE (VN-VER)] Bắt đầu soi BCTC cho {len(top_tickers_dict)} mã...")
-    
+
     report_lines = []
     for ticker in top_tickers_dict.keys():
         print(f"   => Đang chụp X-Quang mã {ticker}...")
-        
+
         # Chạy 2 lớp quét
         cf_status = check_cash_flow_tcbs(ticker)
         intra_status = check_intraday_distribution(ticker)
-        
+
         # Tòa tuyên án: Chỉ cần 1 lỗi ĐỎ là dính Án Tử
         if "❌" in cf_status or "❌" in intra_status:
             verdict = "🚨 NGUY HIỂM - ĐỀ NGHỊ HỦY LỆNH"
         else:
             verdict = "🛡️ NỘI TẠI AN TOÀN - DUYỆT"
-            
+
         report_lines.append(f"**[{ticker}] {verdict}**\n  - BCTC (Dòng tiền): {cf_status}\n  - Intraday (15m): {intra_status}\n")
-        
-        time.sleep(1) # Nghỉ 1 nhịp nhẹ nhàng, không cần 15s vì API nội địa rất thoáng
-        
+
+        time.sleep(1)  # Nghỉ 1 nhịp nhẹ nhàng
+
     return "\n".join(report_lines)
