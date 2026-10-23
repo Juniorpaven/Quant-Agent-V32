@@ -735,3 +735,21 @@ Chúng tôi lưu ý các mã sau đây ĐÃ BỊ LOẠI BỎ NGAY TỪ VÒNG SƠ
 """
 
     final_report = generate_ai_report_with_fallback(master_prompt)
+    print("\n==========================================")
+    print("📑 BÁO CÁO NỘI TẠI (AGENT SKILL V33)")
+    print("==========================================\n")
+    print(final_report)
+    print("\n==========================================")
+
+    # GỬI EMAIL CHỐT HẠ
+    email_subject = f"[Quant 3D Matrix] Lệnh Điều Động Vốn Ngày {today_str}"
+    send_email(email_subject, final_report)
+
+    return final_report
+
+
+if __name__ == "__main__":
+    FULL_WATCHLIST = "VCB, BID, CTG, TCB, MBB, SSI, VND, VHM, VIC, VRE, HPG, HSG, PVD, PVS, DGC, DCM, DPM, VHC, ANV, PTB, MWG, PNJ, FPT, REE, GAS, NT2, VSH, VNM, SAB, KBC, SZC, IDC, VGC, DIG, NVL, PDR, DXG, KDH, NKG, VGS, SMC, VCI, HCM, SIP, DTD, NTC, PHR, GVR"
+    MACRO_KEYWORDS = "Tổng hợp tin tức Vĩ mô Việt Nam (Lãi suất, Tỷ giá, Đầu tư công) VÀ Điểm nóng kinh tế, rủi ro địa chính trị thế giới mới nhất hôm nay"
+
+    run_quant_agent(FULL_WATCHLIST, MACRO_KEYWORDS)
