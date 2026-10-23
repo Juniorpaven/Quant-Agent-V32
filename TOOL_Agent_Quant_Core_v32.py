@@ -657,26 +657,33 @@ def run_quant_agent(tickers_input, macro_query):
     blacklist_text = "\n".join(blacklist_lines) if blacklist_lines else "* Không có mã nào dính án tử."
 
     # ==========================================
-    # MASTER PROMPT V33 (STYLED VERSION)
+    # MASTER PROMPT V33 (ĐỒNG THUẬN ĐA PHIÊN & HỢP NHẤT VỊ THẾ)
     # ==========================================
     master_prompt = f"""
 ĐÓNG VAI: GIÁM ĐỐC QUẢN TRỊ RỦI RO QUỸ ĐẦU TƯ (HỆ THỐNG QUANT 3D MATRIX)
 
 [DỮ LIỆU ĐẦU VÀO LƯỢNG TỬ]
 - Trạng thái Thị trường & Chế độ Vốn: {market_status} | Regime: {regime} | Mục tiêu Giải ngân: {target_allocation*100}% | Tiền mặt: {target_cash_ratio}%
-- Bảng Cơ bản, RRG, Local POC & VSA: {df_quant.to_string()}
-- Tỷ trọng Giải ngân Markowitz Đã Ép Trần Chuẩn Xác: {top_5_picks}
+- Bảng Cơ bản, RRG, Local POC & VSA Hôm nay: {df_quant.to_string()}
+- Danh sách Mua Mới Hôm nay (Top Picks Markowitz Đã Ép Trần): {top_5_picks}
 - Micro-Timing Wyckoff: {chr(10).join(micro_insights)}
 - Vĩ mô 1 tháng qua: {df_macro.to_string()}
 - Tin tức AI cào được: {search_res}
 - Hồ sơ X-Quang BCTC & Intraday của Top Picks: {deep_scan_report}
-- DANH SÁCH BỊ LOẠI BỞI HARD PRE-FILTER:
+- DANH SÁCH BỊ LOẠI BỞI HARD PRE-FILTER HÔM NAY:
 {blacklist_text}
 
-[QUY TẮC VĨ MÔ NGHỊCH LÝ & QUY TẮC THÍCH ỨNG MỚI]
-- Nếu DXY hoặc US10Y có tín hiệu hạ nhiệt/tạo đỉnh ngắn hạn + VIX < 25 + Ngành Leading xuất hiện: Chế độ SELECTIVE EXPANSION, nới lỏng giải ngân lên {target_allocation*100}%.
-- Nếu US10Y tăng mạnh > 5.2% hoặc DXY tăng nóng: Chế độ DEFENSIVE, ưu tiên giữ tiền mặt cao ({target_cash_ratio}%).
-- TẤT CẢ các mã dính OCF âm, UTAD hoặc Bull-trap ĐÃ BỊ GẠCH TÊN HOÀN TOÀN KHỎI BẢNG GIẢI NGÂN và nằm trọn vẹn ở Mục 3.
+[BẢNG ĐỐI SOÁT VỊ THẾ 5 PHIÊN GẦN NHẤT ĐÃ TÍNH TOÁN]:
+{audit_table_markdown}
+
+[QUY TẮC ĐIỀU HÀNH ĐỒNG THUẬN ĐA PHIÊN & VĨ MÔ NGHỊCH LÝ]
+1. Vĩ mô: Nếu DXY hoặc US10Y hạ nhiệt/tạo đỉnh ngắn hạn + VIX < 25 + Ngành Leading xuất hiện: Chế độ SELECTIVE EXPANSION, nới lỏng giải ngân lên {target_allocation*100}%. Nếu US10Y > 5.2% hoặc DXY tăng nóng: Chế độ DEFENSIVE, giữ tiền mặt cao ({target_cash_ratio}%).
+2. Tích hợp vị thế đa phiên: Kết hợp các mã đã khuyến nghị ở 5 phiên trước (từ bảng đối soát) cùng với các mã Mua Mới của phiên hôm nay ({top_5_picks}) thành 1 Bảng Điều Hành Vị Thế duy nhất.
+   - GIA TĂNG VỊ THẾ: Mã cũ đang lãi và hôm nay tiếp tục nổ nến SOS/Vol lớn.
+   - NẮM GIỮ / CHỐT LỜI TỪNG PHẦN: Mã cũ đang lãi tiến sát Target POC hoặc duy trì trên nền giá.
+   - MUA MỚI ĐỒNG THUẬN: Các mã mới hôm nay vượt qua Hard Cutoff và tối ưu Markowitz.
+   - THOÁI VỐN / CẮT LỖ: Mã cũ vi phạm cắt lỗ hoặc hôm nay dính cảnh báo xấu.
+3. Mã vi phạm OCF âm (như HCM, DCM) hoặc dính UTAD/Bull-trap hôm nay ĐÃ BỊ GẠCH TÊN HOÀN TOÀN và nằm trọn vẹn ở Mục 3.
 
 NHIỆM VỤ: Bạn BẮT BUỘC sinh ra báo cáo theo ĐÚNG 100% Cấu trúc Markdown dưới đây:
 
@@ -686,21 +693,24 @@ NHIỆM VỤ: Bạn BẮT BUỘC sinh ra báo cáo theo ĐÚNG 100% Cấu trúc 
 ## 1. TỔNG QUAN VĨ MÔ & THỊ TRƯỜNG
 Đánh giá Vĩ mô theo "Luật Đánh Giá Vĩ Mô Nghịch Lý & Quy Tắc Thích Ứng Mới":
 
-* **Tin tức:** [Tóm tắt 1-2 câu ngắn gọn từ dữ liệu tin tức].
-* **Yếu tố Toán học:**
+- **Tin tức:** [Tóm tắt 1-2 câu ngắn gọn từ dữ liệu tin tức].
+- **Yếu tố Toán học:**
   - DXY (Chỉ số USD): [Mức hiện tại và biến động %]
   - US10Y (Lợi suất TP Mỹ): [Mức hiện tại và biến động %]
   - VIX (Chỉ số Sợ hãi): [Mức hiện tại và biến động %]
-* **Dựa trên luật:** [Áp dụng dữ liệu vào luật vĩ mô và phân tích trạng thái thích ứng {regime}].
-* **Chốt:** Rủi ro [THẤP / TRUNG BÌNH / CAO]. Định hướng: [1 câu tóm tắt chiến lược phân bổ vốn].
+- **Dựa trên luật:** [Áp dụng dữ liệu vào luật vĩ mô và phân tích trạng thái thích ứng {regime}].
+- **Chốt:** Rủi ro [THẤP / TRUNG BÌNH / CAO]. Định hướng: [1 câu tóm tắt chiến lược phân bổ vốn].
 
-## 2. BẢNG LỆNH GIẢI NGÂN THỰC CHIẾN
-Dựa trên phân tích Tín hiệu VSA, Bộ lọc Loại trừ Tuyệt đối (Hard Pre-Filter) và Tỷ trọng Markowitz đã ép trần chuẩn xác:
+## 2. BẢNG ĐIỀU HÀNH VỊ THẾ HỢP NHẤT (HÀNH ĐỘNG HÔM NAY)
+Tổng hợp vị thế chu kỳ 5 phiên gần nhất cùng các lệnh giải ngân mới phiên hôm nay:
 
-[TẠO BẢNG MARKDOWN: Liệt kê các mã trong danh sách Top Picks {top_5_picks}.
-Các cột BẮT BUỘC: Mã | Tỷ trọng Mới (%) | Vùng Mua (Giá Hiện Tại) | Target POC (Số POC) | Tín hiệu | Lý do]
+[TẠO BẢNG MARKDOWN HỢP NHẤT:
+Các cột BẮT BUỘC: Phân Loại | Mã | Phiên Mua | Giá Vốn | Giá Hiện Tại | Lãi/Lỗ (%) | Tín Hiệu Đa Phiên | Lệnh Hành Động Hôm Nay]
 
-*Lưu ý:* Tỷ trọng Mới (%) được tính dựa trên nguyên tắc ép trần chống đu đỉnh và phân bổ tối ưu thích ứng. **Tổng tỷ trọng danh mục giải ngân: [TỰ ĐỘNG CỘNG TỔNG CỘT TỶ TRỌNG MỚI]%.**
+*(Lưu ý: Nếu bảng đối soát 5 phiên trước chưa có dữ liệu, hãy hiển thị danh sách 5 mã Mua Mới của hôm nay kèm tỷ trọng giải ngân).*
+
+* **Tổng tỷ trọng cổ phiếu danh mục sau điều phối:** [TỔNG TỶ TRỌNG CỔ PHIẾU ĐANG NẮM GIỮ VÀ MUA MỚI]%.
+* **Đánh giá hiệu quả các phiên trước:** [Nhận xét 1-2 câu ngắn gọn về diễn biến lời/lỗ của các mã đã khuyến nghị trước đó].
 
 ## 3. CẢNH BÁO RỦI RO ĐỎ (DANH SÁCH LOẠI TRỪ TUYỆT ĐỐI)
 Chúng tôi lưu ý các mã sau đây ĐÃ BỊ LOẠI BỎ NGAY TỪ VÒNG SƠ LOẠI ĐẦU VÀO, không đưa vào danh mục giải ngân:
@@ -710,37 +720,18 @@ Chúng tôi lưu ý các mã sau đây ĐÃ BỊ LOẠI BỎ NGAY TỪ VÒNG SƠ
 **Khuyến nghị:** HỦY LỆNH đối với các mã trong danh sách cảnh báo, tuyệt đối không giải ngân.
 
 ## 4. LỆNH ĐIỀU ĐỘNG TỪ GIÁM ĐỐC QUỸ
-* Trạng thái Vĩ mô [{regime}] và thị trường là cơ hội để [giải ngân có chọn lọc / phòng thủ].
-* Ưu tiên các mã có tín hiệu VSA CHUẨN, dẫn dắt RRG và nội tại BCTC dương.
-* Tuân thủ chặt chẽ các điểm Stoploss dựa trên POC hoặc ATR để quản lý rủi ro.
+- Trạng thái Vĩ mô [{regime}] và thị trường là cơ hội để [giải ngân có chọn lọc / phòng thủ].
+- Tuân thủ chặt chẽ các điểm Stoploss dựa trên POC hoặc ATR để quản lý rủi ro.
 
 **Tính toán Tỷ lệ Tiền mặt:**
-* Tổng tỷ trọng các mã ở Mục 2: [ĐIỀN LẠI TỔNG TỶ TRỌNG]%
-* Tỷ lệ Tiền mặt = 100% - [ĐIỀN TỔNG TỶ TRỌNG]% = [TÍNH: 100 TRỪ TỔNG TỶ TRỌNG]%
+- Tổng tỷ trọng cổ phiếu toàn danh mục: [ĐIỀN TỔNG TỶ TRỌNG CỔ PHIẾU]%
+- Tỷ lệ Tiền mặt = 100% - [ĐIỀN TỔNG TỶ TRỌNG]% = [TÍNH: 100 TRỪ TỔNG TỶ TRỌNG]%
 
 **Hướng dẫn đặt lệnh:**
-* Thực hiện giải ngân ngay lập tức các mã trong Bảng Lệnh Giải Ngân tại Giá Hiện Tại.
-* Đặt Target Chốt Lời tại mức POC (nếu POC > Giá Hiện Tại).
-* Đặt Hỗ trợ Cắt Lỗ tại mức POC (nếu POC < Giá Hiện Tại) hoặc theo ngưỡng ATR đã tính toán.
+- Đối với mã MUA MỚI: Giải ngân tại Giá Hiện Tại theo tỷ trọng đã định mức.
+- Đối với mã GIA TĂNG: Mua thêm theo đúng tỷ trọng điều động.
+- Đối với mã NẮM GIỮ / CHỐT LỜI: Đặt Target Chốt Lời tại POC, nâng ngưỡng chặn lãi Trailing Stop.
+- Đối với mã CẮT LỖ: Thoái vốn ngay tại giá thị trường để bảo toàn vốn.
 """
-{audit_table_markdown}
-    
+
     final_report = generate_ai_report_with_fallback(master_prompt)
-
-    print("\n==========================================")
-    print("📑 BÁO CÁO NỘI TẠI (AGENT SKILL V33)")
-    print("==========================================\n")
-    print(final_report)
-    print("\n==========================================")
-
-    # GỬI EMAIL CHỐT HẠ
-    email_subject = f"[Quant 3D Matrix] Lệnh Điều Động Vốn Ngày {today_str}"
-    send_email(email_subject, final_report)
-
-    return final_report
-
-if __name__ == "__main__":
-    FULL_WATCHLIST = "VCB, BID, CTG, TCB, MBB, SSI, VND, VHM, VIC, VRE, HPG, HSG, PVD, PVS, DGC, DCM, DPM, VHC, ANV, PTB, MWG, PNJ, FPT, REE, GAS, NT2, VSH, VNM, SAB, KBC, SZC, IDC, VGC, DIG, NVL, PDR, DXG, KDH, NKG, VGS, SMC, VCI, HCM, SIP, DTD, NTC, PHR, GVR"
-    MACRO_KEYWORDS = "Tổng hợp tin tức Vĩ mô Việt Nam (Lãi suất, Tỷ giá, Đầu tư công) VÀ Điểm nóng kinh tế, rủi ro địa chính trị thế giới mới nhất hôm nay"
-
-    run_quant_agent(FULL_WATCHLIST, MACRO_KEYWORDS)
