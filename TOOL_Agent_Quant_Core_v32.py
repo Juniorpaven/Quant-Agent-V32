@@ -386,6 +386,99 @@ def generate_ai_report_with_fallback(prompt):
 # ==========================================
 # 5. LUỒNG THỰC THI CHÍNH (MAIN AGENT LOOP)
 # ==========================================
+# ==========================================
+# MODULE ĐỒNG THUẬN ĐA PHIÊN & THEO DÕI VỊ THẾ
+# ==========================================
+import json
+
+TRACKER_FILE = "portfolio_tracker.json"
+
+def load_portfolio_history():
+    """Đọc dữ liệu 5-7 phiên gần nhất từ tracker file."""
+    if not os.path.exists(TRACKER_FILE):
+        return []
+    try:
+        with open(TRACKER_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            return data.get("history", [])
+    except Exception:
+        return []
+
+def evaluate_multi_day_positions(history, current_prices, current_vsa_dict, lookback_days=5):
+    """
+    Đối soát các mã đã mua trong 5 phiên qua với giá hiện tại.
+    Phân loại: GIA TĂNG, CHỐT LỜI, NẮM GIỮ, hoặc CẮT LỖ.
+    """
+    recent_history = history[-lookback_days:] if len(history) >= lookback_days else history
+    position_summary = []
+    monitored_tickers = set()
+
+    for session in reversed(recent_history):
+        s_date = session.get("date", "N/A")
+        picks = session.get("picks", {})
+
+        for ticker, info in picks.items():
+            if ticker in monitored_tickers:
+                continue
+            monitored_tickers.add(ticker)
+
+            entry_price = info.get("entry_price", 0.0)
+            target_poc = info.get("target_poc", 0.0)
+            cur_price = current_prices.get(ticker, entry_price)
+            vsa_info = current_vsa_dict.get(ticker, "Bình thường")
+
+            if entry_price <= 0:
+                continue
+
+            pnl_pct = round(((cur_price - entry_price) / entry_price) * 100, 2)
+
+            if "BÁO ĐỘNG ĐỎ" in vsa_info.upper() or pnl_pct <= -5.0:
+                action = "🚨 CẮT LỖ / THOÁI VỐN NGAY"
+                category = "CẮT LỖ / BẢO TOÀN VỐN"
+            elif cur_price >= (target_poc * 0.98) and pnl_pct > 0:
+                action = "🎯 Chốt lời 50%, nâng chặn lãi"
+                category = "CHỐT LỜI TỪNG PHẦN"
+            elif pnl_pct >= 2.0 and "SOS" in vsa_info.upper():
+                action = "🔥 Mua gia tăng thêm 3%"
+                category = "GIA TĂNG VỊ THẾ"
+            else:
+                action = "🛡️ Tiếp tục nắm giữ, theo dõi POC"
+                category = "TIẾP TỤC NẮM GIỮ"
+
+            position_summary.append({
+                "Phân Loại": category,
+                "Mã": ticker,
+                "Phiên Mua": s_date,
+                "Giá Vốn": entry_price,
+                "Giá Hiện Tại": cur_price,
+                "Lãi/Lỗ (%)": f"{pnl_pct:+0.2f}%",
+                "Tín Hiệu": vsa_info,
+                "Lệnh Hành Động": action
+            })
+
+    return pd.DataFrame(position_summary)
+
+def save_today_session(history, today_str, final_picks_dict, price_dict, poc_dict):
+    """Lưu lại danh mục phiên hôm nay vào file tracker."""
+    new_picks = {}
+    for ticker, weight in final_picks_dict.items():
+        new_picks[ticker] = {
+            "weight": weight,
+            "entry_price": price_dict.get(ticker, 0.0),
+            "target_poc": poc_dict.get(ticker, 0.0)
+        }
+
+    history.append({
+        "date": today_str,
+        "picks": new_picks
+    })
+
+    if len(history) > 10:
+        history = history[-10:]
+
+    with open(TRACKER_FILE, "w", encoding="utf-8") as f:
+        json.dump({"history": history}, f, ensure_ascii=False, indent=2)
+        
 def run_quant_agent(tickers_input, macro_query):
     today_str = datetime.now().strftime('%d/%m/%Y')
     print("\n==========================================")
@@ -545,6 +638,18 @@ def run_quant_agent(tickers_input, macro_query):
     # Chạy DeepScan chính thức xác nhận nội tại cho Top 5
     deep_scan_report = run_deep_scan(top_5_picks)
 
+    # Đọc lịch sử và chạy đối soát đa phiên
+    history_data = load_portfolio_history()
+    current_prices = {row['Mã']: row['Giá Hiện Tại'] for index, row in df_quant.iterrows()}
+    current_vsa = {row['Mã']: row['Tín hiệu VSA'] for index, row in df_quant.iterrows()}
+    poc_dict = {row['Mã']: row['Vùng Mua POC'] for index, row in df_quant.iterrows()}
+
+    df_multi_day_audit = evaluate_multi_day_positions(history_data, current_prices, current_vsa, lookback_days=5)
+    audit_table_markdown = df_multi_day_audit.to_markdown(index=False) if not df_multi_day_audit.empty else "Chưa có dữ liệu vị thế từ các phiên trước."
+
+    # Lưu lại kết quả hôm nay vào tracker cho phiên ngày mai
+    save_today_session(history_data, today_str, top_5_picks, current_prices, poc_dict)
+
     print("⏳ [4/4] Kích hoạt AI tổng hợp báo cáo chiến lược...")
 
     # Chuẩn bị chuỗi báo cáo Blacklist
@@ -618,7 +723,8 @@ Chúng tôi lưu ý các mã sau đây ĐÃ BỊ LOẠI BỎ NGAY TỪ VÒNG SƠ
 * Đặt Target Chốt Lời tại mức POC (nếu POC > Giá Hiện Tại).
 * Đặt Hỗ trợ Cắt Lỗ tại mức POC (nếu POC < Giá Hiện Tại) hoặc theo ngưỡng ATR đã tính toán.
 """
-
+{audit_table_markdown}
+    
     final_report = generate_ai_report_with_fallback(master_prompt)
 
     print("\n==========================================")
