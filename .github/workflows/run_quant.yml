@@ -1,10 +1,10 @@
 name: Run Quant Bot Daily
 on:
-permissions:
-  contents: write
   schedule:
     - cron: '0 9 * * *' # 9:00 UTC tương đương 16:00 giờ Việt Nam
   workflow_dispatch: # Cho phép bấm nút chạy thủ công khi cần
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -26,3 +26,11 @@ jobs:
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
         run: python TOOL_Agent_Quant_Core_v32.py
+        
+      - name: Commit and push tracking history
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add portfolio_tracker.json
+          git commit -m "Auto-update portfolio tracker [skip ci]" || echo "No changes to commit"
+          git push
