@@ -645,7 +645,7 @@ def run_quant_agent(tickers_input, macro_query):
     poc_dict = {row['Mã']: row['Vùng Mua POC'] for index, row in df_quant.iterrows()}
 
     df_multi_day_audit = evaluate_multi_day_positions(history_data, current_prices, current_vsa, lookback_days=5)
-    audit_table_markdown = df_multi_day_audit.to_markdown(index=False) if not df_multi_day_audit.empty else "Chưa có dữ liệu vị thế từ các phiên trước."
+    audit_table_markdown = df_multi_day_audit.to_string(index=False) if not df_multi_day_audit.empty else "Chưa có dữ liệu vị thế từ các phiên trước."
 
     # Lưu lại kết quả hôm nay vào tracker cho phiên ngày mai
     save_today_session(history_data, today_str, top_5_picks, current_prices, poc_dict)
