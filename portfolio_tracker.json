@@ -59,6 +59,36 @@
           "target_poc": 61.17
         }
       }
+    },
+    {
+      "date": "25/10/2026",
+      "picks": {
+        "TCB": {
+          "weight": 3.2,
+          "entry_price": 34.2,
+          "target_poc": 33.27
+        },
+        "GAS": {
+          "weight": 3.08,
+          "entry_price": 78.3,
+          "target_poc": 82.03
+        },
+        "PVS": {
+          "weight": 2.98,
+          "entry_price": 32.3,
+          "target_poc": 33.54
+        },
+        "SAB": {
+          "weight": 2.77,
+          "entry_price": 43.2,
+          "target_poc": 43.07
+        },
+        "REE": {
+          "weight": 2.41,
+          "entry_price": 45.9,
+          "target_poc": 47.04
+        }
+      }
     }
   ]
 }
