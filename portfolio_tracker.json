@@ -119,6 +119,36 @@
           "target_poc": 32.83
         }
       }
+    },
+    {
+      "date": "27/10/2026",
+      "picks": {
+        "PHR": {
+          "weight": 3.36,
+          "entry_price": 32.55,
+          "target_poc": 32.83
+        },
+        "VNM": {
+          "weight": 3.23,
+          "entry_price": 57.6,
+          "target_poc": 61.17
+        },
+        "GAS": {
+          "weight": 3.14,
+          "entry_price": 80.5,
+          "target_poc": 82.03
+        },
+        "VIC": {
+          "weight": 2.92,
+          "entry_price": 237.0,
+          "target_poc": 241.01
+        },
+        "BID": {
+          "weight": 2.89,
+          "entry_price": 33.75,
+          "target_poc": 35.74
+        }
+      }
     }
   ]
 }
