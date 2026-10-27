@@ -179,6 +179,36 @@
           "target_poc": 43.07
         }
       }
+    },
+    {
+      "date": "27/10/2026",
+      "picks": {
+        "VHM": {
+          "weight": 4.81,
+          "entry_price": 63.5,
+          "target_poc": 68.13
+        },
+        "PHR": {
+          "weight": 4.48,
+          "entry_price": 32.3,
+          "target_poc": 32.88
+        },
+        "NTC": {
+          "weight": 4.15,
+          "entry_price": 126.8,
+          "target_poc": 123.19
+        },
+        "VHC": {
+          "weight": 3.18,
+          "entry_price": 51.1,
+          "target_poc": 52.94
+        },
+        "MWG": {
+          "weight": 2.58,
+          "entry_price": 75.7,
+          "target_poc": 72.2
+        }
+      }
     }
   ]
 }
