@@ -287,17 +287,20 @@ def get_macro_quant():
     
 def get_vn_interest_rates():
     """
-    Quét kép mặt bằng lãi suất chuẩn Việt Nam:
-    1. Biến động hàng ngày: Lãi suất liên ngân hàng qua đêm & OMO của NHNN (nhảy số mỗi ngày).
-    2. Mặt bằng chuẩn: Lãi suất tiết kiệm 12 tháng & cho vay nhóm Big4 (VCB, BIDV, VietinBank, Agribank).
+    Quét dữ liệu số liệu cụ thể (%/năm) cho 3 nhóm lãi suất:
+    1. Lãi suất tiết kiệm (Big4 và NHTMCP).
+    2. Lãi suất cho vay sản xuất kinh doanh bình quân.
+    3. Lãi suất cho vay mua nhà / bất động sản (ưu đãi và thả nổi).
     """
-    q_interbank = "Lãi suất liên ngân hàng qua đêm NHNN và bơm hút ròng OMO tín phiếu mới nhất hôm nay"
-    q_big4 = "Lãi suất tiết kiệm huy động 12 tháng và lãi suất cho vay nhóm Big4 Vietcombank BIDV VietinBank mới nhất"
+    q_bds = "Lãi suất cho vay mua nhà bất động sản ngân hàng Việt Nam mới nhất hiện nay bao nhiêu phần trăm ưu đãi thả nổi"
+    q_deposit_loan = "Bảng lãi suất gửi tiết kiệm huy động 12 tháng và lãi suất cho vay sản xuất kinh doanh bình quân các ngân hàng mới nhất"
+    q_interbank = "Lãi suất liên ngân hàng qua đêm NHNN mới nhất hôm nay bao nhiêu phần trăm"
     
+    res_bds = agentic_web_search(q_bds)
+    res_deposit_loan = agentic_web_search(q_deposit_loan)
     res_interbank = agentic_web_search(q_interbank)
-    res_big4 = agentic_web_search(q_big4)
     
-    return f"[LIÊN NGÂN HÀNG & OMO HÀNG NGÀY]:\n{res_interbank}\n\n[MẶT BẰNG CHUẨN BIG4]:\n{res_big4}"
+    return f"[LÃI SUẤT CHO VAY BẤT ĐỘNG SẢN]:\n{res_bds}\n\n[LÃI SUẤT TIẾT KIỆM & CHO VAY SXKD]:\n{res_deposit_loan}\n\n[LÃI SUẤT LIÊN NGÂN HÀNG]:\n{res_interbank}"
 
 def agentic_web_search(query):
     if not query.strip():
@@ -707,18 +710,30 @@ NHIỆM VỤ: Bạn BẮT BUỘC sinh ra báo cáo theo ĐÚNG 100% Cấu trúc 
 # BÁO CÁO QUẢN TRỊ RỦI RO & ĐỊNH HƯỚNG ĐẦU TƯ NGÀY {today_str}
 **Người trình bày:** Giám đốc Quản trị Rủi ro Quỹ Đầu tư
 
-## 1. TỔNG QUAN VĨ MÔ & THỊ TRƯỜNG
+## 1. TỔNG QUAN VĨ MÔ, HÀNG HÓA & MẶT BẰNG LÃI SUẤT NỘI ĐỊA
 Đánh giá Vĩ mô theo "Luật Đánh Giá Vĩ Mô Nghịch Lý & Quy Tắc Thích Ứng Mới":
 
-- **Tin tức & Lãi suất Nội địa:** [Tóm tắt tin vĩ mô và mặt bằng Lãi suất Tiết kiệm / Cho vay của các ngân hàng Việt Nam hôm nay].
-- **Yếu tố Toán học & Hàng hóa Chiến lược:**
+- **Tin tức Vĩ mô chung:** [Tóm tắt 1-2 câu ngắn gọn từ dữ liệu tin tức].
+- **Yếu tố Toán học & Hàng hóa Quốc tế:**
   - DXY (Chỉ số USD): [Mức hiện tại và biến động %]
   - US10Y (Lợi suất TP Mỹ): [Mức hiện tại và biến động %]
   - VIX (Chỉ số Sợ hãi): [Mức hiện tại và biến động %]
   - Gold (Vàng thế giới): [Mức hiện tại USD/oz và biến động %]
   - Crude Oil (Dầu thô WTI): [Mức hiện tại USD/thùng và biến động %]
-  - Lãi suất Liên ngân hàng & Big4: [Tóm tắt xu hướng và mức lãi suất phổ biến từ dữ liệu quét được]
-- **Tác động Lãi suất & Hàng hóa lên Cổ phiếu:** [Phân tích 1-2 câu về xu hướng lãi suất tiết kiệm/cho vay và giá Vàng/Dầu đang tác động tích cực hay tiêu cực đến các nhóm ngành trong danh mục].
+
+- **BẢNG THEO DÕI LÃI SUẤT NGÂN HÀNG VIỆT NAM (CHU KỲ 5 NGÀY & 30 NGÀY):**
+(BẮT BUỘC ĐIỀN CON SỐ % CỤ THỂ TỪ DỮ LIỆU ĐÃ CÀO, KHÔNG ĐƯỢC BỎ TRỐNG HAY CHỈ VIẾT CHỮ MÔ TẢ)
+
+| Loại Lãi Suất | Mức Hiện Tại (%/năm) | Xu Hướng (5 Ngày Qua) | Xu Hướng (30 Ngày Qua) | Tác Động Lên Cổ Phiếu |
+| :--- | :---: | :---: | :---: | :--- |
+| **Lãi suất Tiết kiệm 12T (Big4)** | [Điền số %] | [Tăng/Giảm/Đi ngang] | [Tăng/Giảm/Đi ngang] | [Đánh giá tác động đến dòng tiền] |
+| **Lãi suất Tiết kiệm 12T (NHTMCP)**| [Điền số %] | [Tăng/Giảm/Đi ngang] | [Tăng/Giảm/Đi ngang] | [Đánh giá cạnh tranh huy động] |
+| **Lãi suất Cho vay SXKD Bình quân**| [Điền số %] | [Tăng/Giảm/Đi ngang] | [Tăng/Giảm/Đi ngang] | [Tác động chi phí vốn doanh nghiệp] |
+| **Lãi suất Cho vay Mua BĐS (Ưu đãi)**| [Điền số %] | [Tăng/Giảm/Đi ngang] | [Tăng/Giảm/Đi ngang] | [Tác động tâm lý người mua nhà] |
+| **Lãi suất Cho vay Mua BĐS (Thả nổi)**| [Điền số %] | [Tăng/Giảm/Đi ngang] | [Tăng/Giảm/Đi ngang] | [Rủi ro trả nợ của nhóm BĐS dân dụng] |
+| **Lãi suất Liên ngân hàng (Qua đêm)**| [Điền số %] | [Tăng/Giảm/Đi ngang] | [Tăng/Giảm/Đi ngang] | [Thanh khoản hệ thống ngân hàng] |
+
+- **Nhận định Lãi suất & Tác động Cổ phiếu:** [Phân tích 1-2 câu kết luận: Mặt bằng lãi suất cho vay mua nhà và huy động hiện tại đang ủng hộ nhóm Ngân hàng, BĐS Khu công nghiệp hay gây bất lợi cho nhóm BĐS nợ vay cao].
 - **Dựa trên luật:** [Áp dụng dữ liệu vào luật vĩ mô và phân tích trạng thái thích ứng {regime}].
 - **Chốt:** Rủi ro [THẤP / TRUNG BÌNH / CAO]. Định hướng: [1 câu tóm tắt chiến lược phân bổ vốn].
 
