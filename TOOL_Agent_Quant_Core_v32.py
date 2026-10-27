@@ -286,9 +286,18 @@ def get_macro_quant():
     return pd.DataFrame(macro_data).T
     
 def get_vn_interest_rates():
-    """Quét dữ liệu lãi suất tiết kiệm, cho vay và liên ngân hàng Việt Nam mới nhất trong ngày."""
-    rate_query = "Lãi suất tiết kiệm huy động lãi suất cho vay ngân hàng Việt Nam và lãi suất liên ngân hàng mới nhất hôm nay tăng hay giảm"
-    return agentic_web_search(rate_query)
+    """
+    Quét kép mặt bằng lãi suất chuẩn Việt Nam:
+    1. Biến động hàng ngày: Lãi suất liên ngân hàng qua đêm & OMO của NHNN (nhảy số mỗi ngày).
+    2. Mặt bằng chuẩn: Lãi suất tiết kiệm 12 tháng & cho vay nhóm Big4 (VCB, BIDV, VietinBank, Agribank).
+    """
+    q_interbank = "Lãi suất liên ngân hàng qua đêm NHNN và bơm hút ròng OMO tín phiếu mới nhất hôm nay"
+    q_big4 = "Lãi suất tiết kiệm huy động 12 tháng và lãi suất cho vay nhóm Big4 Vietcombank BIDV VietinBank mới nhất"
+    
+    res_interbank = agentic_web_search(q_interbank)
+    res_big4 = agentic_web_search(q_big4)
+    
+    return f"[LIÊN NGÂN HÀNG & OMO HÀNG NGÀY]:\n{res_interbank}\n\n[MẶT BẰNG CHUẨN BIG4]:\n{res_big4}"
 
 def agentic_web_search(query):
     if not query.strip():
@@ -588,6 +597,7 @@ def run_quant_agent(tickers_input, macro_query):
     print("⏳ [2/4] Quét Bảng điện Vĩ mô & Đánh giá Dynamic Regime...")
     df_macro = get_macro_quant()
     search_res = agentic_web_search(macro_query)
+    vn_rates_res = get_vn_interest_rates()
 
     regime, target_cash_ratio, target_allocation = calculate_market_regime_and_cash_ratio(df_macro, leading_count)
     print(f"📊 [CHẾ ĐỘ THỊ TRƯỜNG]: {regime} | Mục tiêu Tiền mặt: {target_cash_ratio}% | Mục tiêu Giải ngân: {target_allocation*100}%")
@@ -671,8 +681,9 @@ def run_quant_agent(tickers_input, macro_query):
 - Bảng Cơ bản, RRG, Local POC & VSA Hôm nay: {df_quant.to_string()}
 - Danh sách Mua Mới Hôm nay (Top Picks Markowitz Đã Ép Trần): {top_5_picks}
 - Micro-Timing Wyckoff: {chr(10).join(micro_insights)}
-- Vĩ mô 1 tháng qua: {df_macro.to_string()}
-- Tin tức AI cào được: {search_res}
+- Vĩ mô & Hàng hóa (DXY, US10Y, VIX, Vàng, Dầu thô): {df_macro.to_string()}
+- Tin tức Vĩ mô chung: {search_res}
+- Dữ liệu Lãi suất Ngân hàng Việt Nam (Liên ngân hàng & Big4): {vn_rates_res}
 - Hồ sơ X-Quang BCTC & Intraday của Top Picks: {deep_scan_report}
 - DANH SÁCH BỊ LOẠI BỞI HARD PRE-FILTER HÔM NAY:
 {blacklist_text}
@@ -682,12 +693,14 @@ def run_quant_agent(tickers_input, macro_query):
 
 [QUY TẮC ĐIỀU HÀNH ĐỒNG THUẬN ĐA PHIÊN & VĨ MÔ NGHỊCH LÝ]
 1. Vĩ mô: Nếu DXY hoặc US10Y hạ nhiệt/tạo đỉnh ngắn hạn + VIX < 25 + Ngành Leading xuất hiện: Chế độ SELECTIVE EXPANSION, nới lỏng giải ngân lên {target_allocation*100}%. Nếu US10Y > 5.2% hoặc DXY tăng nóng: Chế độ DEFENSIVE, giữ tiền mặt cao ({target_cash_ratio}%).
-2. Tích hợp vị thế đa phiên: Kết hợp các mã đã khuyến nghị ở 5 phiên trước (từ bảng đối soát) cùng với các mã Mua Mới của phiên hôm nay ({top_5_picks}) thành 1 Bảng Điều Hành Vị Thế duy nhất.
-   - GIA TĂNG VỊ THẾ: Mã cũ đang lãi và hôm nay tiếp tục nổ nến SOS/Vol lớn.
-   - NẮM GIỮ / CHỐT LỜI TỪNG PHẦN: Mã cũ đang lãi tiến sát Target POC hoặc duy trì trên nền giá.
-   - MUA MỚI ĐỒNG THUẬN: Các mã mới hôm nay vượt qua Hard Cutoff và tối ưu Markowitz.
-   - THOÁI VỐN / CẮT LỖ: Mã cũ vi phạm cắt lỗ hoặc hôm nay dính cảnh báo xấu.
+2. Tích hợp vị thế đa phiên: Kết hợp các mã đã khuyến nghị ở 5 phiên trước cùng các mã Mua Mới hôm nay ({top_5_picks}) thành 1 Bảng Điều Hành Vị Thế duy nhất.
 3. Mã vi phạm OCF âm (như HCM, DCM) hoặc dính UTAD/Bull-trap hôm nay ĐÃ BỊ GẠCH TÊN HOÀN TOÀN và nằm trọn vẹn ở Mục 3.
+4. Quy tắc Định giá Cổ phiếu theo Lãi suất & Hàng hóa (Chống nhiễu báo chí):
+   - RÀO CHẮN CHỐNG NHIỄU: Chỉ sử dụng Lãi suất Liên ngân hàng qua đêm (NHNN) và Lãi suất nhóm Big4 (VCB, BID, CTG, Agribank) làm chuẩn. BỎ QUA tin giật tít của ngân hàng nhỏ hoặc lãi suất đặc biệt hàng trăm tỷ.
+   - Khi Lãi suất Liên ngân hàng < 4.0% và huy động 12M Big4 <= 5.5%: Thanh khoản dồi dào, đánh giá TÍCH CỰC cho nhóm Ngân hàng (VCB, BID, CTG, TCB, MBB) và BĐS Khu công nghiệp (IDC, VGC, PHR).
+   - Khi Lãi suất Liên ngân hàng vọt > 5.0% hoặc Big4 rục rịch tăng: Cảnh báo chi phí nợ cho nhóm BĐS dân dụng, Xây dựng, Thép; ưu tiên tuyệt đối doanh nghiệp giàu tiền mặt gửi ngân hàng (DGC, FPT, VNM, SAB, NTC).
+   - Giá Dầu thô: Tăng mạnh hỗ trợ nhóm Dầu khí (PVD, PVS, GAS), nhưng tăng quá nóng sẽ cảnh báo rủi ro lạm phát đầu vào.
+   - Giá Vàng: Đo lường tâm lý trú ẩn địa chính trị và áp lực tỷ giá USD/VND.
 
 NHIỆM VỤ: Bạn BẮT BUỘC sinh ra báo cáo theo ĐÚNG 100% Cấu trúc Markdown dưới đây:
 
@@ -697,11 +710,15 @@ NHIỆM VỤ: Bạn BẮT BUỘC sinh ra báo cáo theo ĐÚNG 100% Cấu trúc 
 ## 1. TỔNG QUAN VĨ MÔ & THỊ TRƯỜNG
 Đánh giá Vĩ mô theo "Luật Đánh Giá Vĩ Mô Nghịch Lý & Quy Tắc Thích Ứng Mới":
 
-- **Tin tức:** [Tóm tắt 1-2 câu ngắn gọn từ dữ liệu tin tức].
-- **Yếu tố Toán học:**
+- **Tin tức & Lãi suất Nội địa:** [Tóm tắt tin vĩ mô và mặt bằng Lãi suất Tiết kiệm / Cho vay của các ngân hàng Việt Nam hôm nay].
+- **Yếu tố Toán học & Hàng hóa Chiến lược:**
   - DXY (Chỉ số USD): [Mức hiện tại và biến động %]
   - US10Y (Lợi suất TP Mỹ): [Mức hiện tại và biến động %]
   - VIX (Chỉ số Sợ hãi): [Mức hiện tại và biến động %]
+  - Gold (Vàng thế giới): [Mức hiện tại USD/oz và biến động %]
+  - Crude Oil (Dầu thô WTI): [Mức hiện tại USD/thùng và biến động %]
+  - Lãi suất Liên ngân hàng & Big4: [Tóm tắt xu hướng và mức lãi suất phổ biến từ dữ liệu quét được]
+- **Tác động Lãi suất & Hàng hóa lên Cổ phiếu:** [Phân tích 1-2 câu về xu hướng lãi suất tiết kiệm/cho vay và giá Vàng/Dầu đang tác động tích cực hay tiêu cực đến các nhóm ngành trong danh mục].
 - **Dựa trên luật:** [Áp dụng dữ liệu vào luật vĩ mô và phân tích trạng thái thích ứng {regime}].
 - **Chốt:** Rủi ro [THẤP / TRUNG BÌNH / CAO]. Định hướng: [1 câu tóm tắt chiến lược phân bổ vốn].
 
@@ -713,8 +730,8 @@ Các cột BẮT BUỘC: Phân Loại | Mã | Phiên Mua | Giá Vốn | Giá Hi�
 
 *(Lưu ý: Nếu bảng đối soát 5 phiên trước chưa có dữ liệu, hãy hiển thị danh sách 5 mã Mua Mới của hôm nay kèm tỷ trọng giải ngân).*
 
-* **Tổng tỷ trọng cổ phiếu danh mục sau điều phối:** [TỔNG TỶ TRỌNG CỔ PHIẾU ĐANG NẮM GIỮ VÀ MUA MỚI]%.
-* **Đánh giá hiệu quả các phiên trước:** [Nhận xét 1-2 câu ngắn gọn về diễn biến lời/lỗ của các mã đã khuyến nghị trước đó].
+- **Tổng tỷ trọng cổ phiếu danh mục sau điều phối:** [TỔNG TỶ TRỌNG CỔ PHIẾU ĐANG NẮM GIỮ VÀ MUA MỚI]%.
+- **Đánh giá hiệu quả các phiên trước:** [Nhận xét 1-2 câu ngắn gọn về diễn biến lời/lỗ của các mã đã khuyến nghị trước đó].
 
 ## 3. CẢNH BÁO RỦI RO ĐỎ (DANH SÁCH LOẠI TRỪ TUYỆT ĐỐI)
 Chúng tôi lưu ý các mã sau đây ĐÃ BỊ LOẠI BỎ NGAY TỪ VÒNG SƠ LOẠI ĐẦU VÀO, không đưa vào danh mục giải ngân:
