@@ -42,8 +42,7 @@ EMAIL_PASS = os.environ.get("EMAIL_PASS", "")
 
 # Cấu trúc danh sách nhiều Email nhận
 RECEIVER_EMAILS = [
-    "tranbaotrung2703@gmail.com",
-    "trungtb@goalcoastholdings.com.vn"
+    "tranbaotrung2703@gmail.com"
 ]
 
 # ==========================================
@@ -285,6 +284,11 @@ def get_macro_quant():
         except:
             macro_data[name] = {"Mức hiện tại": "N/A", "Biến động 1T (%)": "N/A"}
     return pd.DataFrame(macro_data).T
+    
+def get_vn_interest_rates():
+    """Quét dữ liệu lãi suất tiết kiệm, cho vay và liên ngân hàng Việt Nam mới nhất trong ngày."""
+    rate_query = "Lãi suất tiết kiệm huy động lãi suất cho vay ngân hàng Việt Nam và lãi suất liên ngân hàng mới nhất hôm nay tăng hay giảm"
+    return agentic_web_search(rate_query)
 
 def agentic_web_search(query):
     if not query.strip():
