@@ -68,11 +68,6 @@
           "entry_price": 34.2,
           "target_poc": 33.27
         },
-        "GAS": {
-          "weight": 3.08,
-          "entry_price": 78.3,
-          "target_poc": 82.03
-        },
         "PVS": {
           "weight": 2.98,
           "entry_price": 32.3,
@@ -132,11 +127,6 @@
           "weight": 3.23,
           "entry_price": 57.6,
           "target_poc": 61.17
-        },
-        "GAS": {
-          "weight": 3.14,
-          "entry_price": 80.5,
-          "target_poc": 82.03
         },
         "VIC": {
           "weight": 2.92,
@@ -267,6 +257,36 @@
           "weight": 2.48,
           "entry_price": 127.8,
           "target_poc": 125.6
+        }
+      }
+    },
+    {
+      "date": "29/10/2026",
+      "picks": {
+        "VHM": {
+          "weight": 2.81,
+          "entry_price": 62.1,
+          "target_poc": 68.06
+        },
+        "VIC": {
+          "weight": 2.65,
+          "entry_price": 241.0,
+          "target_poc": 241.01
+        },
+        "GVR": {
+          "weight": 2.57,
+          "entry_price": 31.95,
+          "target_poc": 32.77
+        },
+        "FPT": {
+          "weight": 2.47,
+          "entry_price": 52.7,
+          "target_poc": 57.09
+        },
+        "MBB": {
+          "weight": 2.44,
+          "entry_price": 19.7,
+          "target_poc": 19.9
         }
       }
     }
