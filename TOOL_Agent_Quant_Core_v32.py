@@ -423,11 +423,13 @@ def load_portfolio_history():
 def evaluate_multi_day_positions(history, current_prices, current_vsa_dict, lookback_days=5):
     """
     Đối soát các mã đã mua trong 5 phiên qua với giá hiện tại.
-    Phân loại: GIA TĂNG, CHỐT LỜI, NẮM GIỮ, hoặc CẮT LỖ.
+    - Rào chắn chống chia tách: Nhận diện lệch giá > 15% do chia thưởng/lỗi API để tự đồng bộ lại.
+    - Đóng vị thế: Ghi nhận danh sách mã đã cắt lỗ để loại bỏ khỏi lịch sử theo dõi.
     """
     recent_history = history[-lookback_days:] if len(history) >= lookback_days else history
     position_summary = []
     monitored_tickers = set()
+    closed_tickers = set()
 
     for session in reversed(recent_history):
         s_date = session.get("date", "N/A")
@@ -448,9 +450,20 @@ def evaluate_multi_day_positions(history, current_prices, current_vsa_dict, look
 
             pnl_pct = round(((cur_price - entry_price) / entry_price) * 100, 2)
 
-            if "BÁO ĐỘNG ĐỎ" in vsa_info.upper() or pnl_pct <= -5.0:
+            # RÀO CHẮN 1: Phát hiện bất thường do chia tách cổ phiếu / cổ tức hoặc lỗi lệch nguồn API
+            # Trên sàn Việt Nam, biên độ HoSE là 7%, nên biến động > 15% trong 2-3 phiên chắc chắn do chia tách hoặc lỗi API
+            if abs(pnl_pct) >= 15.0:
+                action = f"⚠️ Lệch giá chia tách/API. Đồng bộ giá vốn về {cur_price:.2f}"
+                category = "ĐIỀU CHỈNH CHIA TÁCH"
+                info['entry_price'] = cur_price
+                entry_price = cur_price
+                pnl_pct = 0.00
+
+            # RÀO CHẮN 2: Cắt lỗ chuẩn và đánh dấu đóng vị thế
+            elif "BÁO ĐỘNG ĐỎ" in vsa_info.upper() or pnl_pct <= -5.0:
                 action = "🚨 CẮT LỖ / THOÁI VỐN NGAY"
                 category = "CẮT LỖ / BẢO TOÀN VỐN"
+                closed_tickers.add(ticker)  # Đưa vào danh sách đóng vị thế để xóa khỏi file tracker
             elif cur_price >= (target_poc * 0.98) and pnl_pct > 0:
                 action = "🎯 Chốt lời 50%, nâng chặn lãi"
                 category = "CHỐT LỜI TỪNG PHẦN"
@@ -472,10 +485,23 @@ def evaluate_multi_day_positions(history, current_prices, current_vsa_dict, look
                 "Lệnh Hành Động": action
             })
 
-    return pd.DataFrame(position_summary)
+    return pd.DataFrame(position_summary), closed_tickers
 
-def save_today_session(history, today_str, final_picks_dict, price_dict, poc_dict):
-    """Lưu lại danh mục phiên hôm nay vào file tracker."""
+
+def save_today_session(history, today_str, final_picks_dict, price_dict, poc_dict, closed_tickers=None):
+    """
+    Lưu danh mục phiên hôm nay và TỰ ĐỘNG XÓA các mã đã bị Cắt lỗ khỏi lịch sử
+    để các phiên tiếp theo không bị lặp lại lệnh cắt lỗ.
+    """
+    # 1. Dọn dẹp: Xóa hoàn toàn các mã đã Cắt lỗ khỏi bộ nhớ lịch sử
+    if closed_tickers:
+        for session in history:
+            picks = session.get("picks", {})
+            for closed_t in closed_tickers:
+                if closed_t in picks:
+                    del picks[closed_t]
+
+    # 2. Thêm danh mục giải ngân mới của ngày hôm nay
     new_picks = {}
     for ticker, weight in final_picks_dict.items():
         new_picks[ticker] = {
@@ -661,11 +687,11 @@ def run_quant_agent(tickers_input, macro_query):
     current_vsa = {row['Mã']: row['Tín hiệu VSA'] for index, row in df_quant.iterrows()}
     poc_dict = {row['Mã']: row['Vùng Mua POC'] for index, row in df_quant.iterrows()}
 
-    df_multi_day_audit = evaluate_multi_day_positions(history_data, current_prices, current_vsa, lookback_days=5)
+    df_multi_day_audit, closed_tickers = evaluate_multi_day_positions(history_data, current_prices, current_vsa, lookback_days=5)
     audit_table_markdown = df_multi_day_audit.to_string(index=False) if not df_multi_day_audit.empty else "Chưa có dữ liệu vị thế từ các phiên trước."
 
-    # Lưu lại kết quả hôm nay vào tracker cho phiên ngày mai
-    save_today_session(history_data, today_str, top_5_picks, current_prices, poc_dict)
+    # Lưu lại kết quả hôm nay vào tracker và dọn dẹp các mã đã cắt lỗ
+    save_today_session(history_data, today_str, top_5_picks, current_prices, poc_dict, closed_tickers)
 
     print("⏳ [4/4] Kích hoạt AI tổng hợp báo cáo chiến lược...")
 
