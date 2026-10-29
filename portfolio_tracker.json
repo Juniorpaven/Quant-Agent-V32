@@ -105,7 +105,7 @@
         },
         "TCB": {
           "weight": 2.83,
-          "entry_price": 33.8,
+          "entry_price": 22.33,
           "target_poc": 33.23
         },
         "VNM": {
@@ -237,6 +237,36 @@
           "weight": 2.53,
           "entry_price": 51.6,
           "target_poc": 52.94
+        }
+      }
+    },
+    {
+      "date": "29/10/2026",
+      "picks": {
+        "VIC": {
+          "weight": 4.52,
+          "entry_price": 241.0,
+          "target_poc": 241.01
+        },
+        "SAB": {
+          "weight": 4.15,
+          "entry_price": 42.9,
+          "target_poc": 43.07
+        },
+        "HPG": {
+          "weight": 3.78,
+          "entry_price": 20.75,
+          "target_poc": 20.52
+        },
+        "PHR": {
+          "weight": 3.08,
+          "entry_price": 32.15,
+          "target_poc": 32.83
+        },
+        "NTC": {
+          "weight": 2.48,
+          "entry_price": 127.8,
+          "target_poc": 125.6
         }
       }
     }
