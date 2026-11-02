@@ -1,43 +1,8 @@
 {
   "history": [
     {
-      "date": "26/10/2026",
-      "picks": {
-        "MWG": {
-          "weight": 3.39,
-          "entry_price": 74.8,
-          "target_poc": 74.98
-        },
-        "VHM": {
-          "weight": 3.23,
-          "entry_price": 63.9,
-          "target_poc": 68.13
-        },
-        "TCB": {
-          "weight": 2.83,
-          "entry_price": 22.33,
-          "target_poc": 33.23
-        },
-        "VNM": {
-          "weight": 2.77,
-          "entry_price": 57.6,
-          "target_poc": 61.17
-        },
-        "PHR": {
-          "weight": 2.49,
-          "entry_price": 32.55,
-          "target_poc": 32.83
-        }
-      }
-    },
-    {
       "date": "27/10/2026",
       "picks": {
-        "PHR": {
-          "weight": 3.36,
-          "entry_price": 32.55,
-          "target_poc": 32.83
-        },
         "VNM": {
           "weight": 3.23,
           "entry_price": 57.6,
@@ -68,11 +33,6 @@
           "entry_price": 74.8,
           "target_poc": 74.98
         },
-        "PHR": {
-          "weight": 3.14,
-          "entry_price": 32.55,
-          "target_poc": 32.83
-        },
         "VGS": {
           "weight": 3.1,
           "entry_price": 18.4,
@@ -92,11 +52,6 @@
           "weight": 4.81,
           "entry_price": 63.5,
           "target_poc": 68.13
-        },
-        "PHR": {
-          "weight": 4.48,
-          "entry_price": 32.3,
-          "target_poc": 32.88
         },
         "NTC": {
           "weight": 4.15,
@@ -133,11 +88,6 @@
           "entry_price": 63.5,
           "target_poc": 68.13
         },
-        "PHR": {
-          "weight": 2.62,
-          "entry_price": 32.15,
-          "target_poc": 32.83
-        },
         "VHC": {
           "weight": 2.53,
           "entry_price": 51.6,
@@ -163,11 +113,6 @@
           "entry_price": 20.75,
           "target_poc": 20.52
         },
-        "PHR": {
-          "weight": 3.08,
-          "entry_price": 32.15,
-          "target_poc": 32.83
-        },
         "NTC": {
           "weight": 2.48,
           "entry_price": 127.8,
@@ -187,11 +132,6 @@
           "weight": 2.65,
           "entry_price": 241.0,
           "target_poc": 241.01
-        },
-        "GVR": {
-          "weight": 2.57,
-          "entry_price": 31.95,
-          "target_poc": 32.77
         },
         "FPT": {
           "weight": 2.47,
@@ -292,6 +232,36 @@
           "weight": 3.43,
           "entry_price": 78.0,
           "target_poc": 81.99
+        }
+      }
+    },
+    {
+      "date": "02/11/2026",
+      "picks": {
+        "VHM": {
+          "weight": 4.33,
+          "entry_price": 62.0,
+          "target_poc": 64.03
+        },
+        "VIC": {
+          "weight": 4.24,
+          "entry_price": 242.0,
+          "target_poc": 231.96
+        },
+        "GAS": {
+          "weight": 3.84,
+          "entry_price": 77.0,
+          "target_poc": 81.99
+        },
+        "MBB": {
+          "weight": 3.36,
+          "entry_price": 18.75,
+          "target_poc": 19.89
+        },
+        "VSH": {
+          "weight": 3.2,
+          "entry_price": 40.9,
+          "target_poc": 40.88
         }
       }
     }
