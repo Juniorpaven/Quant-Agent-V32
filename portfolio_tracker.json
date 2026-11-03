@@ -3,26 +3,6 @@
     {
       "date": "27/10/2026",
       "picks": {
-        "VNM": {
-          "weight": 3.23,
-          "entry_price": 57.6,
-          "target_poc": 61.17
-        },
-        "VIC": {
-          "weight": 2.92,
-          "entry_price": 237.0,
-          "target_poc": 241.01
-        },
-        "BID": {
-          "weight": 2.89,
-          "entry_price": 33.75,
-          "target_poc": 35.74
-        }
-      }
-    },
-    {
-      "date": "27/10/2026",
-      "picks": {
         "VHM": {
           "weight": 3.57,
           "entry_price": 63.9,
@@ -262,6 +242,36 @@
           "weight": 3.2,
           "entry_price": 40.9,
           "target_poc": 40.88
+        }
+      }
+    },
+    {
+      "date": "03/11/2026",
+      "picks": {
+        "TCB": {
+          "weight": 3.02,
+          "entry_price": 21.4,
+          "target_poc": 21.72
+        },
+        "VHM": {
+          "weight": 3.0,
+          "entry_price": 61.9,
+          "target_poc": 64.03
+        },
+        "GAS": {
+          "weight": 2.95,
+          "entry_price": 75.4,
+          "target_poc": 81.96
+        },
+        "MWG": {
+          "weight": 2.8,
+          "entry_price": 72.3,
+          "target_poc": 72.28
+        },
+        "PVS": {
+          "weight": 2.63,
+          "entry_price": 29.8,
+          "target_poc": 33.49
         }
       }
     }
