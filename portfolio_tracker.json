@@ -1,36 +1,6 @@
 {
   "history": [
     {
-      "date": "30/10/2026",
-      "picks": {
-        "MBB": {
-          "weight": 3.1,
-          "entry_price": 19.3,
-          "target_poc": 19.9
-        },
-        "VIC": {
-          "weight": 3.1,
-          "entry_price": 241.0,
-          "target_poc": 231.9
-        },
-        "VNM": {
-          "weight": 3.08,
-          "entry_price": 56.9,
-          "target_poc": 60.31
-        },
-        "MWG": {
-          "weight": 2.95,
-          "entry_price": 74.0,
-          "target_poc": 75.75
-        },
-        "VSH": {
-          "weight": 2.38,
-          "entry_price": 41.5,
-          "target_poc": 41.3
-        }
-      }
-    },
-    {
       "date": "31/10/2026",
       "picks": {
         "VIC": {
@@ -167,11 +137,6 @@
           "weight": 2.52,
           "entry_price": 21.85,
           "target_poc": 21.72
-        },
-        "NT2": {
-          "weight": 2.5,
-          "entry_price": 22.65,
-          "target_poc": 23.07
         }
       }
     },
@@ -278,11 +243,6 @@
           "entry_price": 73.7,
           "target_poc": 75.03
         },
-        "NTC": {
-          "weight": 1.82,
-          "entry_price": 129.0,
-          "target_poc": 127.76
-        },
         "VHM": {
           "weight": 1.81,
           "entry_price": 62.1,
@@ -292,6 +252,36 @@
           "weight": 1.63,
           "entry_price": 31.85,
           "target_poc": 30.47
+        }
+      }
+    },
+    {
+      "date": "09/11/2026",
+      "picks": {
+        "VIC": {
+          "weight": 4.33,
+          "entry_price": 234.4,
+          "target_poc": 241.1
+        },
+        "SIP": {
+          "weight": 3.46,
+          "entry_price": 49.7,
+          "target_poc": 49.07
+        },
+        "GAS": {
+          "weight": 3.37,
+          "entry_price": 73.0,
+          "target_poc": 82.06
+        },
+        "CTG": {
+          "weight": 2.8,
+          "entry_price": 31.65,
+          "target_poc": 30.53
+        },
+        "BID": {
+          "weight": 2.31,
+          "entry_price": 32.05,
+          "target_poc": 33.63
         }
       }
     }
