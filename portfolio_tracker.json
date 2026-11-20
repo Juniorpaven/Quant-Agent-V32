@@ -1,26 +1,6 @@
 {
   "history": [
     {
-      "date": "10/11/2026",
-      "picks": {
-        "MBB": {
-          "weight": 1.95,
-          "entry_price": 19.4,
-          "target_poc": 19.89
-        },
-        "MWG": {
-          "weight": 1.91,
-          "entry_price": 74.0,
-          "target_poc": 74.96
-        },
-        "IDC": {
-          "weight": 1.91,
-          "entry_price": 36.0,
-          "target_poc": 36.05
-        }
-      }
-    },
-    {
       "date": "11/11/2026",
       "picks": {
         "VIC": {
@@ -87,11 +67,6 @@
           "weight": 2.1,
           "entry_price": 42.75,
           "target_poc": 42.89
-        },
-        "BID": {
-          "weight": 2.07,
-          "entry_price": 31.85,
-          "target_poc": 33.88
         }
       }
     },
@@ -138,11 +113,6 @@
     {
       "date": "16/11/2026",
       "picks": {
-        "BID": {
-          "weight": 2.41,
-          "entry_price": 31.65,
-          "target_poc": 33.62
-        },
         "GAS": {
           "weight": 2.38,
           "entry_price": 72.7,
@@ -252,6 +222,36 @@
           "weight": 1.7,
           "entry_price": 18.6,
           "target_poc": 19.33
+        }
+      }
+    },
+    {
+      "date": "20/11/2026",
+      "picks": {
+        "VGS": {
+          "weight": 1.93,
+          "entry_price": 19.2,
+          "target_poc": 19.35
+        },
+        "SAB": {
+          "weight": 1.67,
+          "entry_price": 42.45,
+          "target_poc": 43.0
+        },
+        "REE": {
+          "weight": 1.66,
+          "entry_price": 46.55,
+          "target_poc": 49.29
+        },
+        "VHM": {
+          "weight": 1.57,
+          "entry_price": 60.4,
+          "target_poc": 63.93
+        },
+        "IDC": {
+          "weight": 1.5,
+          "entry_price": 34.2,
+          "target_poc": 36.05
         }
       }
     }
