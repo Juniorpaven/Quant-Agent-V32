@@ -1,26 +1,6 @@
 {
   "history": [
     {
-      "date": "15/11/2026",
-      "picks": {
-        "VNM": {
-          "weight": 2.69,
-          "entry_price": 53.6,
-          "target_poc": 55.38
-        },
-        "VIC": {
-          "weight": 2.55,
-          "entry_price": 243.0,
-          "target_poc": 240.78
-        },
-        "CTG": {
-          "weight": 2.45,
-          "entry_price": 31.5,
-          "target_poc": 30.53
-        }
-      }
-    },
-    {
       "date": "16/11/2026",
       "picks": {
         "GAS": {
@@ -282,6 +262,36 @@
           "weight": 1.47,
           "entry_price": 50.3,
           "target_poc": 53.53
+        }
+      }
+    },
+    {
+      "date": "25/11/2026",
+      "picks": {
+        "VIC": {
+          "weight": 1.54,
+          "entry_price": 245.4,
+          "target_poc": 241.31
+        },
+        "PVS": {
+          "weight": 1.45,
+          "entry_price": 26.2,
+          "target_poc": 29.78
+        },
+        "VNM": {
+          "weight": 1.39,
+          "entry_price": 52.5,
+          "target_poc": 54.49
+        },
+        "GAS": {
+          "weight": 1.38,
+          "entry_price": 69.5,
+          "target_poc": 76.13
+        },
+        "FPT": {
+          "weight": 1.34,
+          "entry_price": 46.05,
+          "target_poc": 46.89
         }
       }
     }
