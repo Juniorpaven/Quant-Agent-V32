@@ -15,11 +15,15 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install pandas requests
-      - run: python v34/tai_du_lieu.py
+      - name: Tai du lieu
+        timeout-minutes: 25
+        run: python -u v34/tai_du_lieu.py 2>&1 | tee data_nhat_ky.txt
       - name: Commit du lieu
+        if: always()
         run: |
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
+          mkdir -p data && cp data_nhat_ky.txt data/_nhat_ky_tai.txt || true
           git add data
           git commit -m "Cập nhật dữ liệu giá và BCTC [skip ci]" || echo "Không có thay đổi"
           git pull --rebase origin ${{ github.ref_name }} || true
