@@ -1,0 +1,2 @@
+404 application/problem+json len=150 chan=False
+{"type":"about:blank","title":"Not Found","status":404,"detail":"No static resource api/company/dividend/FPT.","instance":"/api/company/dividend/FPT"}
