@@ -12,6 +12,7 @@ LO = 100
 BIEN_DO = 0.07
 TAI_BAN_SAU = 2          # số phiên phải chờ trước khi bán
 THANH_KHOAN_TOI_THIEU = 10e9  # đồng/phiên, bình quân 20 phiên
+MIEN_THANH_KHOAN = {"E1VFVN30"}  # ETF: nạp tiền nhỏ, không cần lọc thanh khoản
 
 
 def nap_gia(thu_muc):
@@ -84,6 +85,7 @@ class Engine:
 
     def dat_duoc(self, ma, i):
         """Đủ thanh khoản và có giá tại phiên i."""
+        if ma in MIEN_THANH_KHOAN: return True
         v = self.gtgd20[ma].iloc[i] if ma in self.gtgd20 else np.nan
         return np.isfinite(v) and v >= THANH_KHOAN_TOI_THIEU
 
