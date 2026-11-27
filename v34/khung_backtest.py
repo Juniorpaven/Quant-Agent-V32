@@ -75,7 +75,10 @@ def chi_so(kq: KetQua):
 class Engine:
     def __init__(self, gia, tu="2015-01-01", den=None, nap_hang_thang=10e6, von_dau=0.0):
         self.gia = gia
+        full = gia["VNINDEX"].index
         self.cal = gia["VNINDEX"].loc[tu:den].index
+        self.close_full = pd.DataFrame({m: d["Close"] for m, d in gia.items()}).reindex(full)
+        self.off = full.get_loc(self.cal[0])
         self.open = pd.DataFrame({m: d["Open"] for m, d in gia.items()}).reindex(self.cal)
         self.close = pd.DataFrame({m: d["Close"] for m, d in gia.items()}).reindex(self.cal)
         self.vol = pd.DataFrame({m: d["Volume"] for m, d in gia.items()}).reindex(self.cal)
