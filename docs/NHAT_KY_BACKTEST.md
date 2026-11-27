@@ -48,3 +48,8 @@ Các cửa sổ MA150 và MA250 cho kết quả tương tự (xem chạy `python
   - SSI fiin-fundamental: HTTP 403, trang "Blocked - SSI".
 - Kết luận: không có nguồn BCTC công khai nào lấy được tự động từ runner GitHub. Không tiếp tục cố vượt chặn.
 - Cần người dùng chọn: (a) tự cung cấp CSV BCTC và cổ tức vào `data/bctc/`, (b) cấp API key chính thức (DNSE Lightspeed hoặc SSI FastConnect) qua GitHub Secrets, (c) cho làm tạm bản chỉ dựa vào giá.
+
+## 27/11/2026 – Nguồn BCTC thay thế: Vietcap IQ
+- Thăm dò vòng 2 (yêu cầu thường, User-Agent khai báo): Vietcap IQ (`iq.vietcap.com.vn`) trả JSON HTTP 200 cho BCTC và chỉ số; CafeF, Vietstock, VPS trả 200 (HTML/JSON, chưa dùng); Simplize 404; HNX lỗi SSL.
+- Tải BCTC 70 mã không lỗi: kết quả kinh doanh, cân đối kế toán, lưu chuyển tiền tệ (năm và quý, có `publicDate`), chỉ số tài chính theo quý (gồm nợ xấu, bao phủ nợ xấu cho ngân hàng), và từ điển mã chỉ tiêu. Lưu ở `data/bctc/`.
+- Hạn chế: dữ liệu chỉ từ năm 2018 (8 năm báo cáo), nên bộ lọc nhiều năm dùng được từ khoảng tháng 4/2022. Chưa có lịch sử cổ tức riêng (dùng "cổ tức đã trả" trong lưu chuyển tiền tệ làm thay thế, có thể lẫn cổ tức trả cho cổ đông thiểu số). Chưa có dữ liệu cho phép thử 4 (bên liên quan), 5 (kiểm toán), 7 (người nội bộ): ghi "không đánh giá được".
