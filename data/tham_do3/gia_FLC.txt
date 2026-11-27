@@ -1,2 +1,0 @@
-400 application/json len=63 chan=False
-{"status":400,"code":"BAD_REQUEST","message":"invalid symbol"}

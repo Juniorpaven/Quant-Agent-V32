@@ -1,29 +1,44 @@
-"""Thăm dò vòng 3: yêu cầu thường, User-Agent khai báo, không giả danh. Nguồn nào chặn thì bỏ."""
-import os, time, requests
-os.makedirs("data/tham_do3", exist_ok=True)
-H = {"User-Agent": "quant-agent-research/1.0", "Accept": "application/json, text/html"}
-IQ = "https://iq.vietcap.com.vn/api/iq-insight-service"
-U = {}
-for ten, p in {"openapi_v3": "/v3/api-docs", "openapi_v2": "/v2/api-docs", "swagger": "/swagger-ui/index.html",
-               "cty": "/v1/company/FPT", "cty_co_tuc": "/v1/company/FPT/dividend", "cty_co_tuc2": "/v1/company/FPT/dividends",
-               "cty_su_kien": "/v1/company/FPT/events", "cty_co_dong": "/v1/company/FPT/shareholders",
-               "cty_noi_bo": "/v1/company/FPT/insider-transaction", "cty_noi_bo2": "/v1/company/FPT/insider-transactions",
-               "cty_kiem_toan": "/v1/company/FPT/auditor", "cty_ds": "/v1/company/FPT/price-history",
-               "ds_ma": "/v1/company/list", "ds_ma2": "/v1/market/symbols", "bctc_nam_cu": "/v1/company/FPT/financial-statement?section=INCOME_STATEMENT&fromYear=2010"}.items():
-    U["iq_" + ten] = IQ + p
-for ma in ("FLC", "ROS", "HQC", "ITA", "GTN", "TTF", "HAI", "AMD", "LDG", "OGC", "SCR", "HNG"):
-    t1 = int(time.time()); t0 = t1 - 86400 * 365 * 12
-    U["gia_" + ma] = f"https://services.entrade.com.vn/chart-api/v2/ohlcs/stock?from={t0}&to={t1}&symbol={ma}&resolution=1D"
-for ma in ("FLC", "ROS"):
-    U["bctc_" + ma] = f"{IQ}/v1/company/{ma}/financial-statement?section=INCOME_STATEMENT"
-U["cafef_co_tuc_ajax"] = "https://s.cafef.vn/Ajax/PageNew/DataHistory/DividendHistory.ashx?Symbol=FPT&PageIndex=1&PageSize=20"
-U["vietstock_su_kien"] = "https://finance.vietstock.vn/FPT/su-kien.htm"
-for ten, url in U.items():
+"""Thăm dò vòng 4: tóm tắt cấu trúc phản hồi Vietcap IQ (yêu cầu thường, User-Agent khai báo)."""
+import json, os, time, requests
+os.makedirs("data/tham_do4", exist_ok=True)
+H = {"User-Agent": "quant-agent-research/1.0", "Accept": "application/json"}
+IQ = "https://iq.vietcap.com.vn/api/iq-insight-service/v1/company"
+def tom_tat(j, sau=0):
+    if isinstance(j, dict):
+        return {k: (tom_tat(v, sau + 1) if sau < 2 else type(v).__name__) for k, v in list(j.items())[:25]}
+    if isinstance(j, list):
+        return [f"list[{len(j)}]", tom_tat(j[0], sau + 1) if j and sau < 2 else None]
+    return j if not isinstance(j, str) else j[:40]
+def thu(ten, url):
     try:
-        r = requests.get(url, headers=H, timeout=20)
-        bi_chan = any(k in r.text[:3000].lower() for k in ("just a moment", "blocked", "access denied"))
-        mo_ta = f"{r.status_code} {r.headers.get('content-type','')[:30]} len={len(r.text)} chan={bi_chan}"
-        open(f"data/tham_do3/{ten}.txt", "w").write(mo_ta + "\n" + r.text[:6000])
+        r = requests.get(url, headers=H, timeout=25)
+        try: j = r.json()
+        except Exception: j = None
+        out = {"http": r.status_code, "len": len(r.text)}
+        if j is not None: out["cau_truc"] = tom_tat(j)
+        return j, out
     except Exception as e:
-        mo_ta = f"LỖI {type(e).__name__}"
-    print(ten, mo_ta, flush=True)
+        return None, {"loi": type(e).__name__}
+ket_qua = {}
+j, o = thu("noi_bo", f"{IQ}/FPT/insider-transaction?page=0&size=2000")
+if j and j.get("data"):
+    c = j["data"].get("content", [])
+    o["so_ban_ghi"] = len(c); o["tong"] = {k: v for k, v in j["data"].items() if k != "content"}
+    o["nam_cong_bo"] = sorted({x["publicDate"][:4] for x in c if x.get("publicDate")})
+    o["ma_su_kien"] = sorted({x.get("eventCode") for x in c})
+    o["khoa_mau"] = sorted(c[0].keys()) if c else None
+ket_qua["noi_bo"] = o
+for ma in ("FPT", "ROS", "FLC", "HAI", "AMD", "GTN"):
+    j, o = thu("gia", f"{IQ}/{ma}/price-history?page=0&size=5000")
+    if j and j.get("data"):
+        c = j["data"].get("content", [])
+        o["so_ban_ghi"] = len(c); o["tong"] = {k: v for k, v in j["data"].items() if k != "content"}
+        if c: o["ngay"] = [c[0].get("tradingDate"), c[-1].get("tradingDate")]; o["khoa_gia"] = sorted(k for k in c[0] if "rice" in k or "Volume" in k)[:20]
+    ket_qua["gia_" + ma] = o
+for p in ("dividend-history", "cash-dividend", "dividend-payment", "corporate-action", "corporate-actions", "event-calendar", "events/dividend",
+          "major-shareholder", "major-shareholders", "shareholder", "ownership", "audit-opinion", "auditor-opinion", "audit", "related-party", "news", "stock-split",
+          "financial-ratio", "statistics-financial?period=Y", "financial-statement?section=NOTE"):
+    j, o = thu(p, f"{IQ}/FPT/{p}")
+    ket_qua["thu_" + p] = o
+json.dump(ket_qua, open("data/tham_do4/tom_tat.json", "w"), ensure_ascii=False, indent=1)
+print(json.dumps(ket_qua, ensure_ascii=False)[:6000])
