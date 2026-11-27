@@ -53,3 +53,47 @@ Các cửa sổ MA150 và MA250 cho kết quả tương tự (xem chạy `python
 - Thăm dò vòng 2 (yêu cầu thường, User-Agent khai báo): Vietcap IQ (`iq.vietcap.com.vn`) trả JSON HTTP 200 cho BCTC và chỉ số; CafeF, Vietstock, VPS trả 200 (HTML/JSON, chưa dùng); Simplize 404; HNX lỗi SSL.
 - Tải BCTC 70 mã không lỗi: kết quả kinh doanh, cân đối kế toán, lưu chuyển tiền tệ (năm và quý, có `publicDate`), chỉ số tài chính theo quý (gồm nợ xấu, bao phủ nợ xấu cho ngân hàng), và từ điển mã chỉ tiêu. Lưu ở `data/bctc/`.
 - Hạn chế: dữ liệu chỉ từ năm 2018 (8 năm báo cáo), nên bộ lọc nhiều năm dùng được từ khoảng tháng 4/2022. Chưa có lịch sử cổ tức riêng (dùng "cổ tức đã trả" trong lưu chuyển tiền tệ làm thay thế, có thể lẫn cổ tức trả cho cổ đông thiểu số). Chưa có dữ liệu cho phép thử 4 (bên liên quan), 5 (kiểm toán), 7 (người nội bộ): ghi "không đánh giá được".
+
+## 27/11/2026 – Tầng 2: chọn mã lõi (lọc chất lượng + nhân tố)
+Cấu hình (đặt trước khi chạy, không dò tham số): lọc theo thời điểm (BCTC năm +90 ngày, chỉ số quý +45 ngày). Phi ngân hàng: (1) OCF/LNST 4 năm ≥ 0,8 và không quá 1 năm OCF âm; (2) phải thu + tồn kho 3 năm không tăng quá doanh thu 15 điểm %; (3) thu nhập khác ròng/LNTT < 15%; (6) khả năng trả lãi ≥ 3 và nợ vay/VCSH ≤ 1,5; (8) cổ tức tiền mặt đã trả ≥ 4/5 năm. Ngân hàng: nợ xấu ≤ 3%, bao phủ ≥ 70%, tăng tín dụng ≤ 30%, ROE bình quân ≥ 10%. Phép thử 4, 5, 7: "không đánh giá được". Điểm nhân tố: xếp hạng trung bình chất lượng (ROE, OCF/LN), giá trị (LN/vốn hóa), động lượng 6–12 tháng bỏ tháng gần nhất. Rà vào ngày 15 của tháng 2, 5, 8, 11; chỉ bán khi mã trượt lọc; nạp hằng tháng chỉ mua thêm; khe chưa lấp mua E1VFVN30. Dữ liệu BCTC chỉ từ 2018 nên chạy từ 2021-05.
+Kiểm tra giá: không có khoảng trống kiểu chia cổ phiếu chưa điều chỉnh (biến động lớn nhất khớp biên độ HNX/UPCOM), coi như giá đã điều chỉnh.
+
+| Giai đoạn | Chiến lược | CAGR | MDD | Vòng quay/năm |
+| --- | --- | --- | --- | --- |
+| 2021-05 → nay | Mua đều E1VFVN30 | 9,88% | −42,28% | 0% |
+| 2021-05 → nay | T2 N=12 | 5,06% | −41,38% | 28,5% |
+| 2021-05 → nay | T2 N=12 + tạm dừng MA200 | 4,52% | −33,13% | 26,4% |
+| 2021-05 → nay | T2 N=12, trần 4 ngân hàng | 5,74% | −41,87% | 20,1% |
+| 2021-05 → nay | T2 N=15 | 6,17% | −40,44% | 26,6% |
+| 2021-05 → nay | T2 N=12, pha 50% E1VFVN30 | 7,65% | −40,35% | 14,7% |
+| 2021-05 → nay | T2 N=12, trần 4 NH + pha 50% | 8,29% | −41,29% | 11,5% |
+| 2021-05 → 2023 | Mua đều E1VFVN30 / T2 N=12 | −6,74% / +6,20% | −42,28% / −41,38% | — |
+| 2024 → nay | Mua đều E1VFVN30 / T2 N=12 | +11,04% / −0,86% | −15,84% / −20,42% | — |
+
+Nhận xét: lõi thắng ở 2021–2023 (giai đoạn giảm), thua nặng từ 2024 vì tập mã đạt lọc dồn vào ngân hàng (8/12 mã) và bỏ lỡ nhóm kéo VN-Index (VN-Index 2024→nay +46%, lõi chọn mã không giữ Vingroup). Không biến thể nào thắng mua đều.
+**Quyết định: loại tầng 2 làm lõi** (không đạt tiêu chí mục 6: CAGR thấp hơn chuẩn). Lõi dùng E1VFVN30. Danh sách mã đạt lọc giữ lại để theo dõi, không phải khuyến nghị mua. Hạn chế: chỉ ~4,5 năm dữ liệu, tập mã là danh sách hiện tại (thiên lệch người sống sót, càng làm kết quả tầng 2 đáng ngờ chứ không bất lợi hơn cho nó), một chế độ thị trường.
+
+## 27/11/2026 – Tầng 4: Wyckoff khung tuần (vệ tinh)
+Cấu hình: vùng đi ngang ≥ 8 tuần (biên độ ≤ 30%); vào khi Spring + Test khối lượng thấp (< 0,7 lần TB 10 tuần) hoặc SOS (đóng cửa vượt đỉnh vùng, khối lượng ≥ 1,5 lần); dừng lỗ 2 ATR14 và bám 3 ATR; tối đa 5 mã, mỗi mã 5% NAV (vệ tinh tối đa 25%), vốn chưa dùng nằm trong E1VFVN30; chỉ mã đạt lọc tầng 2.
+
+| Giai đoạn | Chiến lược | CAGR | MDD | Vòng quay/năm | Lệnh vào |
+| --- | --- | --- | --- | --- | --- |
+| 2021-05 → nay | Mua đều E1VFVN30 | 9,88% | −42,28% | 0% | — |
+| 2021-05 → nay | Vệ tinh Wyckoff (mã đạt lọc) | 9,72% | −42,47% | 86,4% | 51 |
+| 2021-05 → nay | Vệ tinh Wyckoff (mọi mã) | 9,86% | −41,18% | 151,3% | 89 |
+| 2021-05 → 2023 | Chuẩn / có lọc / không lọc | −6,74% / −6,87% / −7,34% | — | — | — |
+| 2024 → nay | Chuẩn / có lọc / không lọc | 11,04% / 11,32% / 11,81% | — | — | — |
+
+**Quyết định: bỏ tầng 4, gộp vốn vệ tinh vào lõi** (đúng quy định mục 2: không chứng minh được cải thiện). Chênh lệch trong biên nhiễu, vòng quay cao, không ổn định giữa hai đoạn.
+
+## 27/11/2026 – Tầng 1 và kết quả cuối
+- Cấu trúc cuối: lõi 100% mua đều E1VFVN30 hằng tháng + luật tạm dừng khi VN-Index dưới MA200 (tầng 3, giữ tạm, chưa đạt rõ ràng). Không có vệ tinh. Danh sách chất lượng chỉ để theo dõi.
+- So với chuẩn: tầng 3 "tạm dừng" 2015–nay CAGR 10,74% so với 10,85%, vòng quay 0%.
+- **Kết quả trung thực: hệ thống V34 không thắng mua đều E1VFVN30 sau phí.** Mua đều E1VFVN30 là chuẩn mà mọi tầng thêm vào đều không vượt qua.
+
+## 27/11/2026 – Tầng 6: tích hợp
+- Thêm `v34/bao_cao_v34.py`: bảng luật thị trường, vị thế và tỷ lệ tiền mặt (đọc `data/vi_the.json` do người dùng khai) và danh sách chất lượng đều do code tạo. Gemini chỉ viết lời bình từ số liệu đã tính, không tìm kiếm web; không có số thì ghi "không có dữ liệu". Chỉ gửi mail khi có phiên giao dịch (sửa lỗi 4: chạy cả cuối tuần/ngày lễ).
+- Workflow mới `run_quant_v34.yml` (thứ Hai–thứ Sáu, 16:00); `run_quant.yml` chỉ còn chạy tay (V33 bị tắt lịch). `tai_du_lieu_v34.yml` làm mới BCTC vào ngày 20 của tháng 2, 5, 8, 11.
+- Người nhận mail lấy từ secret `EMAIL_NHAN` (mặc định gửi cho `EMAIL_USER`); không còn địa chỉ trong mã. Cần đặt secret `EMAIL_NHAN` nếu muốn gửi nhiều người.
+- Chưa kiểm tra gửi mail thật và gọi Gemini thật trong sandbox (chỉ chạy khô được).
+- Các lỗi V33 mục 3: 1, 2, 3, 6, 8, 9 không còn vì V33 không còn chạy theo lịch (không còn vị thế đa phiên hay dừng lỗ −5%); 4 đã sửa; 5 xác nhận là 403 TCBS; 7 đã bỏ yêu cầu AI điền số. Chưa sửa mã V33 cũ (giữ nguyên để tham chiếu).
