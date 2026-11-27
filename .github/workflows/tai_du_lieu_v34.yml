@@ -1,6 +1,9 @@
 name: Tai du lieu V34
 on:
   workflow_dispatch:
+  push:
+    branches: [nang-cap-v34]
+    paths: ['v34/kich_hoat_tai.txt']
 permissions:
   contents: write
 jobs:
