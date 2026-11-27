@@ -35,6 +35,25 @@ class DuLieuCoBan:
                     kt = pd.Timestamp(int(r["year"]), int(r["quarter"]) * 3, 1) + pd.offsets.MonthEnd(0)
                     cs.append((kt + pd.Timedelta(days=45), r))
             self.chi_so[ma] = sorted(cs, key=lambda x: x[0])
+        self.noibo = {}
+        for f in sorted(glob.glob(os.path.join(os.path.dirname(thu_muc), "noibo", "*.json"))):
+            ma = os.path.basename(f)[:-5]
+            ev = []
+            for x in json.load(open(f)):
+                if x.get("tradeStatusEn") != "Done" or x.get("actionTypeEn") not in ("Buy", "Sell") or not x.get("publicDate"): continue
+                acq = x.get("shareAcquire") or 0.0
+                if x["actionTypeEn"] == "Sell":
+                    sl = -acq if acq < 0 else max((x.get("shareBeforeTrade") or 0) - (x.get("shareAfterTrade") or 0), 0)
+                    ev.append((pd.Timestamp(x["publicDate"]), float(sl)))
+                else:
+                    sl = acq if acq > 0 else max((x.get("shareAfterTrade") or 0) - (x.get("shareBeforeTrade") or 0), 0)
+                    ev.append((pd.Timestamp(x["publicDate"]), -float(sl)))
+            self.noibo[ma] = ev
+
+    def ban_rong_noi_bo(self, ma, ngay):
+        """Số cổ phiếu người nội bộ bán ròng (đã thực hiện) trong 12 tháng trước `ngay`; None nếu không có dữ liệu."""
+        if ma not in self.noibo: return None
+        return sum(v for d, v in self.noibo[ma] if ngay - pd.Timedelta(days=365) < d <= ngay)
 
     def cac_nam(self, ma, ngay, so_nam=5):
         """Các năm đã công bố tại `ngay`, mới nhất cuối."""
@@ -49,6 +68,15 @@ class DuLieuCoBan:
 def _g(r, k):
     v = r.get(k)
     return float(v) if v is not None and np.isfinite(v) else np.nan
+
+
+def _phep_thu_noi_bo(dl, ma, ngay, nguong=0.005):
+    """Bán ròng của người nội bộ (đã thực hiện, 12 tháng) > 0,5% số cổ phiếu lưu hành thì không đạt. Chỉ đánh giá phần mua/bán, không có dữ liệu cầm cố hay gọi ký quỹ."""
+    bn = dl.ban_rong_noi_bo(ma, ngay)
+    cs = dl.chi_so_moi_nhat(ma, ngay)
+    sh = _g(cs[-1], "numberOfSharesMktCap") if cs else np.nan
+    if bn is None or not (sh and np.isfinite(sh) and sh > 0): return CHUA_DANH_GIA
+    return bool(bn / sh <= nguong)
 
 
 def phep_thu_phi_ngan_hang(dl, ma, ngay):
@@ -85,7 +113,8 @@ def phep_thu_phi_ngan_hang(dl, ma, ngay):
     cover = (cur.pbt + lai) / lai if lai > 0 else np.inf
     de = cur.vay / cur.vcsh if cur.vcsh > 0 else np.inf
     kq["6_no_vay"] = bool(cover >= 3 and de <= 1.5)
-    kq["7_noi_bo"] = CHUA_DANH_GIA
+    kq["7_noi_bo"] = _phep_thu_noi_bo(dl, ma, ngay)
+    kq["0_bctc_moi"] = bool(nam[-1][1]["hieu_luc"] >= ngay - pd.Timedelta(days=450))
     so_nam_cotuc = int((df.cotuc < 0).tail(5).sum())
     kq["8_co_tuc_tien_mat"] = bool(so_nam_cotuc >= 4)
     roe = (n4.lnst / n4.vcsh).mean()
@@ -103,7 +132,8 @@ def phep_thu_ngan_hang(dl, ma, ngay):
     roe = np.nanmean([_g(x, "roe") for x in cs])
     kq = {"npl<=3%": bool(npl <= 0.03), "bao_phu>=70%": bool(bao_phu >= 0.7),
           "tang_tin_dung<=30%": bool(tang_tin_dung <= 0.30) if np.isfinite(tang_tin_dung) else CHUA_DANH_GIA,
-          "roe>=10%": bool(roe >= 0.10), "co_tuc_tien_mat": CHUA_DANH_GIA}
+          "roe>=10%": bool(roe >= 0.10), "co_tuc_tien_mat": CHUA_DANH_GIA, "7_noi_bo": _phep_thu_noi_bo(dl, ma, ngay),
+          "0_bctc_moi": bool(dl.chi_so[ma][-1][0] >= ngay - pd.Timedelta(days=200)) if False else bool(any(d >= ngay - pd.Timedelta(days=200) for d, _ in dl.chi_so.get(ma, []) if d <= ngay))}
     return kq, {"roe": roe, "ocf_ln": np.nan, "lnst": np.nan, "so_nam_cotuc": np.nan}
 
 

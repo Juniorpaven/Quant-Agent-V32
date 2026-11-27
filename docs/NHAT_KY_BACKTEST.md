@@ -97,3 +97,30 @@ Cấu hình: vùng đi ngang ≥ 8 tuần (biên độ ≤ 30%); vào khi Spring
 - Người nhận mail lấy từ secret `EMAIL_NHAN` (mặc định gửi cho `EMAIL_USER`); không còn địa chỉ trong mã. Cần đặt secret `EMAIL_NHAN` nếu muốn gửi nhiều người.
 - Chưa kiểm tra gửi mail thật và gọi Gemini thật trong sandbox (chỉ chạy khô được).
 - Các lỗi V33 mục 3: 1, 2, 3, 6, 8, 9 không còn vì V33 không còn chạy theo lịch (không còn vị thế đa phiên hay dừng lỗ −5%); 4 đã sửa; 5 xác nhận là 403 TCBS; 7 đã bỏ yêu cầu AI điền số. Chưa sửa mã V33 cũ (giữ nguyên để tham chiếu).
+
+## 27/11/2026 – Mở rộng dữ liệu để xử lý hạn chế, chạy lại tầng 2 và tầng 4
+Nguồn mới (Vietcap IQ, yêu cầu thường, User-Agent khai báo): giá điều chỉnh và BCTC của 32 mã suy yếu hoặc hủy niêm yết (FLC, ROS, HAI, AMD, HQC, ITA, TTF, LDG, OGC, SCR, HNG…; GTN không có dữ liệu), và giao dịch nội bộ 2007–2026 cho 104/105 mã (GAB không có). Tập mã nay là 105 mã. Giá mã hủy niêm yết dừng ở ngày cuối, vị thế đang giữ coi như mất hết giá trị (bảo thủ).
+Thay đổi bộ lọc (đặt trước khi chạy lại): thêm phép thử 7 (bán ròng đã thực hiện của người nội bộ trong 12 tháng > 0,5% số cổ phiếu lưu hành thì loại; chỉ xét mua/bán, không có cầm cố, gọi ký quỹ) và quy tắc BCTC mới nhất không quá 15 tháng (ngân hàng: chỉ số quý không quá 200 ngày) để mã ngừng công bố không lọt qua bằng số liệu cũ. Bộ lọc loại đúng FLC, ROS, HQC, NVL tại các thời điểm 2021–2023.
+Vẫn không có nguồn tự động: phép thử 4 (bên liên quan), 5 (kiểm toán), lịch sử cổ tức riêng, BCTC trước 2018 (đã thử nhiều tên endpoint, đều 404).
+
+### Tầng 2 chạy lại (2021-05 → nay, chuẩn E1VFVN30: CAGR 9,88%, MDD −42,28%)
+| Biến thể | CAGR | MDD | Vòng quay/năm | 2021–2023 | 2024–nay |
+| --- | --- | --- | --- | --- | --- |
+| T2 N=12 | 6,19% | −43,01% | 33,1% | +7,34% | −1,97% |
+| T2 N=12 + tạm dừng MA200 | 5,03% | −33,34% | 30,9% | +5,09% | −1,88% |
+| T2 N=12, trần 4 ngân hàng | 7,37% | −41,41% | 24,7% | +3,10% | +0,71% |
+| T2 N=15 | 5,64% | −40,64% | 30,8% | +6,49% | −1,92% |
+| T2 N=12, pha 50% E1VFVN30 | 8,36% | −41,13% | 17,5% | +1,65% | +3,26% |
+| T2 N=12, trần 4 NH + pha 50% | 9,38% | −40,01% | 14,8% | +0,05% | +5,25% |
+(Chuẩn: 2021–2023 −6,74%, 2024–nay +11,04%.) **Quyết định không đổi: loại tầng 2 làm lõi** (biến thể tốt nhất vẫn thấp hơn chuẩn 0,5 điểm %, MDD tốt hơn chỉ 2,3 điểm %, không "rõ rệt"; đoạn 2024–nay thua nặng).
+
+### Tầng 4 chạy lại
+| Chiến lược | CAGR 2021-05→nay | MDD | Vòng quay/năm | 2021–2023 | 2024–nay |
+| --- | --- | --- | --- | --- | --- |
+| Mua đều E1VFVN30 | 9,88% | −42,28% | 0% | −6,74% | +11,04% |
+| Vệ tinh Wyckoff (mã đạt lọc) | 9,75% | −42,56% | 79,0% | −6,81% | +11,57% |
+| Vệ tinh Wyckoff (mọi mã) | 9,91% | −41,18% | 154,0% | −7,61% | +12,00% |
+**Quyết định không đổi: bỏ tầng 4, gộp vốn vệ tinh vào lõi** (chênh lệch trong biên nhiễu, không ổn định giữa hai đoạn).
+
+### Kết luận sau mở rộng dữ liệu
+Giảm thiên lệch người sống sót và thêm phép thử 7 không đổi kết luận: không tầng nào thêm vào thắng mua đều E1VFVN30 sau phí. Hạn chế còn lại: chỉ ~4,5 năm dữ liệu BCTC, một chế độ thị trường, thiếu phép thử 4 và 5, cổ tức dùng thay thế từ lưu chuyển tiền tệ, danh sách mã vẫn do chọn tay (chưa có lịch sử thành phần chỉ số).
