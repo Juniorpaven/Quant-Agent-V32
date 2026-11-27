@@ -40,3 +40,11 @@ Các cửa sổ MA150 và MA250 cho kết quả tương tự (xem chạy `python
 
 ### Bước tiếp theo
 - Tầng 2 cần BCTC và cổ tức. Đang chờ người dùng chọn nguồn thay TCBS.
+
+## 27/11/2026 – Thăm dò nguồn BCTC thay TCBS
+- Run "Tai du lieu V34" #2 thất bại sau 25 phút 29 giây: do TCBS trả 403 hàng trăm lần nên chạm giới hạn thời gian. Phần giá đã commit trước đó nên không mất dữ liệu. Đã bỏ TCBS khỏi `v34/tai_du_lieu.py`.
+- Thăm dò từ runner GitHub, dùng yêu cầu thường (User-Agent khai báo rõ, không giả trình duyệt, không Referer/Origin giả), có sự đồng ý của người dùng:
+  - VNDirect finfo (`finfo-api.vndirect.com.vn`): hết thời gian kết nối (ConnectTimeout) cả 4 endpoint. Runner không tới được máy chủ này.
+  - SSI fiin-fundamental: HTTP 403, trang "Blocked - SSI".
+- Kết luận: không có nguồn BCTC công khai nào lấy được tự động từ runner GitHub. Không tiếp tục cố vượt chặn.
+- Cần người dùng chọn: (a) tự cung cấp CSV BCTC và cổ tức vào `data/bctc/`, (b) cấp API key chính thức (DNSE Lightspeed hoặc SSI FastConnect) qua GitHub Secrets, (c) cho làm tạm bản chỉ dựa vào giá.
