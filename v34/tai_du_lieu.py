@@ -58,7 +58,7 @@ def tai_json(url):
 def kiem_tra_ket_noi():
     t1 = int(time.time()); t0 = t1 - 86400 * 30
     for ten, url in [("Entrade", f"https://services.entrade.com.vn/chart-api/v2/ohlcs/stock?from={t0}&to={t1}&symbol=FPT&resolution=1D"),
-                     ("TCBS", "https://apipubaws.tcbs.com.vn/tcanalysis/v1/finance/FPT/cashflow?yearly=1&isAll=true")]:
+                     ("VNDirect", "https://finfo-api.vndirect.com.vn/v4/ratios/latest?filter=code:FPT")]:
         try:
             r = requests.get(url, headers=HDR, timeout=10)
             print("THỬ", ten, r.status_code, r.text[:200].replace("\n", " "), flush=True)
@@ -79,20 +79,7 @@ def main():
             continue
         df.to_csv(f"{DATA}/gia/{ma}.csv", index=False)
         print("gia", ma, len(df), df.Date.min().date(), df.Date.max().date(), flush=True)
-    for ma in MA_LOC:
-        out = {}
-        for khoa, ten in NGUON_BCTC.items():
-            for ky, yearly in (("quy", 0), ("nam", 1)):
-                d = tai_json(f"https://apipubaws.tcbs.com.vn/tcanalysis/v1/finance/{ma}/{ten}?yearly={yearly}&isAll=true")
-                out[f"{khoa}_{ky}"] = d
-        out["codt"] = tai_json(f"https://apipubaws.tcbs.com.vn/tcanalysis/v1/company/{ma}/dividend-payment-histories?page=0&size=100")
-        out["ratio_nam"] = tai_json(f"https://apipubaws.tcbs.com.vn/tcanalysis/v1/finance/{ma}/financialratio?yearly=1&isAll=true")
-        out["ratio_quy"] = tai_json(f"https://apipubaws.tcbs.com.vn/tcanalysis/v1/finance/{ma}/financialratio?yearly=0&isAll=true")
-        if not any(out.values()):
-            loi.append(f"bctc:{ma}")
-            continue
-        json.dump(out, open(f"{DATA}/bctc/{ma}.json", "w"), ensure_ascii=False)
-        print("bctc", ma, {k: (len(v) if v else 0) for k, v in out.items()}, flush=True)
+    # BCTC: TCBS bị Cloudflare chặn (403) nên tạm bỏ; chờ nguồn thay thế (xem docs/NHAT_KY_BACKTEST.md)
     json.dump({"cap_nhat": datetime.now(timezone.utc).isoformat(), "loi": loi},
               open(f"{DATA}/_trang_thai.json", "w"), ensure_ascii=False, indent=1)
     print("LỖI:", loi)
