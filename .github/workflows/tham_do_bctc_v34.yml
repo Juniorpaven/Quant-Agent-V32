@@ -1,4 +1,4 @@
-name: Tham do BCTC V34
+name: Tham do BCTC V34 vong 2
 on:
   workflow_dispatch:
   push:
@@ -17,14 +17,14 @@ jobs:
       - run: pip install requests
       - name: Tham do
         timeout-minutes: 5
-        run: python -u v34/tham_do_bctc.py 2>&1 | tee data_tham_do.txt
+        run: python -u v34/tham_do_bctc.py 2>&1 | tee data_tham_do2.txt
       - name: Commit
         if: always()
         run: |
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
-          mkdir -p data/tham_do && cp data_tham_do.txt data/tham_do/_tom_tat.txt || true
-          git add data/tham_do
+          mkdir -p data/tham_do2 && cp data_tham_do2.txt data/tham_do2/_tom_tat.txt || true
+          git add data/tham_do2
           git commit -m "Kết quả thăm dò nguồn BCTC [skip ci]" || echo "Không có thay đổi"
           git pull --rebase origin ${{ github.ref_name }} || true
           git push origin HEAD:${{ github.ref_name }}
