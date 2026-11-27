@@ -18,8 +18,10 @@ jobs:
           python-version: '3.11'
       - run: pip install pandas requests
       - name: Tai du lieu
-        timeout-minutes: 25
-        run: python -u v34/tai_du_lieu.py bctc 2>&1 | tee data_nhat_ky.txt
+        timeout-minutes: 40
+        run: |
+          python -u v34/tai_du_lieu.py bctc 2>&1 | tee data_nhat_ky.txt
+          python -u v34/tai_mo_rong.py 2>&1 | tee -a data_nhat_ky.txt
       - name: Commit du lieu
         if: always()
         run: |
