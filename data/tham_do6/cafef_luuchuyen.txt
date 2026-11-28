@@ -1,0 +1,1041 @@
+200 text/html; charset=utf-8 len=44727
+
+
+<style>
+    
+
+    .table-wrapper-item {
+        gap: 20px;
+        display: flex;
+        flex-direction: column;
+        background: #f5f6f8;
+        border-bottom-right-radius: 12px;
+        border-bottom-left-radius: 12px;
+        border: 1px solid rgba(0, 0, 0, 0.10);
+        overflow: hidden;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    thead th {
+        box-shadow: 0 -1px 0 0 rgba(0, 0, 0, 0.05) inset;        
+        background: #FFF;
+    }
+    thead th.name_quy-item{
+        color: var(--CafeF-Blue, #004370);
+        text-align: center;
+        font-family: "SF Pro Display";
+        font-size: 15px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 20px;
+    }
+    tbody td {
+        /*border: 1px solid #e2e2e2;
+        padding: 14px 16px;
+        font-size: 16px;
+        color: #333;*/
+    }
+
+    tbody tr.section-item {
+        box-shadow: 0 -1px 0 0 rgba(0, 0, 0, 0.05) inset;
+    }
+
+    tbody tr.sub-title-item {
+        background: #fafafa;
+        font-weight: 700;
+    }
+
+    .title-item {
+        
+        color: var(--Red-1, #C32022);
+        
+        font-family: "SF Pro Display";
+        font-size: 20px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 28px; 
+    }
+
+    .left-item {
+        text-align: left;
+        border-right: 1px solid rgba(0, 0, 0, 0.10);
+        display: flex;
+        padding: 8px 20px;
+        align-items: center;
+        gap: 4px;
+        flex: 1 0 0;
+        align-self: stretch;
+    }
+
+    .center-item {
+        text-align: center;
+    }
+
+    .number-item {
+            width: 136px;
+            padding: 8px;
+            flex-direction: row;
+            justify-content: flex-end;
+            align-items: center;
+            align-self: stretch;
+            box-sizing: border-box;
+            height: 36px;
+            border-right: 1px solid rgba(0, 0, 0, 0.10);
+            text-align: end;
+            font-size: 13px !important;
+    }
+
+    .negative-item {
+        color: #c0392b;
+    }
+    .name_quy-item{
+        border-right: 1px solid rgba(0, 0, 0, 0.10);
+    }
+    .growth-item, .name_quy-item {
+        width:136px;
+        min-width:136px;
+        max-width:136px;
+        padding: 8px;
+        justify-content: center;
+        align-items: flex-end;
+        gap: 10px;
+        align-self: stretch;
+        
+    }
+    th, td{
+        box-sizing:border-box;
+    }
+    .bars-item {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        align-self: stretch;
+        height: 20px;
+    }
+
+    .bar-wrapper-item {
+        display: flex;
+        flex-direction: column;
+        width: 8px;
+        height: 20px;
+    }
+
+    .bar-top-item {
+        height: 10px;
+        display: flex;
+        align-items: flex-end;
+        width: 8px;
+    }
+
+    .bar-bottom-item {
+        height: 10px;
+        display: flex;
+        align-items: flex-start;
+        width: 8px;
+    }
+
+    .bar-pos-item {
+        width: 8px;
+        background: #0B75B1;
+    }
+
+    .bar-neg-item {
+        width: 8px;
+        background: #C32022;
+    }
+
+    .indent-1-item {
+        padding-left: 30px;
+    }
+
+    .indent-2-item {
+        padding-left: 55px;
+    }
+    .table_1-item{
+
+    }
+    .click_page-item{
+        width:36px;
+    min-width:36px;
+    max-width:36px;
+        padding: 8px;
+        align-items: center;
+        align-self: stretch;
+        border-right: 1px solid rgba(0, 0, 0, 0.10);
+    }
+    .level1-item{
+        color: #000;
+        font-family: "SF Pro Display";
+        font-size: 15px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 20px; 
+        background: #F8F8F8;
+    }
+    .level2-item, .level3-item{
+        color: #161616;
+        font-family: "SF Pro Display";
+        font-size: 15px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 20px;         
+        background: #FFF;
+    }
+    .not_click-item{
+        opacity: 0.3;
+        background: #e7e7e7;
+        cursor: not-allowed;
+    }
+    .allow_click-item{
+        cursor:pointer;
+    }
+    .chi-so-tai-chinh-item{
+        overflow: hidden;
+    border-radius: 12px;
+    border: solid 1px rgba(0, 0, 0, 0.10);
+    }
+    .name_quy-item span{
+        color: var(--CafeF-Red, #C32022);
+        font-family: "SF Pro Display";
+        font-size: 9px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 16px; 
+        display: flex;
+        height: 11px;
+        align-items: center;
+        justify-content: center;
+    }
+    .name_quy-item div{
+            display: flex;
+            flex-direction: column;
+            height: 28px;
+            align-items: center;
+            justify-content: center;
+    }
+</style>
+<div class="chose_time_unit_finacial-item">
+    <div class="chose_time_unit_finacial_left-item">
+        <div class="chose_time_unit_finacial_left_box-item">
+            <div class="chose_time_unit_finacial_left_name-item">Thời gian</div>
+            <div class="dropdown-item2">
+                <div class="dropdown-selected-item">
+                    <span>Theo quý</span>
+
+                    <img src="https://cafefnew.mediacdn.vn/Images/bctc/drop-select.png" />
+                </div>
+
+                <div class="dropdown-menu-item">
+                    <div class="dropdown-item-item active_drop_time-item" data-time="QUY">Theo quý</div>
+                    <div class="dropdown-item-item" data-time="NAM">Theo năm</div>
+                    <div class="dropdown-item-item" data-time="LUYKE">Lũy kế 6 tháng</div>
+                </div>
+            </div>
+        </div>
+        <div class="chose_time_unit_finacial_left_box-item">
+            <div class="chose_time_unit_finacial_left_name-item">Đơn vị</div>
+            <div class="dropdown-unit-item2">
+                <div class="dropdown-unit-selected-item">
+                    <span>Tỷ đồng</span>
+                    <img src="https://cafefnew.mediacdn.vn/Images/bctc/drop-select.png" />
+                </div>
+                <div class="dropdown-unit-menu-item">
+                    <div class="dropdown-unit-item-item active_drop_unit-item">Tỷ đồng </div>
+                    <div class="dropdown-unit-item-item">Triệu đồng </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="chose_time_unit_finacial_right-item">
+        <img style="width: 24px;" src="https://cafefnew.mediacdn.vn//Images/bctc/Download.png" />
+        <div>Xuất Excel</div>
+    </div>
+</div>
+<div style="display:flex;gap:20px; flex-direction: column; background: #f5f6f8;">
+    <div class="table-wrapper-item"></div>
+</div>
+
+<script>
+    var TAI_CHINH_Item = {
+        dropdown: document.querySelector('.dropdown-item2'),
+        selected: document.querySelector('.dropdown-selected-item span'),
+        selectedBox: document.querySelector('.dropdown-selected-item'),
+        items: document.querySelectorAll('.dropdown-menu-item .dropdown-item-item'),
+        dropdownUnit: document.querySelector('.dropdown-unit-item2'),
+        selectedUnit: document.querySelector('.dropdown-unit-selected-item span'),
+        selectedUnitBox: document.querySelector('.dropdown-unit-selected-item'),
+        unitItems: document.querySelectorAll('.dropdown-unit-menu-item .dropdown-unit-item-item'),
+        dataAll: [],
+        currentData: null,
+        currentPageIndex: 1,
+        currentPageSize: 4,
+        currentType: "ALL",
+        currentTypeTime: "QUY",
+        pageIndexes: {},
+        tableData: {},
+        tableDataCS: {},
+        isSecurity: false,
+        getPageIndex(type) {
+            if (!this.pageIndexes[type]) {
+                this.pageIndexes[type] = 1;
+            }
+            return this.pageIndexes[type];
+        },
+        getUnitDivisor() {
+            var unitText = this.selectedUnit.textContent.trim().toLowerCase();
+            if (unitText.indexOf("triệu") >= 0) {
+                return 1000000;
+            }
+            return 1000000000;
+        },
+        formatNumberValue(val) {
+            if (val === undefined || val === null || val === '') return "-";
+            var num = parseFloat(val);
+            if (isNaN(num) || num === 0) return "-";
+            var divisor = this.getUnitDivisor();
+            var result = num / divisor;
+            if (Math.abs(result) < 0.005) {
+                result = 0;
+            }
+            return result.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        },
+        async FindData(listData, code) {
+            var data = listData.find(x => x.code == code);
+
+            return data?.value || 0;
+        },
+
+        normalizeLcttTime(timeBctc) {
+            var time = String((timeBctc && timeBctc.time) || '').trim();
+            var content = String((timeBctc && timeBctc.content) || '').trim();
+            if (time && content && time.indexOf(content) < 0 && !/\d{4}/.test(time)) {
+                return (time + '-' + content).toUpperCase();
+            }
+            return (time || content).toUpperCase();
+        },
+
+        getLcttPeriodYear(period) {
+            if (period && period.year) {
+                return period.year;
+            }
+            if (period && period.Year) {
+                return period.Year;
+            }
+            var match = this.normalizeLcttTime(period).match(/(\d{4})/);
+            return match ? parseInt(match[1], 10) : 0;
+        },
+
+        getLcttPeriodQuarter(period) {
+            if (period && period.quater) {
+                return period.quater;
+            }
+            if (period && period.quarter) {
+                return period.quarter;
+            }
+            if (period && period.Quarter) {
+                return period.Quarter;
+            }
+            var match = this.normalizeLcttTime(period).match(/Q(\d)/i);
+            return match ? parseInt(match[1], 10) : 0;
+        },
+
+        findMongoLcttPeriod(apiPeriod, mongoPeriods) {
+            var apiKey = this.normalizeLcttTime(apiPeriod);
+            var apiYear = this.getLcttPeriodYear(apiPeriod);
+            var apiQuarter = this.getLcttPeriodQuarter(apiPeriod);
+            return (mongoPeriods || []).find(function (mongoPeriod) {
+                if (TAI_CHINH_Item.normalizeLcttTime(mongoPeriod) === apiKey) {
+                    return true;
+                }
+                var mongoYear = TAI_CHINH_Item.getLcttPeriodYear(mongoPeriod);
+                var mongoQuarter = TAI_CHINH_Item.getLcttPeriodQuarter(mongoPeriod);
+                return apiYear > 0 && apiQuarter > 0
+                    && mongoYear === apiYear
+                    && mongoQuarter === apiQuarter;
+            });
+        },
+
+        isSecurityLcttDisplayOnlyRow(templateRow) {
+            return /^Trong đó có kỳ hạn/i.test(String((templateRow && templateRow.name) || '').trim());
+        },
+
+        isSecurityLcttIntroRow(templateRow, rowIndex) {
+            return rowIndex === 0
+                && /^I+\./.test(String((templateRow && templateRow.name) || '').trim());
+        },
+
+        countSecurityLcttMongoDataRows(sectionRows) {
+            var count = 0;
+            (sectionRows || []).forEach(function (templateRow, rowIndex) {
+                if (TAI_CHINH_Item.isSecurityLcttDisplayOnlyRow(templateRow)
+                    || TAI_CHINH_Item.isSecurityLcttIntroRow(templateRow, rowIndex)) {
+                    return;
+                }
+                count++;
+            });
+            return count;
+        },
+
+        mapSecurityLcttSectionRows(sectionRows, mongoLines, sectionOffset) {
+            var mongoPointer = sectionOffset;
+            var result = [];
+            (sectionRows || []).forEach(function (templateRow, rowIndex) {
+                if (TAI_CHINH_Item.isSecurityLcttDisplayOnlyRow(templateRow)
+                    || TAI_CHINH_Item.isSecurityLcttIntroRow(templateRow, rowIndex)) {
+                    result.push({ code: templateRow.code, value: undefined });
+                    return;
+                }
+
+                var line = mongoLines[mongoPointer];
+                mongoPointer++;
+                var val = line
+                    ? (line.Value != null ? line.Value : line.value)
+                    : undefined;
+                result.push({ code: templateRow.code, value: val });
+            });
+            return result;
+        },
+
+        mergeSecurityLcttMongoDetail(apiPayload, mongoPeriods) {
+            if (!apiPayload || !apiPayload.value || !mongoPeriods || !mongoPeriods.length) {
+                return apiPayload;
+            }
+
+            var templates = apiPayload.value.templace || [];
+            if (!apiPayload.value.data) {
+                apiPayload.value.data = [];
+            }
+
+            var sectionOffset = 0;
+            templates.forEach(function (sectionTemplate) {
+                var sectionRows = sectionTemplate.data || [];
+
+                var periodGroup = apiPayload.value.data.find(function (x) {
+                    return String(x.code) === String(sectionTemplate.code);
+                });
+                if (!periodGroup) {
+                    periodGroup = { code: sectionTemplate.code, data: [] };
+                    apiPayload.value.data.push(periodGroup);
+                }
+
+                // Ghép tuần tự Mongo ↔ template; bỏ qua dòng tiêu đề I. và "Trong đó có kỳ hạn"
+                periodGroup.data = mongoPeriods.map(function (mongoPeriod) {
+                    var mongoLines = mongoPeriod.Data || mongoPeriod.data || [];
+                    return {
+                        time: mongoPeriod.Time || mongoPeriod.time,
+                        content: mongoPeriod.Content || mongoPeriod.content || '',
+                        year: mongoPeriod.Year || mongoPeriod.year,
+                        quarter: mongoPeriod.Quarter || mongoPeriod.quarter,
+                        data: TAI_CHINH_Item.mapSecurityLcttSectionRows(
+                            sectionRows,
+                            mongoLines,
+                            sectionOffset
+                        )
+                    };
+                });
+
+                sectionOffset += TAI_CHINH_Item.countSecurityLcttMongoDataRows(sectionRows);
+            });
+
+            apiPayload.value.count = Math.max(apiPayload.value.count || 0, mongoPeriods.length);
+            return apiPayload;
+        },
+
+        async enrichSecurityLcttFromMongo(symbol, pageIndex, typeTime, data) {
+            if (!this.isSecurity || !symbol || !data || !data.value) {
+                return;
+            }
+
+            try {
+                var mongoUrl = `/du-lieu/Ajax/PageNew/GetSecurityLcttDetail.ashx?Symbol=${symbol}&pageIndex=${pageIndex}&pageSize=4&TypeTime=${typeTime}`;
+                var mongoRes = await fetch(mongoUrl);
+                if (!mongoRes.ok) {
+                    console.warn('Security LCTT mongo enrich HTTP', mongoRes.status);
+                    return;
+                }
+                var mongoJson = await mongoRes.json();
+                if (mongoJson && mongoJson.Success && mongoJson.Data && mongoJson.Data.length) {
+                    this.mergeSecurityLcttMongoDetail(data, mongoJson.Data);
+                } else if (mongoJson && mongoJson.Success === false) {
+                    console.warn('Security LCTT mongo enrich failed:', mongoJson.Message || 'unknown');
+                }
+            } catch (mongoErr) {
+                console.warn('Security LCTT mongo enrich skipped:', mongoErr);
+            }
+        },
+        
+        async renderDatachild(data, id) {
+            var type = id.replace('table_', '');
+            var p = this.getPageIndex(type);
+            var count = data.value.count || 0;
+            var htmlTable = data.value.templace.map(item => {
+                var dataBCTC = data.value.data.find(x => x.code == item.code);
+                if (!dataBCTC || !dataBCTC.data) return '';
+                return `
+   
+            <thead>
+                <tr>
+                    <th class="left-item title">${item.name}</th>
+                    <th ${p * 4 >= count ? '' : `onclick="TAI_CHINH_Item.getDataReportSummary(${p + 1},4,'${item.code}', TAI_CHINH_Item.currentTypeTime)"`} class="click_page ${p * 4 >= count ? "not_click" : "allow_click"}"><img style="height:11px;" src="https://cafefnew.mediacdn.vn/Images/bctc/next_pre.png"/></th>
+                    ${[...dataBCTC.data].reverse().map(
+                                timeBctc => ` <th class="name_quy">
+                        <div>
+                        <div>${timeBctc.time}</div>
+                        <span>${timeBctc.content}</span>
+                        </div></th> `
+                            ).join('')}
+                    <th onclick="${p > 1 ? `TAI_CHINH_Item.getDataReportSummary(${p - 1},4,'${item.code}', TAI_CHINH_Item.currentTypeTime)` : ''}" class="click_page ${p == 1 ? "not_click" : "allow_click"}"><img style="height:11px;transform: rotateY(180deg);" src="https://cafefnew.mediacdn.vn/Images/bctc/next_pre.png"/></th>
+                    <th class="name_quy" style="border: none;">Tăng trưởng</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                ${item.data.map(dataItem => {
+                                const levelClass = dataItem.lever == 1 ? "level1" : dataItem.lever == 2 ? "level2" : "level3";
+                                const rowValues = [...dataBCTC.data].reverse().map(timeBctc => {
+                                    const rawVal = timeBctc.data.find(x => x.code == dataItem.code)?.value;
+                                    return (rawVal !== undefined && rawVal !== null && rawVal !== '') ? parseFloat(rawVal) : 0;
+                                });
+                                const hasPositive = rowValues.some(v => v > 0);
+                                const hasNegative = rowValues.some(v => v < 0);
+                                const isMixed = hasPositive && hasNegative;
+                                const scale = isMixed ? 10 : 20;
+
+                                const absValues = rowValues.map(v => Math.abs(v));
+                                const maxVal = Math.max(...absValues);
+                                const heights = rowValues.map(v => {
+                                    if (maxVal === 0) return { h: 0, val: 0 };
+                                    return {
+                                        h: (Math.abs(v) / maxVal) * scale,
+                                        val: v
+                                    };
+                                });
+
+                                const cols = [...dataBCTC.data].reverse().map(timeBctc => {
+                                    const rawVal = timeBctc.data.find(x => x.code == dataItem.code)?.value;
+                                    const formatted = TAI_CHINH_Item.formatNumberValue(rawVal);
+                                    const styleColor = (rawVal !== undefined && rawVal !== null && rawVal !== '' && parseFloat(rawVal) < 0) ? ' style="color: #C32022;"' : '';
+                                    return ` <td class="number-item"${styleColor}> ${formatted} </td> `;
+                                }).join('');
+                                return `
+                        <tr class="section ${levelClass}"">
+                            <td class="left-item">${dataItem.name}</td>
+                            <td class="click_page"></td>
+                            ${cols}
+                             <td class="click_page"></td>
+                            <td class="growth">
+                                <div class="bars">
+                                    ${heights.map(item => {
+                                    if (!isMixed) {
+                                        if (item.val > 0) {
+                                            return `
+                                                    <div class="bar-wrapper" style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center; height: 20px;">
+                                                        <div class="bar-pos" style="height: ${item.h}px;"></div>
+                                                    </div>
+                                                `;
+                                        } else if (item.val < 0) {
+                                            return `
+                                                    <div class="bar-wrapper" style="display: flex; flex-direction: column; justify-content: flex-start; align-items: center; height: 20px;">
+                                                        <div class="bar-neg" style="height: ${item.h}px;"></div>
+                                                    </div>
+                                                `;
+                                        } else {
+                                            return `<div class="bar-wrapper" style="height: 20px; width: 8px;"></div>`;
+                                        }
+                                    } else {
+                                        return `
+                                                <div class="bar-wrapper" style="display: flex; flex-direction: column; height: 20px;">
+                                                    <div class="bar-top" style="height: 10px; display: flex; align-items: flex-end; justify-content: center; width: 8px;">
+                                                        ${item.val > 0 ? `<div class="bar-pos" style="height: ${item.h}px;"></div>` : ''}
+                                                    </div>
+                                                    <div class="bar-bottom" style="height: 10px; display: flex; align-items: flex-start; justify-content: center; width: 8px;">
+                                                        ${item.val < 0 ? `<div class="bar-neg" style="height: ${item.h}px;"></div>` : ''}
+                                                    </div>
+                                                </div>
+                                            `;
+                                    }
+                                }).join('')}
+                                </div>
+                            </td>
+                  
+                        </tr>
+                    `;
+                            }).join('')}
+                        </tbody>
+                `;
+            }).join('');
+            document.querySelector(`#${id}`).innerHTML = htmlTable;
+        },
+        async renderDataAll(data) {
+            
+            var count = data.value.count || 0;
+            var htmlTable = ``;
+            if (data.value.templace == null || data.value.templace.length === 0) {
+                htmlTable = `<div style="display: flex;padding: 12px; justify-content: center; ">Không có dữ liệu</div>`;
+            } else {
+                htmlTable = data.value.templace.map(item => {
+                    var dataBCTC = data.value.data.find(x => x.code == item.code);
+                    if (!dataBCTC || !dataBCTC.data) return '';
+                    var p = this.getPageIndex(item.code);
+                    return `
+                <table class="table_${item.number}" id="table_${item.code}">
+                    <thead>
+                        <tr>
+                            <th class="left-item title">${item.name}</th>
+                            <th ${p * 4 >= count ? '' : `onclick="TAI_CHINH_Item.getDataReportSummary(${p + 1},4,'${item.code}', TAI_CHINH_Item.currentTypeTime)"`} class="click_page ${p * 4 >= count ? "not_click" : "allow_click"}"><img style="height:11px;" src="https://cafefnew.mediacdn.vn/Images/bctc/next_pre.png"/></th>
+                            ${[...dataBCTC.data].reverse().map(
+                        timeBctc => ` <th class="name_quy">
+                                <div>
+                                <div>${timeBctc.time}</div>
+                                <span>${timeBctc.content}</span>
+                                </div></th> `
+                    ).join('')}
+                            <th onclick="${p > 1 ? `TAI_CHINH_Item.getDataReportSummary(${p - 1},4,'${item.code}', TAI_CHINH_Item.currentTypeTime)` : ''}" class="click_page ${p == 1 ? "not_click" : "allow_click"}"><img style="height:11px;transform: rotateY(180deg);" src="https://cafefnew.mediacdn.vn/Images/bctc/next_pre.png"/></th>
+                            <th class="name_quy" style="border: none;">Tăng trưởng</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        ${item.data.map(dataItem => {
+                        const levelClass = dataItem.lever == 1 ? "level1" : dataItem.lever == 2 ? "level2" : "level3";
+                        const rowValues = [...dataBCTC.data].reverse().map(timeBctc => {
+                            const rawVal = timeBctc.data.find(x => x.code == dataItem.code)?.value;
+                            return (rawVal !== undefined && rawVal !== null && rawVal !== '') ? parseFloat(rawVal) : 0;
+                        });
+                        const hasPositive = rowValues.some(v => v > 0);
+                        const hasNegative = rowValues.some(v => v < 0);
+                        const isMixed = hasPositive && hasNegative;
+                        const scale = isMixed ? 10 : 20;
+
+                        const absValues = rowValues.map(v => Math.abs(v));
+                        const maxVal = Math.max(...absValues);
+                        const heights = rowValues.map(v => {
+                            if (maxVal === 0) return { h: 0, val: 0 };
+                            return {
+                                h: (Math.abs(v) / maxVal) * scale,
+                                val: v
+                            };
+                        });
+                        const cols = [...dataBCTC.data].reverse().map(timeBctc => {
+                            const rawVal = timeBctc.data.find(x => x.code == dataItem.code)?.value;
+                            const formatted = TAI_CHINH_Item.formatNumberValue(rawVal);
+                            const styleColor = (rawVal !== undefined && rawVal !== null && rawVal !== '' && parseFloat(rawVal) < 0) ? ' style="color: #C32022;"' : '';
+                            return ` <td class="number"${styleColor}> ${formatted} </td> `;
+                        }).join('');
+
+                        return `
+                                <tr class="section ${levelClass}">
+
+                                    <td class="left-item">${dataItem.name}</td>
+                                    <td class="click_page"></td>
+                                    ${cols}
+                                     <td class="click_page"></td>
+                                    <td class="growth">
+                                        <div class="bars">
+                                            ${heights.map(item => {
+                            if (!isMixed) {
+                                if (item.val > 0) {
+                                    return `
+                                                            <div class="bar-wrapper" style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center; height: 20px;">
+                                                                <div class="bar-pos" style="height: ${item.h}px;"></div>
+                                                            </div>
+                                                        `;
+                                } else if (item.val < 0) {
+                                    return `
+                                                            <div class="bar-wrapper" style="display: flex; flex-direction: column; justify-content: flex-start; align-items: center; height: 20px;">
+                                                                <div class="bar-neg" style="height: ${item.h}px;"></div>
+                                                            </div>
+                                                        `;
+                                } else {
+                                    return `<div class="bar-wrapper" style="height: 20px; width: 8px;"></div>`;
+                                }
+                            } else {
+                                return `
+                                                        <div class="bar-wrapper" style="display: flex; flex-direction: column; height: 20px;">
+                                                            <div class="bar-top" style="height: 10px; display: flex; align-items: flex-end; justify-content: center; width: 8px;">
+                                                                ${item.val > 0 ? `<div class="bar-pos" style="height: ${item.h}px;"></div>` : ''}
+                                                            </div>
+                                                            <div class="bar-bottom" style="height: 10px; display: flex; align-items: flex-start; justify-content: center; width: 8px;">
+                                                                ${item.val < 0 ? `<div class="bar-neg" style="height: ${item.h}px;"></div>` : ''}
+                                                            </div>
+                                                        </div>
+                                                    `;
+                            }
+                        }).join('')}
+                                        </div>
+                                    </td>
+          
+                                </tr>
+                            `;
+                    }).join('')}
+                    </tbody>
+                </table>
+            `;
+                }).join('');
+            }
+            document.querySelector('.table-wrapper-item').innerHTML = htmlTable;
+        },
+        async getDataReportSummary(pageIndex = 1, pagesize = 4, type = "ALL", typeTime = "QUY") {
+            try {
+                if (type !== "ALL") {
+                    this.pageIndexes[type] = pageIndex;
+                } else {
+                    this.pageIndexes = {
+                        HDKD: 1,
+                        HDDT: 1,
+                        HDTC: 1
+                    };
+                }
+                const response = await fetch(`https://apiweb.cafef.vn/api/v1/BCTC/GetReportLCTT?symbol=FPT&pageIndex=${pageIndex}&pageSize=${pagesize}&reportType=${type}&TypeTime=${typeTime}`);
+                const data = await response.json();
+
+                await this.enrichSecurityLcttFromMongo('FPT', pageIndex, typeTime, data);
+
+                this.currentData = data;
+                this.currentPageIndex = pageIndex;
+                this.currentPageSize = pagesize;
+                this.currentType = type;
+                this.currentTypeTime = typeTime;
+
+                if (type != "ALL") {
+                    this.tableData[type] = data;
+                    await this.renderDatachild(data, `table_${type}`)
+                } else {
+                    data.value.templace.forEach(temp => {
+                        var singleData = data.value.data.find(x => x.code === temp.code);
+                        if (singleData) {
+                            this.tableData[temp.code] = {
+                                value: {
+                                    templace: [temp],
+                                    data: [singleData],
+                                    count: data.value.count
+                                }
+                            };
+                        }
+                    });
+                    await this.renderDataAll(data);
+                }
+
+                return data;
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        
+        async init() {
+            this.bindDropdownTime();
+            this.bindDropdownUnit();
+            this.bindClickOutside();
+            this.bindExportExcel();
+            await this.getDataReportSummary();
+        },
+        bindExportExcel: function () {
+            var btn = document.querySelector('.chose_time_unit_finacial_right-item');
+            if (btn) {
+                btn.style.cursor = 'pointer';
+                btn.addEventListener('click', () => {
+                    this.exportToExcel();
+                });
+            }
+        },
+        exportToExcel: function () {
+            var wrapperTables = Array.from(document.querySelectorAll('.table-wrapper-item table'));
+            
+            var tables = [...wrapperTables];
+            if (!tables.length) {
+                alert("Không có dữ liệu để xuất Excel.");
+                return;
+            }
+            
+            var excelHtml = `
+            <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+            <head>
+                <meta charset="utf-8" />
+                <!--[if gte mso 9]>
+                <xml>
+                    <x:ExcelWorkbook>
+                        <x:ExcelWorksheets>
+                            <x:ExcelWorksheet>
+                                <x:Name>BCTC_Tom_Tat</x:Name>
+                                <x:WorksheetOptions>
+                                    <x:DisplayGridlines/>
+                                </x:WorksheetOptions>
+                            </x:ExcelWorksheet>
+                        </x:ExcelWorksheets>
+                    </x:ExcelWorkbook>
+                </xml>
+                <![endif]-->
+                <style>
+                    table { border-collapse: collapse; margin-bottom: 20px; font-family: Arial, sans-serif; }
+                    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+                    th { background-color: #f2f2f2; font-weight: bold; }
+                    .title-item { color: #C32022; font-size: 16px; font-weight: bold; }
+                    .level1-item { font-weight: bold; background-color: #F8F8F8; }
+                    .level2-item { font-weight: normal; }
+                    .level3-item { font-weight: normal; }
+                    .number-item { text-align: right; }
+                </style>
+            </head>
+            <body>
+            `;
+
+            tables.forEach(table => {
+                excelHtml += '<table>';
+                
+                // Process thead
+                var thead = table.querySelector('thead');
+                if (thead) {
+                    excelHtml += '<thead>';
+                    var rows = thead.querySelectorAll('tr');
+                    rows.forEach(row => {
+                        excelHtml += '<tr>';
+                        var ths = row.querySelectorAll('th');
+                        ths.forEach((th, index) => {
+                            // Skip next/prev pagination columns and growth column
+                            if (th.classList.contains('click_page-item') || th.textContent.includes('Tăng trưởng')) {
+                                return;
+                            }
+                            excelHtml += `<th>${th.innerText.trim()}</th>`;
+                        });
+                        excelHtml += '</tr>';
+                    });
+                    excelHtml += '</thead>';
+                }
+                
+                // Process tbody
+                var tbody = table.querySelector('tbody');
+                if (tbody) {
+                    excelHtml += '<tbody>';
+                    var rows = tbody.querySelectorAll('tr');
+                    rows.forEach(row => {
+                        var levelClass = '';
+                        if (row.classList.contains('level1-item')) levelClass = ' class="level1-item"';
+                        else if (row.classList.contains('level2-item')) levelClass = ' class="level2-item"';
+                        else if (row.classList.contains('level3-item')) levelClass = ' class="level3-item"';
+                        
+                        excelHtml += `<tr${levelClass}>`;
+                        var tds = row.querySelectorAll('td');
+                        tds.forEach((td, index) => {
+                            // Skip next/prev pagination columns and growth column (bars)
+                            if (td.classList.contains('click_page-item') || td.classList.contains('growth-item')) {
+                                return;
+                            }
+                            
+                            var isNumber = td.classList.contains('number-item');
+                            var styleAttr = '';
+                            if (isNumber) {
+                                styleAttr = ' class="number-item"';
+                                var isNegative = td.style.color === 'rgb(195, 32, 34)' || td.getAttribute('style')?.includes('#C32022');
+                                if (isNegative) {
+                                    styleAttr = ' class="number-item" style="color: #C32022;"';
+                                }
+                            }
+                            excelHtml += `<td${styleAttr}>${td.innerText.trim()}</td>`;
+                        });
+                        excelHtml += '</tr>';
+                    });
+                    excelHtml += '</tbody>';
+                }
+                
+                excelHtml += '</table>';
+            });
+
+            excelHtml += '</body></html>';
+
+            var symbol = 'fpt'.toUpperCase() || 'BCTC';
+            var fileName = `${symbol}_LCTT.xls`;
+            var blob = new Blob([excelHtml], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+            
+            if (window.navigator && window.navigator.msSaveBlob) { // IE 10+
+                window.navigator.msSaveBlob(blob, fileName);
+            } else {
+                var link = document.createElement("a");
+                if (link.download !== undefined) {
+                    var url = URL.createObjectURL(blob);
+                    link.setAttribute("href", url);
+                    link.setAttribute("download", fileName);
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+            }
+        },
+        bindDropdownTime: function () {
+            this.selectedBox.addEventListener('click', () => {
+                this.dropdownUnit.classList.remove('active-item');
+                this.dropdown.classList.toggle('active-item');
+            });
+            this.items.forEach(item => {
+                item.addEventListener('click', () => {
+                    this.selected.textContent = item.textContent.trim();
+                    this.items.forEach(i => {
+                        i.classList.remove('active_drop_time-item');
+                    });
+                    item.classList.add('active_drop_time-item');
+                    this.dropdown.classList.remove('active-item');
+                    
+                    var typeTime = item.getAttribute('data-time') || 'QUY';
+                    this.getDataReportSummary(1, 4, "ALL", typeTime);
+                });
+            });
+        },
+        bindDropdownUnit: function () {
+            this.selectedUnitBox.addEventListener('click', () => {
+                this.dropdown.classList.remove('active-item');
+                this.dropdownUnit.classList.toggle('active-item');
+            });
+            this.unitItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    this.selectedUnit.textContent = item.textContent.trim();
+                    // Update UI active classes
+                    this.unitItems.forEach(i => {
+                        i.classList.remove('active_drop_unit-item');
+                    });
+                    item.classList.add('active_drop_unit-item');
+                    this.dropdownUnit.classList.remove('active-item');
+                    // Re-render all tables with updated unit selection using stored data
+                    if (this.currentData) {
+                        this.renderDataAll(this.currentData);
+                    }
+                });
+            });
+        },
+        bindClickOutside: function () {
+            document.addEventListener('click', (e) => {
+                if (!this.dropdown.contains(e.target)) {
+                    this.dropdown.classList.remove('active-item');
+                }
+                if (!this.dropdownUnit.contains(e.target)) {
+                    this.dropdownUnit.classList.remove('active-item');
+                }
+            });
+        }
+    };
+    TAI_CHINH_Item.init();
+</script>
+
+<style>
+    .chose_time_unit_finacial-item {
+        display: flex;
+        padding: 8px 20px;
+        justify-content: space-between;
+        align-items: center;
+        background:  #F8F8F8;
+        border: 1px solid rgba(0, 0, 0, 0.10);
+        width: 100%;
+        box-sizing: border-box;
+        border-bottom: none;
+    }
+
+    .chose_time_unit_finacial_left-item {
+        display: flex;
+        gap: 24px;
+    }
+
+    .chose_time_unit_finacial_left_box-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .chose_time_unit_finacial_left_name-item {
+        color: var(--secondary-text, #353535);
+        font-family: "SF Pro Display";
+        font-size: 15px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 20px; /* 133.333% */
+        letter-spacing: 0.2px;
+    }
+
+    .dropdown-item2, .dropdown-unit-item2 {
+        position: relative;
+        display: inline-block;
+        font-size: 14px;
+    }
+
+    .dropdown-selected-item, .dropdown-unit-selected-item {
+        height: 28px;
+        justify-content: space-between;
+        cursor: pointer;
+        display: flex;
+        padding: 4px 16px;
+        align-items: center;
+        gap: 8px;
+        align-self: stretch;
+        border-radius: 8px;
+        border: 1px solid rgba(0, 0, 0, 0.10);
+        background: #F8F8F8;
+        box-sizing: border-box;
+        color: #004370;
+        text-align: center;
+        font-family: "SF Pro Display";
+        font-size: 15px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 20px;
+    }
+
+        .dropdown-selected-item img, .dropdown-unit-selected-item img {
+            width: 12px;
+            flex-shrink: 0;
+        }
+
+    .dropdown-menu-item, .dropdown-unit-menu-item {
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        min-width: 100%;
+        background: #fff;
+        border: 1px solid #E5E5E5;
+        border-radius: 8px;
+        overflow: hidden;
+        width: 132px;
+        z-index: 10;
+        display: none;
+        font-style: normal;
+        font-weight: 600;
+    }
+
+    .dropdown-item-item, .dropdown-unit-item-item {
+        padding: 10px 12px;
+        cursor: pointer;
+    }
+
+        .dropdown-item-item:hover, .dropdown-unit-item-item:hover {
+            background: #F5F5F5;
+        }
+
+    .dropdown-item2.active-item .dropdown-menu-item, .dropdown-unit-item2.active-item .dropdown-unit-menu-item {
+        display: block;
+    }
+
+    .active_drop_time-item, .active_drop_unit-item {
+        background: #ceddff;
+    }
+
+    .chose_time_unit_finacial_right-item {
+        display: flex;
+        height: 36px;
+        padding: 6px 20px 6px 12px;
+        align-items: flex-start;
+        gap: 10px;
+        border-radius: 8px;
+        background: #33A42E;
+        box-shadow: 0 -2px 0 0 rgba(0, 0, 0, 0.25) inset;
+        color: #FFF;
+        font-family: "SF Pro Display";
+        font-size: 17px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 24px;
+        box-sizing: border-box;
+    }
+</style>

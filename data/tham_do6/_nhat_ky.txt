@@ -1,0 +1,10 @@
+cafef_co_tuc 200 4450 
+cafef_kqkd 200 40163 
+s_co_tuc 404 21 
+s_kqkd 404 21 
+cafef_kqkd_nam2015 200 40163 
+cafef_kqkd_trang2 200 40163 
+cafef_candoi 200 36938 
+cafef_luuchuyen 200 44727 
+cafef_chiso 200 19337 
+cafef_chiso_tt 200 986 

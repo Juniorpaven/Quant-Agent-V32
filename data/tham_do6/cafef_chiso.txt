@@ -1,0 +1,466 @@
+200 text/html; charset=utf-8 len=19337
+
+
+<div style="display: flex;
+    flex-direction: column;
+    background: #FFF;
+    border: solid 1px rgba(0, 0, 0, 0.10);
+    overflow: hidden;
+    border-bottom-right-radius: 12px;
+    border-bottom-left-radius: 12px;">
+    <div class="chart-chi-so-tai-chinh"></div>
+    <div class="chi-so-tai-chinh-tab"></div>
+</div>
+<style>
+    .chart-chi-so-tai-chinh {
+        height: 336px;
+        border-bottom: solid 2px #EEE;
+    }
+    .chart-chi-so-tai-chinh .highcharts-yaxis-labels text {
+        white-space: nowrap;
+    }
+    .table_cs_cstc .number-item {
+    color: #161616;
+    text-align: right;
+    font-family: "SF Pro Display";
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 16px;
+    letter-spacing: 0.2px;
+}
+    .number-item {
+    width: 136px;
+    padding: 8px;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    align-self: stretch;
+    box-sizing: border-box;
+    height: 36px;
+    border-right: 1px solid rgba(0, 0, 0, 0.10);
+    text-align: end;
+    font-size: 13px !important;
+}
+</style>
+<script>
+    var CHI_SO = {
+        tableDataCS: {},
+        imageActive: 'EPS',
+        formatYAxisLabel(value) {
+            if (value === 0) return '0';
+
+            const abs = Math.abs(value);
+            if (abs >= 1e9) {
+                return Highcharts.numberFormat(value / 1e9, 0, '.', ' ') + ' Tỷ';
+            }
+            if (abs >= 1e6) {
+                return Highcharts.numberFormat(value / 1e6, 0, '.', ' ') + ' M';
+            }
+            if (abs >= 1e4) {
+                return Highcharts.numberFormat(value / 1e3, 0, '.', ' ') + ' K';
+            }
+            if (abs < 1) {
+                return Highcharts.numberFormat(value, 2, '.', ' ');
+            }
+            if (abs < 10) {
+                return Highcharts.numberFormat(value, 1, '.', ' ');
+            }
+            return Highcharts.numberFormat(value, 0, '.', ' ');
+        },
+        getChartMarginLeft(seriesData) {
+            const yValues = seriesData.map(d => d.y);
+            const dataMax = Math.max(...yValues, 0);
+            const dataMin = Math.min(...yValues, 0);
+            const axisMax = dataMax > 0 ? dataMax * 1.1 : 0;
+            const axisMin = dataMin < 0 ? dataMin * 1.1 : 0;
+            const sampleLabels = [
+                this.formatYAxisLabel(axisMax),
+                this.formatYAxisLabel(axisMin),
+                this.formatYAxisLabel(0)
+            ];
+            const maxLen = Math.max(...sampleLabels.map(s => s.length));
+            return Math.max(55, maxLen * 7 + 15);
+        },
+        resolveChartUnit(code, apiUnit) {
+            if (code === 'EPS' || code === 'BV' || code === 'BVPS') {
+                return 'nghìn đồng';
+            }
+            if (['ROA', 'ROE', 'ROS', 'GOS', 'DAR', 'ROEA', 'ROAA'].includes(code)) {
+                return 'Phần trăm';
+            }
+            if (code === 'PE' || code === 'P/E') {
+                return '';
+            }
+            if (!apiUnit || apiUnit === 'đồng' || apiUnit === 'nghìn') {
+                return 'nghìn đồng';
+            }
+            if (apiUnit === '%' || apiUnit === '(%)' || apiUnit.toLowerCase() === 'percent') {
+                return 'Phần trăm';
+            }
+            return apiUnit;
+        },
+        async GetApiChart(code = "EPS") {
+            try {
+                const response = await fetch(`https://apiweb.cafef.vn/api/v1/BCTC/FinancialIndicatorsChart?symbol=FPT&pageIndex=1&pageSize=15&type=${code}`);
+                const data = await response.json();
+                this.imageActive = code;
+                if (data && data.isSuccess && data.value) {
+                    this.createChartChiSo(data.value);
+                }
+
+                // Update check-icon in every name_TC cell
+                document.querySelectorAll('.table_cs_cstc .name_TC').forEach(td => {
+                    const rowCode = td.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
+                    const iconDiv = td.querySelector('div');
+                    if (!iconDiv) return;
+                    if (rowCode === code) {
+                        iconDiv.innerHTML = '<img src="https://cafefnew.mediacdn.vn/Images/Icons/check-yl.svg"/>';
+                    } else {
+                        iconDiv.innerHTML = '';
+                    }
+                });
+
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        createChartChiSo(rawData) {
+            const container = document.querySelector('.chart-chi-so-tai-chinh');
+            if (!container) return;
+
+            // Parse data
+            let chartItems = Array.isArray(rawData)
+                ? rawData
+                : (rawData.data || rawData.items || []);
+
+            let chartName = rawData.name || this.imageActive || '';
+            let unit = this.resolveChartUnit(this.imageActive, rawData.unit);
+
+            if (!chartItems.length) {
+                container.innerHTML = `
+                    <div style="padding:2rem;color:#999;text-align:center;font-size:13px;">
+                        Không có dữ liệu biểu đồ.
+                    </div>
+                `;
+                return;
+            }
+
+            // SORT NGƯỢC LẠI
+            chartItems = [...chartItems].reverse();
+
+            // Data
+            const categories = chartItems.map(d =>
+                d.time || d.label || d.year || ''
+            );
+
+            const seriesData = chartItems.map(d => {
+                const rawValue = d.value !== undefined ? d.value : (d.val || 0);
+
+                return {
+                    y: parseFloat(rawValue) || 0,
+                    rawValue: rawValue,
+                    label: d.time || d.label || d.year || ''
+                };
+            });
+
+            // Clear old chart
+            container.innerHTML = '';
+
+            const marginLeft = this.getChartMarginLeft(seriesData);
+            const self = this;
+
+            Highcharts.chart(container, {
+                chart: {
+                    type: 'area',
+                    height: 336,
+                    backgroundColor: '#fff',
+                    spacingTop: 10,
+                    spacingLeft: 35,
+                    spacingRight: 35,
+                    spacingBottom: 10,
+                    marginLeft: marginLeft,
+                    style: {
+                        fontFamily: 'SF Pro Display, sans-serif'
+                    }
+                },
+
+                title: {
+                    text: 'Biểu đồ ' + chartName + ' theo năm',
+                    style: {
+                        fontSize: '20px',
+                        fontWeight: '600',
+                        color: '#161616'
+                    }
+                },
+
+                subtitle: {
+                    text: 'Bấm vào mỗi chỉ tiêu để xem biểu đồ tương ứng',
+                    style: {
+                        fontSize: '13px',
+                        color: '#616161'
+                    }
+                },
+
+                credits: {
+                    enabled: false
+                },
+
+                legend: {
+                    enabled: false
+                },
+
+                xAxis: {
+                    categories: categories,
+                    tickmarkPlacement: 'on',
+                    tickLength: 0,
+                    lineColor: '#eee',
+                    title: {
+                        text: unit,
+                        align: 'low',
+                        offset: 15,
+                        margin: -20,
+                        x: -30,
+                        style: {
+                            color: '#999',
+                            fontSize: '11px'
+                        }
+                    },
+                    labels: {
+                        style: {
+                            color: '#999',
+                            fontSize: '11px'
+                        }
+                    }
+                },
+
+                yAxis: {
+                    allowDecimals: true,
+                    title: {
+                        enabled: false
+                    },
+                    lineWidth: 1,
+                    gridLineColor: '#f0f0f0',
+
+                    labels: {
+                        autoRotation: 0,
+                        reserveSpace: true,
+                        style: {
+                            color: '#999',
+                            fontSize: '11px',
+                            whiteSpace: 'nowrap'
+                        },
+                        formatter: function () {
+                            return self.formatYAxisLabel(this.value);
+                        }
+                    }
+                },
+
+                tooltip: {
+                    useHTML: true,
+                    formatter: function () {
+                        const point = this.points ? this.points[0].point : this.point;
+
+                        return `
+                            <div style="font-size:12px;">
+                                <b>${point.label}</b><br/>
+                                ${chartName}: <b>${point.rawValue}</b>
+                            </div>
+                        `;
+                    }
+                },
+
+                plotOptions: {
+                    area: {
+                        lineWidth: 3,
+                        color: '#FF9500',
+
+                        // Smooth line
+                        marker: {
+                            enabled: true,
+                            radius: 4,
+                            fillColor: '#FF9500',
+                            lineColor: '#fff',
+                            lineWidth: 2,
+                            symbol: 'circle'
+                        },
+
+                        // Gradient fill giống ảnh
+                        fillColor: {
+                            linearGradient: {
+                                x1: 0,
+                                y1: 0,
+                                x2: 0,
+                                y2: 1
+                            },
+                            stops: [
+                                [0, 'rgba(255, 149, 0, 0.38)'],
+                                [1, 'rgba(255, 218, 166, 0)']
+                            ]
+                        },
+
+                        states: {
+                            hover: {
+                                lineWidth: 3
+                            }
+                        }
+                    },
+
+                    series: {
+                        animation: false
+                    }
+                },
+
+                series: [
+                    {
+                        name: chartName,
+                        data: seriesData
+                    }
+                ],
+
+                exporting: {
+                    enabled: false
+                }
+            });
+        },
+        async renderChisoTC(data, pageIndexCS = 1) {
+            
+            var count = data.value.count || 0;
+            var p = pageIndexCS;
+            var templace = data.value.templace || [];
+            var dataBCTC = data.value.data || [];
+            if (!templace.length || !dataBCTC.length) {
+                document.querySelector('.chi-so-tai-chinh-tab').innerHTML = '';
+                return;
+            }
+
+            var htmlTable = `
+            <table class="table_cs_cstc" id="table_cs_cstc_tab">
+                <thead>
+                    <tr>
+                        <th class="left_TC title">${data.value.name || 'Chỉ số tài chính'}</th>
+                        <th ${p * 4 >= count ? '' : `onclick="CHI_SO.GetChisoTC(${p + 1})"`} class="click_page ${p * 4 >= count ? "not_click" : "allow_click"}"><img style="height:11px;" src="https://cafefnew.mediacdn.vn/Images/bctc/next_pre.png"/></th>
+                        ${[...dataBCTC].reverse().map(
+                timeBctc => ` <th class="name_quy">${timeBctc.time}
+                            </th> `
+            ).join('')}
+                        <th onclick="${p > 1 ? `CHI_SO.GetChisoTC(${p - 1})` : ''}" class="click_page ${p == 1 ? "not_click" : "allow_click"}"><img style="height:11px;transform: rotateY(180deg);" src="https://cafefnew.mediacdn.vn/Images/bctc/next_pre.png"/></th>
+                        <th class="name_quy" style="border: none;">Tăng trưởng</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${templace.map((dataItem, index) => {
+                const levelClass = index % 2 === 0 ? 'evenCSTC' : 'oddCSTC';
+                const rowValues = [...dataBCTC].reverse().map(timeBctc => {
+                    const rawVal = timeBctc.data?.find(x => x.code == dataItem.code)?.value;
+                    return (rawVal !== undefined && rawVal !== null && rawVal !== '') ? parseFloat(rawVal) : 0;
+                });
+                const hasPositive = rowValues.some(v => v > 0);
+                const hasNegative = rowValues.some(v => v < 0);
+                const isMixed = hasPositive && hasNegative;
+                const scale = isMixed ? 10 : 20;
+
+                const absValues = rowValues.map(v => Math.abs(v));
+                const maxVal = Math.max(...absValues);
+                const heights = rowValues.map(v => {
+                    if (maxVal === 0) return { h: 0, val: 0 };
+                    return {
+                        h: (Math.abs(v) / maxVal) * scale,
+                        val: v
+                    };
+                });
+                const cols = [...dataBCTC].reverse().map(timeBctc => {
+                    const rawVal = timeBctc.data?.find(x => x.code == dataItem.code)?.value;
+                    const formatted =
+                        (rawVal !== undefined &&
+                            rawVal !== null &&
+                            rawVal !== '' &&
+                            !isNaN(parseFloat(rawVal)) &&
+                            parseFloat(rawVal) !== 0)
+                            ? parseFloat(rawVal).toLocaleString('en-US', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            })
+                            : "-";
+                    const styleColor = (rawVal !== undefined && rawVal !== null && rawVal !== '' && parseFloat(rawVal) < 0) ? ' style="color: #C32022;"' : '';
+                    return ` <td class="number-item"${styleColor}> ${formatted} </td> `;
+                }).join('');
+                        const isActive = CHI_SO.imageActive === dataItem.code;
+                return `
+                            <tr class="section ${levelClass}">
+                                <td class="left_TC name_TC" style="cursor: pointer;" onclick="CHI_SO.GetApiChart('${dataItem.code}')">
+                                <div>
+                                ${isActive
+                                                    ? '<img src="https://cafefnew.mediacdn.vn/Images/Icons/check-yl.svg"/>'
+                                                    : ''
+                                }</div>
+                                ${dataItem.name}
+                                </td>
+                                <td class="click_page"></td>
+                                ${cols}
+                                 <td class="click_page"></td>
+                                <td class="growth">
+                                    <div class="bars">
+                                        ${heights.map(item => {
+                    if (!isMixed) {
+                        if (item.val > 0) {
+                            return `
+                                                        <div class="bar-wrapper" style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center; height: 20px;">
+                                                            <div class="bar-pos" style="height: ${item.h}px;"></div>
+                                                        </div>
+                                                    `;
+                        } else if (item.val < 0) {
+                            return `
+                                                        <div class="bar-wrapper" style="display: flex; flex-direction: column; justify-content: flex-start; align-items: center; height: 20px;">
+                                                            <div class="bar-neg" style="height: ${item.h}px;"></div>
+                                                        </div>
+                                                    `;
+                        } else {
+                            return `<div class="bar-wrapper" style="height: 20px; width: 8px;"></div>`;
+                        }
+                    } else {
+                        return `
+                                                    <div class="bar-wrapper" style="display: flex; flex-direction: column; height: 20px;">
+                                                        <div class="bar-top" style="height: 10px; display: flex; align-items: flex-end; justify-content: center; width: 8px;">
+                                                            ${item.val > 0 ? `<div class="bar-pos" style="height: ${item.h}px;"></div>` : ''}
+                                                        </div>
+                                                        <div class="bar-bottom" style="height: 10px; display: flex; align-items: flex-start; justify-content: center; width: 8px;">
+                                                            ${item.val < 0 ? `<div class="bar-neg" style="height: ${item.h}px;"></div>` : ''}
+                                                        </div>
+                                                    </div>
+                                                `;
+                    }
+                }).join('')}
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+            }).join('')}
+                </tbody>
+            </table>
+            `;
+            document.querySelector('.chi-so-tai-chinh-tab').innerHTML = htmlTable;
+        },
+        async GetChisoTC(pageIndexCS = 1) {
+            try {
+                const response = await fetch(`https://apiweb.cafef.vn/api/v2/BCTC/FinancialIndicators?symbol=FPT&pageIndex=${pageIndexCS}&pageSize=4`);
+                const data = await response.json();
+                
+                if (data && data.isSuccess && data.value) {
+                    this.tableDataCS["CSTC"] = data;
+                    await this.renderChisoTC(data, pageIndexCS);
+                }
+
+                return data;
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async init() {
+            
+            await this.GetChisoTC();
+            await this.GetApiChart();
+        },
+    };
+    CHI_SO.init();
+</script>
