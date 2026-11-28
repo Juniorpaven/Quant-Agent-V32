@@ -73,7 +73,8 @@ def chi_so(kq: KetQua):
 
 
 class Engine:
-    def __init__(self, gia, tu="2015-01-01", den=None, nap_hang_thang=10e6, von_dau=0.0):
+    def __init__(self, gia, tu="2015-01-01", den=None, nap_hang_thang=10e6, von_dau=0.0, truot_gia=0.0):
+        self.truot = truot_gia  # trượt giá mỗi chiều (tỷ lệ), áp lên giá khớp: mua đắt hơn, bán rẻ hơn
         self.gia = gia
         full = gia["VNINDEX"].index
         self.cal = gia["VNINDEX"].loc[tu:den].index
@@ -120,7 +121,7 @@ class Engine:
                         chan += 1; continue          # T+2,5
                     sl = min(vt.get(ma, 0), int(muc // LO) * LO)
                     if sl <= 0: continue
-                    gt = sl * po * 1000
+                    gt = sl * po * (1 - self.truot) * 1000
                     phi = gt * (PHI + THUE_BAN)
                     tien += gt - phi; chi_phi += phi; ban_tong += gt
                     vt[ma] -= sl
@@ -129,9 +130,9 @@ class Engine:
                     po, ptc = self.open[ma].iloc[i], tc.get(ma, np.nan)
                     if not np.isfinite(po) or po >= ptc * (1 + BIEN_DO - 1e-3):
                         chan += 1; continue          # giá trần: không mua được
-                    sl = int(min(ngan_sach, tien) / (po * 1000 * (1 + PHI)) // LO) * LO
+                    sl = int(min(ngan_sach, tien) / (po * (1 + self.truot) * 1000 * (1 + PHI)) // LO) * LO
                     if sl <= 0: continue
-                    gt = sl * po * 1000
+                    gt = sl * po * (1 + self.truot) * 1000
                     phi = gt * PHI
                     tien -= gt + phi; chi_phi += phi
                     vt[ma] = vt.get(ma, 0) + sl

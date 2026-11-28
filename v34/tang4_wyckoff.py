@@ -12,29 +12,30 @@ from tang2_chon_ma import loc
 SAN_TUAN_MIN, BIEN_DO_VUNG = 8, 0.30
 
 
-def tin_hieu_tuan(df):
+def tin_hieu_tuan(df, san_tuan=None, bien_do=None, sos_vr=1.5, spring_vr=0.7, che_do="ca_hai"):
     """df: giá ngày một mã. Trả về DataFrame index = ngày giao dịch cuối tuần, cột loai ('A'/'B'/''), vol_ratio."""
+    san_tuan = san_tuan or SAN_TUAN_MIN; bien_do = bien_do or BIEN_DO_VUNG
     d = df.copy()
     tuan = d.groupby(d.index.to_period("W-FRI")).agg(O=("Open", "first"), H=("High", "max"), L=("Low", "min"), C=("Close", "last"), V=("Volume", "sum"), ngay=("Close", lambda s: s.index[-1]))
     out = []
-    for k in range(SAN_TUAN_MIN + 12, len(tuan)):
+    for k in range(san_tuan + 12, len(tuan)):
         w = tuan.iloc[k]
         vung = tuan.iloc[k - 1 - 26 - 1 if k > 28 else 0: k - 1]  # vùng gồm các tuần trước (tối đa 26)
         vung = tuan.iloc[max(0, k - 27): k - 1]
-        if len(vung) < SAN_TUAN_MIN: continue
+        if len(vung) < san_tuan: continue
         ho_tro, dinh = vung.L.min(), vung.H.max()
-        if dinh / ho_tro - 1 > BIEN_DO_VUNG: continue
+        if dinh / ho_tro - 1 > bien_do: continue
         tb_v = tuan.V.iloc[k - 10:k].mean()
         vr = w.V / tb_v if tb_v > 0 else np.nan
         loai = ""
         # SOS
-        if w.C > dinh and vr >= 1.5: loai = "B"
-        else:
+        if che_do != "chi_spring" and w.C > dinh and vr >= sos_vr: loai = "B"
+        elif che_do != "chi_sos":
             # Spring trong 1–4 tuần trước
             for j in range(k - 4, k):
                 s = tuan.iloc[j]
                 if s.L < ho_tro and s.L >= ho_tro * 0.95 and s.C > ho_tro:
-                    if w.L >= s.L and vr < 0.7 and w.C > ho_tro: loai = "A"
+                    if w.L >= s.L and vr < spring_vr and w.C > ho_tro: loai = "A"
                     break
         if loai: out.append((w.ngay, loai, vr))
     return pd.DataFrame(out, columns=["ngay", "loai", "vr"]).set_index("ngay") if out else pd.DataFrame(columns=["loai", "vr"])
@@ -47,11 +48,15 @@ def atr14(df):
 
 
 class VeTinhWyckoff:
-    def __init__(self, dl, gia, ds_ma, ma_etf="E1VFVN30", ty_le_moi_ma=0.05, toi_da=5, he_so_dung=2.0, he_so_bam=3.0, chi_ma_dat_loc=True):
+    def __init__(self, dl, gia, ds_ma, ma_etf="E1VFVN30", ty_le_moi_ma=0.05, toi_da=5, he_so_dung=2.0, he_so_bam=3.0, chi_ma_dat_loc=True, tin_hieu_kw=None, cache=None):
         self.dl, self.gia, self.etf = dl, gia, ma_etf
         self.w, self.toi_da, self.k_stop, self.k_trail = ty_le_moi_ma, toi_da, he_so_dung, he_so_bam
         self.loc_ct = chi_ma_dat_loc
-        self.tin_hieu = {m: tin_hieu_tuan(gia[m]) for m in ds_ma if m in gia and len(gia[m]) > 300}
+        kw = tin_hieu_kw or {}; khoa = tuple(sorted(kw.items()))
+        if cache is not None and khoa in cache: self.tin_hieu = cache[khoa]
+        else:
+            self.tin_hieu = {m: tin_hieu_tuan(gia[m], **kw) for m in ds_ma if m in gia and len(gia[m]) > 300}
+            if cache is not None: cache[khoa] = self.tin_hieu
         self.atr = {m: atr14(gia[m]) for m in self.tin_hieu}
         self.vt = {}            # ma -> {stop, cao, atr}
         self.thang, self.cache_loc = None, {}
