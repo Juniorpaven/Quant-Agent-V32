@@ -48,7 +48,7 @@ def main():
                 json.dump(out, open(f, "w"), ensure_ascii=False)
                 moi.append({"ma": ma, "ky": f"Q{ky_m[1]}/{ky_m[0]}", "cong_bo": ky_m[2], "truoc": f"Q{ky_cu[1]}/{ky_cu[0]}" if ky_cu else None})
                 ky_cu = ky_m
-        if niem_yet and ky_kv and (not ky_cu or ky_cu[:2] < ky_kv): cham.append({"ma": ma, "ky_cuoi": f"Q{ky_cu[1]}/{ky_cu[0]}" if ky_cu else None, "ky_ky_vong": f"Q{ky_kv[1]}/{ky_kv[0]}"})
+        if niem_yet and ky_kv and ky_cu and ky_cu[:2] < ky_kv: cham.append({"ma": ma, "ky_cuoi": f"Q{ky_cu[1]}/{ky_cu[0]}" if ky_cu else None, "ky_ky_vong": f"Q{ky_kv[1]}/{ky_kv[0]}"})
         if thu_hai or any(m["ma"] == ma for m in moi):
             ev = mr.tai_noi_bo(ma)
             if ev: json.dump(ev, open(f"{DATA}/noibo/{ma}.json", "w"), ensure_ascii=False)

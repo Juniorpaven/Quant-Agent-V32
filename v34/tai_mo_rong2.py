@@ -8,7 +8,7 @@ import tai_du_lieu as td, tai_mo_rong as mr
 
 THEM2 = ("AAA BCM BSR BWE CMG CRE CSV CTR CTS DBC DGW DHC DPR DXS EVF FCN FRT FTS HAG HHV HT1 HUT IJC IMP KDC KOS LHG NAB NLG NTL PAN PPC PVT "
          "QCG SBT SCS SHS SJS SSB TCM TDM TLG TNH VCG VCS VDS VOS VPG VSC VTP YEG BAF DRC HVN PGV PET SGT HVG TCR VIS TNG PGD GEG ELC HID "
-         "CTI DAH VPH SCI SAM DQC VNS NBB CCL AGR APG BSI CTF EIB KSB DDV TIP JVC FUCVREIT").split()
+         "CTI DAH VPH SCI SAM DQC VNS NBB CCL AGR APG BSI CTF EIB KSB DDV TIP JVC").split()
 H = {"User-Agent": "quant-agent-research/1.0", "Accept": "application/json, text/html"}
 os.makedirs("data/tham_do5", exist_ok=True)
 
