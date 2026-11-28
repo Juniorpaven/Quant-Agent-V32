@@ -1,0 +1,21 @@
+lát 4/6: 145 mã
+  1/145 ABR
+  11/145 BLU
+  21/145 CMV
+HTTP 500 https://apiweb.cafef.vn/api/v2/BCTC/GetReportCDKT?symbol=DLM&pageIndex=1&pageSize=20&reportType=ALL&TypeTime=NAM
+HTTP 500 https://apiweb.cafef.vn/api/v2/BCTC/GetReportCDKT?symbol=DLM&pageIndex=1&pageSize=20&reportType=ALL&TypeTime=NAM
+HTTP 500 https://apiweb.cafef.vn/api/v1/BCTC/GetReportLCTT?symbol=DLM&pageIndex=1&pageSize=20&reportType=ALL&TypeTime=NAM
+HTTP 500 https://apiweb.cafef.vn/api/v1/BCTC/GetReportLCTT?symbol=DLM&pageIndex=1&pageSize=20&reportType=ALL&TypeTime=NAM
+  31/145 DNP
+  41/145 FTS
+  51/145 HID
+  61/145 ING
+  71/145 LTG
+  81/145 NLG
+  91/145 PMS
+  101/145 SBG
+  111/145 SRA
+  121/145 THG
+  131/145 VAB
+  141/145 VPG
+thiếu: {'gia': 0, 'bctc': 0, 'noibo': 8, 'cafef': 2}
