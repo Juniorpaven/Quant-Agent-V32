@@ -1,7 +1,28 @@
 {
- "cap_nhat": "2026-11-28T09:06:00.248043+00:00",
+ "cap_nhat": "2026-11-28T09:25:12.788442+00:00",
  "moi_hom_nay": [],
- "cham_cong_bo": [],
+ "cham_cong_bo": [
+  {
+   "ma": "BNA",
+   "ky_cuoi": "Q2/2026",
+   "ky_ky_vong": "Q3/2026"
+  },
+  {
+   "ma": "CAP",
+   "ky_cuoi": "Q2/2026",
+   "ky_ky_vong": "Q3/2026"
+  },
+  {
+   "ma": "ECI",
+   "ky_cuoi": "Q3/2025",
+   "ky_ky_vong": "Q3/2026"
+  },
+  {
+   "ma": "FID",
+   "ky_cuoi": "Q2/2026",
+   "ky_ky_vong": "Q3/2026"
+  }
+ ],
  "loi": [],
  "lich_su": [
   {
