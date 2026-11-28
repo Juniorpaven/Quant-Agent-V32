@@ -1,0 +1,188 @@
+ho_so AAA Chemicals
+ho_so ACB Banks
+ho_so AGR Financial Services
+ho_so AMD Real Estate
+ho_so ANV Food & Beverage
+ho_so APG Financial Services
+ho_so ART Financial Services
+ho_so ASM Food & Beverage
+ho_so BAF Food & Beverage
+ho_so BCG Financial Services
+ho_so BCM Real Estate
+ho_so BID Banks
+ho_so BMP Construction & Materials
+ho_so BSI Financial Services
+ho_so BSR Oil & Gas
+ho_so BVH Insurance
+ho_so BWE Utilities
+ho_so CCL Real Estate
+ho_so CEO Real Estate
+ho_so CII Construction & Materials
+ho_so CMG Technology
+ho_so CRE Real Estate
+ho_so CSV Chemicals
+ho_so CTD Construction & Materials
+ho_so CTF Automobiles & Parts
+ho_so CTG Banks
+ho_so CTI Construction & Materials
+ho_so CTR Construction & Materials
+ho_so CTS Financial Services
+ho_so DAH Travel & Leisure
+ho_so DBC Food & Beverage
+ho_so DCM Chemicals
+ho_so DDV Chemicals
+ho_so DGC Chemicals
+ho_so DGW Retail
+ho_so DHC Basic Resources
+ho_so DHG Health Care
+ho_so DIG Real Estate
+ho_so DLG Construction & Materials
+ho_so DPM Chemicals
+ho_so DPR Chemicals
+ho_so DQC Personal & Household Goods
+ho_so DRC Automobiles & Parts
+ho_so DRH Real Estate
+ho_so DTD Real Estate
+ho_so DXG Real Estate
+ho_so DXS Real Estate
+ho_so EIB Banks
+ho_so ELC Technology
+ho_so EVF Financial Services
+ho_so EVG Construction & Materials
+ho_so FCN Construction & Materials
+ho_so FIR Real Estate
+ho_so FIT Health Care
+ho_so FLC Real Estate
+ho_so FPT Technology
+ho_so FRT Retail
+ho_so FTS Financial Services
+ho_so FUCVREIT Financial Services
+ho_so GAB Construction & Materials
+ho_so GAS Utilities
+ho_so GEG Utilities
+ho_so GEX Industrial Goods & Services
+ho_so GMD Industrial Goods & Services
+ho_so GVR Chemicals
+ho_so HAG Food & Beverage
+ho_so HAH Industrial Goods & Services
+ho_so HAI Chemicals
+ho_so HBC Construction & Materials
+ho_so HCM Financial Services
+ho_so HDB Banks
+ho_so HDC Real Estate
+ho_so HDG Utilities
+ho_so HHV Construction & Materials
+ho_so HID Construction & Materials
+ho_so HNG Food & Beverage
+ho_so HPG Basic Resources
+ho_so HQC Real Estate
+ho_so HSG Basic Resources
+ho_so HT1 Construction & Materials
+ho_so HUT Automobiles & Parts
+ho_so HVG Food & Beverage
+ho_so HVN Travel & Leisure
+ho_so IDC Real Estate
+ho_so IJC Real Estate
+ho_so IMP Health Care
+ho_so ITA Real Estate
+ho_so ITC Real Estate
+ho_so JVC Health Care
+ho_so KBC Real Estate
+ho_so KDC Food & Beverage
+ho_so KDH Real Estate
+ho_so KLF Travel & Leisure
+ho_so KOS Real Estate
+ho_so KSB Construction & Materials
+ho_so LCG Construction & Materials
+ho_so LDG Real Estate
+ho_so LHG Real Estate
+ho_so LPB Banks
+ho_so MBB Banks
+ho_so MSB Banks
+ho_so MSN Food & Beverage
+ho_so MWG Retail
+ho_so NAB Banks
+ho_so NBB Real Estate
+ho_so NKG Basic Resources
+ho_so NLG Real Estate
+ho_so NT2 Utilities
+ho_so NTC Real Estate
+ho_so NTL Real Estate
+ho_so NVL Real Estate
+ho_so OCB Banks
+ho_so OGC Real Estate
+ho_so PAN Food & Beverage
+ho_so PC1 Construction & Materials
+ho_so PDR Real Estate
+ho_so PET Retail
+ho_so PGD Utilities
+ho_so PGV Utilities
+ho_so PHR Chemicals
+ho_so PLX Oil & Gas
+ho_so PNJ Personal & Household Goods
+ho_so POW Utilities
+ho_so PPC Utilities
+ho_so PTB Basic Resources
+ho_so PVD Oil & Gas
+ho_so PVS Oil & Gas
+ho_so PVT Industrial Goods & Services
+ho_so QCG Real Estate
+ho_so REE Utilities
+ho_so ROS Construction & Materials
+ho_so SAB Food & Beverage
+ho_so SAM Technology
+ho_so SBT Food & Beverage
+ho_so SCI Construction & Materials
+ho_so SCR Real Estate
+ho_so SCS Travel & Leisure
+ho_so SGT Technology
+ho_so SHB Banks
+ho_so SHS Financial Services
+ho_so SIP Real Estate
+ho_so SJF Basic Resources
+ho_so SJS Real Estate
+ho_so SMC Basic Resources
+ho_so SSB Banks
+ho_so SSI Financial Services
+ho_so STB Banks
+ho_so SZC Real Estate
+ho_so TCB Banks
+ho_so TCH Real Estate
+ho_so TCM Personal & Household Goods
+ho_so TCR Construction & Materials
+ho_so TDH Real Estate
+ho_so TDM Utilities
+ho_so TGG Construction & Materials
+ho_so TIP Real Estate
+ho_so TLG Personal & Household Goods
+ho_so TNG Personal & Household Goods
+ho_so TNH Health Care
+ho_so TNT Construction & Materials
+ho_so TPB Banks
+ho_so TTF Basic Resources
+ho_so VCB Banks
+ho_so VCG Construction & Materials
+ho_so VCI Financial Services
+ho_so VCS Construction & Materials
+ho_so VDS Financial Services
+ho_so VGC Construction & Materials
+ho_so VHC Food & Beverage
+ho_so VHM Real Estate
+ho_so VIB Banks
+ho_so VIC Real Estate
+ho_so VIS Basic Resources
+ho_so VIX Financial Services
+ho_so VJC Travel & Leisure
+ho_so VND Financial Services
+ho_so VNM Food & Beverage
+ho_so VNS Travel & Leisure
+ho_so VOS Industrial Goods & Services
+ho_so VPB Banks
+ho_so VPG Basic Resources
+ho_so VPH Real Estate
+ho_so VPI Real Estate
+ho_so VRE Real Estate
+ho_so VSC Industrial Goods & Services
+ho_so VSH Utilities
+ho_so VTP Industrial Goods & Services
+ho_so YEG Media
