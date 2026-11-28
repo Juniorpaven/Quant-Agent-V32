@@ -1,0 +1,19 @@
+lát 2/6: 146 mã
+  1/146 AAN
+  11/146 BKG
+  21/146 CMG
+  31/146 DNB
+HTTP 500 https://apiweb.cafef.vn/api/v2/BCTC/GetReportCDKT?symbol=DVV&pageIndex=1&pageSize=20&reportType=ALL&TypeTime=NAM
+HTTP 500 https://apiweb.cafef.vn/api/v2/BCTC/GetReportCDKT?symbol=DVV&pageIndex=1&pageSize=20&reportType=ALL&TypeTime=NAM
+  41/146 FPT
+  51/146 HHS
+  61/146 IMP
+  71/146 LPS
+  81/146 NHT
+  91/146 PMG
+  101/146 SAV
+  111/146 SPP
+  121/146 THB
+  131/146 UIC
+  141/146 VPB
+thiếu: {'gia': 2, 'bctc': 0, 'noibo': 8, 'cafef': 1}
