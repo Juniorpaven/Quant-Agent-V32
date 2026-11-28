@@ -4,6 +4,7 @@ import json, os, sys, time
 import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import tai_du_lieu as td
+from tien_ich import ghi_bctc
 
 MA_THEM = ("FLC ROS HAI AMD GTN ITA HQC TTF LDG OGC SCR HNG GAB KLF ART FIT TGG DLG HBC TNT SJF ASM TDH HDC "
            "CEO LCG ITC DRH FIR EVG VIX BCG GEX").split()
@@ -56,7 +57,7 @@ def main():
         for khoa, sec in (("kqkd", "INCOME_STATEMENT"), ("cdkt", "BALANCE_SHEET"), ("lctt", "CASH_FLOW")):
             out[khoa] = td.tai_iq(f"{td.IQ}/company/{ma}/financial-statement?section={sec}"); time.sleep(0.3)
         out["chi_so"] = td.tai_iq(f"{td.IQ}/company/{ma}/statistics-financial"); time.sleep(0.3)
-        if out["kqkd"]: json.dump(out, open(f"{DATA}/bctc/{ma}.json", "w"), ensure_ascii=False); print("bctc", ma, flush=True)
+        if out["kqkd"]: ghi_bctc(f"{DATA}/bctc/{ma}.json", out); print("bctc", ma, flush=True)
         else: loi["bctc"].append(ma)
     for ma in td.MA_LOC + MA_THEM:
         ev = tai_noi_bo(ma)

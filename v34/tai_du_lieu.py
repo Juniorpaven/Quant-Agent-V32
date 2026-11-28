@@ -4,6 +4,9 @@ import json, os, sys, time
 from datetime import datetime, timezone
 import pandas as pd
 import requests
+import os as _o, sys as _s
+_s.path.insert(0, _o.path.dirname(_o.path.abspath(__file__)))
+from tien_ich import ghi_bctc
 
 DATA = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data")
 HDR = {"User-Agent": "Mozilla/5.0"}
@@ -108,7 +111,7 @@ def tai_bctc():
         time.sleep(0.3)
         if not out["kqkd"]:
             loi.append(ma); print("thiếu BCTC", ma, flush=True); continue
-        json.dump(out, open(f"{DATA}/bctc/{ma}.json", "w"), ensure_ascii=False)
+        ghi_bctc(f"{DATA}/bctc/{ma}.json", out)
         print("bctc", ma, {k: (list(v.keys()) if isinstance(v, dict) else (len(v) if v else 0)) for k, v in out.items()}, flush=True)
     json.dump({"cap_nhat": datetime.now(timezone.utc).isoformat(), "loi_bctc": loi},
               open(f"{DATA}/_trang_thai_bctc.json", "w"), ensure_ascii=False, indent=1)

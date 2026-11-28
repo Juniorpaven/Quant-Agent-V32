@@ -1,7 +1,9 @@
 """Tầng 2 phiên bản TTM: bộ lọc dùng dữ liệu bốn quý gần nhất (cập nhật đến quý mới nhất đã công bố) thay vì báo cáo năm,
 cộng hai phép thử thay thế: (4) tỷ lệ phải thu nội bộ và cho vay trên tổng tài sản; (5) chênh lệch tổng 4 quý và số năm đã kiểm toán."""
+import glob, json, os
 import numpy as np, pandas as pd
 from tang2_chon_ma import DuLieuCoBan, NGAN_HANG, CHUA_DANH_GIA, _g, _phep_thu_noi_bo, phep_thu_ngan_hang
+from du_lieu_dai import doc_co_tuc
 
 
 def _qkey(r): return (int(r["yearReport"]), int(r["lengthReport"]))
@@ -10,8 +12,10 @@ def _qkey(r): return (int(r["yearReport"]), int(r["lengthReport"]))
 class DuLieuTTM(DuLieuCoBan):
     def __init__(self, thu_muc="data/bctc"):
         super().__init__(thu_muc)
-        import json, glob, os
-        self.ttm, self.lech_kt = {}, {}
+        self.ttm, self.lech_kt, self.co_tuc = {}, {}, {}
+        for f in glob.glob(os.path.join(os.path.dirname(thu_muc), "cafef", "[A-Z]*.json")):
+            try: self.co_tuc[os.path.basename(f)[:-5]] = doc_co_tuc(json.load(open(f)).get("co_tuc"))
+            except Exception: pass
         for ma in self.nam:
             d = json.load(open(os.path.join(thu_muc, f"{ma}.json")))
             qi = {_qkey(r): r for r in (d["kqkd"].get("quarters") or []) if r["lengthReport"] in (1, 2, 3, 4)}
@@ -77,7 +81,11 @@ def phep_thu_ttm(dl, ma, ngay, moi=True):
     kq["6_no_vay"] = bool(cover >= 3 and (cur["vay"] / cur["vcsh"] if cur["vcsh"] > 0 else np.inf) <= 1.5)
     kq["7_noi_bo"] = _phep_thu_noi_bo(dl, ma, ngay)
     nam = dl.cac_nam(ma, ngay, 5)
-    so_nam = int(sum(1 for y, v in nam if _g(v["lctt"], "cfa32") < 0)) if nam else 0
+    ct = dl.co_tuc.get(ma)
+    if ct is not None and len(ct) and ngay >= pd.Timestamp(2018, 1, 1):   # cổ tức tiền thật theo ngày không hưởng quyền (CafeF)
+        d5 = ct[(ct.loai == "tien") & (ct.ngay <= ngay) & (ct.ngay > ngay - pd.Timedelta(days=365 * 5))]; so_nam = int(d5.ngay.dt.year.nunique())
+    else:
+        so_nam = int(sum(1 for y, v in nam if _g(v["lctt"], "cfa32") < 0)) if nam else 0   # thay thế khi chưa có dữ liệu cổ tức
     kq["8_co_tuc_tien_mat"] = bool(so_nam >= 4)
     kq["0_bctc_moi"] = bool(cur["hl"] >= ngay - pd.Timedelta(days=200))
     roe = (df.lnst / df.vcsh).mean()

@@ -1,7 +1,9 @@
-"""Tải BCTC năm (CDKT, KQKD, LCTTGT/LCTTTT), 20 năm, và lịch sử cổ tức từ API công khai của CafeF cho mọi mã có BCTC trong data/bctc.
+"""Tải BCTC năm 20 năm (KQKD; CDKT và LCTT qua tai_cafef2) và lịch sử cổ tức từ API công khai của CafeF cho mọi mã có BCTC trong data/bctc.
 Yêu cầu thường, User-Agent khai báo, nghỉ giữa các lệnh; gặp 403/429 hoặc trang chặn thì dừng toàn bộ."""
 import glob, json, os, sys, time
 import requests
+sys_path_fix = __import__('sys').path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import tai_cafef2 as c2
 H = {"User-Agent": "quant-agent-research/1.0", "Accept": "application/json"}
 API = "https://apiweb.cafef.vn/api/v1/BCTC/GetReportDetail"
 CT = "https://cafef.vn/du-lieu/Ajax/PageNew/LichSuKien.ashx?Symbol="
@@ -33,10 +35,10 @@ ma_ds = [os.path.basename(f)[:-5] for f in sorted(glob.glob("data/bctc/[A-Z]*.js
 da_co = {os.path.basename(f)[:-5] for f in glob.glob("data/cafef/[A-Z]*.json")}
 for ma in ma_ds:
     if bi_chan: break
-    if ma in da_co: continue
-    out = {"kqkd": bao_cao(ma, "KQKD"), "cdkt": bao_cao(ma, "CDKT")}
-    out["lctt"] = bao_cao(ma, "LCTTGT")
-    if not out["lctt"]["data"]: out["lctt"] = bao_cao(ma, "LCTTTT"); out["lctt"]["loai"] = "truc_tiep"
+    if ma in da_co and os.environ.get("LAM_MOI") != "1": continue
+    out = {"kqkd": bao_cao(ma, "KQKD"), "cdkt": c2.bao_cao(ma, "cdkt"), "lctt": c2.bao_cao(ma, "lctt")}
+    out["cdkt"]["loai_dung"] = out["lctt"]["loai_dung"] = 2
+    if c2.bi_chan: break
     j = lay(CT + ma); time.sleep(0.6)
     out["co_tuc"] = (j or {}).get("Data") if isinstance(j, dict) else None
     json.dump(out, open(f"data/cafef/{ma}.json", "w"), ensure_ascii=False)
