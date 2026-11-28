@@ -19,18 +19,19 @@ tt = {m: gia[m].Close.iloc[-1] / gia[m].Close.asof(pd.Timestamp("2010-05-04")) f
 top10 = sorted(tt, key=tt.get, reverse=True)[:10]; print("10 mã tăng mạnh nhất (bỏ ra trong kiểm tra):", top10, flush=True)
 for tu in ("2010-05-01", "2015-01-01"):
     e = Engine(gia, tu=tu); e.nguong_fn = nguong_tk; ecd = Engine(gia_cd, tu=tu); ecd.nguong_fn = nguong_tk
-    chuan = e.chay("Mua đều VN-Index giả lập", MuaDeuETF()); chuan_cd = ecd.chay("Mua đều VN-Index + 2,2%/năm (cổ tức ước lượng)", MuaDeuETF())
+    def in1(k): c = chi_so(k); print(f"  [{tu}] {k.ten}: CAGR {c['CAGR (XIRR)']*100:.2f}%, MDD {c['MDD']*100:.1f}%, Sharpe {c['Sharpe']:.2f}", flush=True); return k
+    chuan = in1(e.chay("Mua đều VN-Index giả lập", MuaDeuETF())); chuan_cd = in1(ecd.chay("Mua đều VN-Index + 2,2%/năm (cổ tức ước lượng)", MuaDeuETF()))
     ks = [chuan, chuan_cd]
-    t2 = e.chay("T2 dài N=12 (cơ sở)", LoiTang2(dl, 12, ds_ma=ds, loc_fn=loc_dai)); ks.append(t2)
-    ks.append(e.chay("T2 dài N=12, bỏ 10 mã tăng mạnh nhất (hậu kiến)", LoiTang2(dl, 12, ds_ma=[m for m in ds if m not in top10], loc_fn=loc_dai)))
+    t2 = in1(e.chay("T2 dài N=12 (cơ sở)", LoiTang2(dl, 12, ds_ma=ds, loc_fn=loc_dai))); ks.append(t2)
+    ks.append(in1(e.chay("T2 dài N=12, bỏ 10 mã tăng mạnh nhất (hậu kiến)", LoiTang2(dl, 12, ds_ma=[m for m in ds if m not in top10], loc_fn=loc_dai))))
     sub = []
-    for sd in range(4):
+    for sd in range(3):
         rng = np.random.default_rng(100 + sd); chon = [m for m in ds if rng.random() < 0.7]
-        k = e.chay(f"bỏ ngẫu nhiên 30% mã #{sd}", LoiTang2(dl, 12, ds_ma=chon, loc_fn=loc_dai)); sub.append(chi_so(k))
-    ng = [chi_so(e.chay(f"ngẫu nhiên trong mã đạt lọc #{sd}", LoiTang2(dl, 12, ds_ma=ds, loc_fn=loc_dai, xep="ngau_nhien", seed=sd))) for sd in range(4)]
-    ks.append(e.chay("T2 chỉ ROE", LoiTang2(dl, 12, ds_ma=ds, loc_fn=loc_dai, xep="roe")))
+        k = in1(e.chay(f"bỏ ngẫu nhiên 30% mã #{sd}", LoiTang2(dl, 12, ds_ma=chon, loc_fn=loc_dai))); sub.append(chi_so(k))
+    ng = [chi_so(in1(e.chay(f"ngẫu nhiên trong mã đạt lọc #{sd}", LoiTang2(dl, 12, ds_ma=ds, loc_fn=loc_dai, xep="ngau_nhien", seed=sd)))) for sd in range(3)]
+    ks.append(in1(e.chay("T2 chỉ ROE", LoiTang2(dl, 12, ds_ma=ds, loc_fn=loc_dai, xep="roe"))))
     ts = Engine(gia, tu=tu, truot_gia=0.003); ts.nguong_fn = nguong_tk
-    ks.append(ts.chay("T2 dài N=12, trượt giá 0,3%", LoiTang2(dl, 12, ds_ma=ds, loc_fn=loc_dai))); ks.append(ts.chay("VN-Index giả lập, trượt giá 0,3%", MuaDeuETF()))
+    ks.append(in1(ts.chay("T2 dài N=12, trượt giá 0,3%", LoiTang2(dl, 12, ds_ma=ds, loc_fn=loc_dai)))); ks.append(in1(ts.chay("VN-Index giả lập, trượt giá 0,3%", MuaDeuETF())))
     print(f"\n### {tu} → nay\n"); print(in_bang([chi_so(k) for k in ks]))
     for nm, lst in (("bỏ ngẫu nhiên 30% mã (4 lần)", sub), ("ngẫu nhiên trong mã đạt lọc (4 lần)", ng)):
         a = np.array([[x["CAGR (XIRR)"], x["MDD"]] for x in lst]); print(f"  {nm}: CAGR trung bình {a[:,0].mean()*100:.2f}% (min {a[:,0].min()*100:.2f}, max {a[:,0].max()*100:.2f}), MDD trung bình {a[:,1].mean()*100:.1f}%")

@@ -37,7 +37,8 @@ class LoiTang2:
             ung = [m for m in self.ds_ma if m in eng.close.columns and m not in self.giu and self.loc(dl, m, d)[0] and eng.dat_duoc(m, i)]
             if ung:
                 bang = diem_nhan_to(dl, eng.close_full, eng.vol, ung, d, i + eng.off, loc_fn=self.loc)
-                if self.xep == "ngau_nhien": thu_tu = list(bang.index); self.rng.shuffle(thu_tu)
+                if bang.empty: thu_tu = []
+                elif self.xep == "ngau_nhien": thu_tu = list(bang.index); self.rng.shuffle(thu_tu)
                 elif self.xep in ("roe", "gia_tri", "mom"): thu_tu = list(bang.sort_values(self.xep, ascending=False).index)
                 else: thu_tu = list(bang.index)
                 for m in thu_tu:
