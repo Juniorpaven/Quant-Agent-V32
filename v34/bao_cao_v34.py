@@ -9,7 +9,8 @@ from email.mime.text import MIMEText
 import numpy as np, pandas as pd, requests
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from tang2_chon_ma import DuLieuCoBan, loc, diem_nhan_to, CHUA_DANH_GIA
+from tang2_chon_ma import diem_nhan_to, CHUA_DANH_GIA
+from tang2_ttm import DuLieuTTM, loc_ttm
 
 GOC = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 GIA = os.path.join(GOC, "data", "gia")
@@ -53,7 +54,7 @@ def tai_vi_the():
 
 
 def lap_bao_cao(cap_nhat=True):
-    dl = DuLieuCoBan(os.path.join(GOC, "data", "bctc"))
+    dl = DuLieuTTM(os.path.join(GOC, "data", "bctc"))
     ds = [m for m in dl.nam if os.path.exists(os.path.join(GIA, f"{m}.csv"))]
     gia = {}
     for m in ["VNINDEX", MA_LOI] + ds:
@@ -66,13 +67,20 @@ def lap_bao_cao(cap_nhat=True):
     sl.update(vnindex=round(float(vn.iloc[-1]), 2), ma200=round(float(ma200.iloc[-1]), 2), tren_ma200=bool(vn.iloc[-1] > ma200.iloc[-1]),
               cach_ma200_pct=round(float(vn.iloc[-1] / ma200.iloc[-1] - 1) * 100, 2))
     d = pd.Timestamp(ngay_cuoi)
-    dat = [m for m in ds if m in gia and loc(dl, m, d)[0] and (gia[m].Close * gia[m].Volume * 1000).tail(20).mean() >= 10e9]
+    dat = [m for m in ds if m in gia and loc_ttm(dl, m, d)[0] and (gia[m].Close * gia[m].Volume * 1000).tail(20).mean() >= 10e9]
     close = pd.DataFrame({m: gia[m].Close for m in dat}).reindex(vn.index) if dat else None
-    bang = diem_nhan_to(dl, close, None, dat, d, len(vn) - 1) if dat else pd.DataFrame()
+    bang = diem_nhan_to(dl, close, None, dat, d, len(vn) - 1, loc_fn=loc_ttm) if dat else pd.DataFrame()
     top = bang.head(12)
     sl["danh_sach_chat_luong"] = [{"ma": m, "diem": round(float(top.loc[m, "diem"]), 2), "roe_tb": round(float(top.loc[m, "roe"]) * 100, 1),
-                                   "chua_danh_gia": sum(1 for v in loc(dl, m, d)[1].values() if v == CHUA_DANH_GIA)} for m in top.index]
+                                   "chua_danh_gia": sum(1 for v in loc_ttm(dl, m, d)[1].values() if v == CHUA_DANH_GIA)} for m in top.index]
     sl["so_ma_dat_loc"] = len(dat)
+    f_moi = os.path.join(GOC, "data", "_bctc_moi.json")
+    if os.path.exists(f_moi):
+        try:
+            j = json.load(open(f_moi)); han = pd.Timestamp(ngay_cuoi) - pd.Timedelta(days=7)
+            sl["bctc_moi_7_ngay"] = [x for x in j.get("lich_su", []) if pd.Timestamp(x["ngay"]) >= han]
+            sl["bctc_cham"] = j.get("cham_cong_bo", []); sl["bctc_cap_nhat"] = j.get("cap_nhat")
+        except Exception: pass
     vt = tai_vi_the()
     if vt:
         dong, tong_cp = [], 0.0
@@ -110,7 +118,16 @@ def dung_markdown(sl, loi_binh):
     if sl["danh_sach_chat_luong"]:
         d += ["| Mã | Điểm nhân tố | ROE bình quân (%) | Số phép thử chưa đánh giá được |", "| --- | ---: | ---: | ---: |"]
         d += [f"| {r['ma']} | {r['diem']} | {r['roe_tb']} | {r['chua_danh_gia']} |" for r in sl["danh_sach_chat_luong"]]
-    d += ["", "## 4. Lời bình", "", loi_binh or "Không có lời bình (không có khóa Gemini hoặc lỗi gọi mô hình).", "",
+    d += ["", "## 4. BCTC mới công bố và mã chậm công bố", ""]
+    if "bctc_moi_7_ngay" in sl:
+        moi = sl["bctc_moi_7_ngay"]
+        d.append("BCTC mới công bố trong 7 ngày: " + (", ".join(f"{x['ma']} ({x['ky']}, công bố {x['cong_bo']})" for x in moi) if moi else "không có") + ".")
+        cham = sl.get("bctc_cham", [])
+        d.append("Mã chậm công bố (quá hạn quý +45 ngày hoặc năm +90 ngày, vẫn đang giao dịch): " + (", ".join(f"{x['ma']} (kỳ cuối {x['ky_cuoi']}, cần {x['ky_ky_vong']})" for x in cham[:25]) + ("…" if len(cham) > 25 else "") if cham else "không có") + ". Chậm nộp BCTC là một dấu hiệu cảnh báo.")
+        d.append(f"Dữ liệu BCTC cập nhật lần cuối: {sl.get('bctc_cap_nhat')}.")
+    else:
+        d.append("Chưa có dữ liệu cập nhật BCTC (không có dữ liệu).")
+    d += ["", "## 5. Lời bình", "", loi_binh or "Không có lời bình (không có khóa Gemini hoặc lỗi gọi mô hình).", "",
           "_Công cụ nghiên cứu cá nhân, không phải tư vấn đầu tư._"]
     return "\n".join(d)
 
