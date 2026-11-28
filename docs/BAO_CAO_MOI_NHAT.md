@@ -26,6 +26,12 @@ Chỉ báo tham khảo (backtest cho thấy không cải thiện lợi suất so
 | Độ rộng: % mã trên MA50 | 19.7% | yếu |
 | Biến động 20 phiên (năm hóa) | 19.4% (gấp 1.15 lần trung vị 1 năm) | bình thường |
 | Cách đỉnh 52 tuần | -14.2% | điều chỉnh vừa |
+| Giá trị giao dịch thị trường (20 phiên) | gấp 1.01 lần trung vị 1 năm | bình thường |
+| Mức kéo xa MA200 | -7.2% | không kéo xa |
+| Mã đang chạy nóng (tăng ≥30% trong 3 tháng hoặc ≥100% trong 12 tháng) | 0.8% (1 mã) | ít |
+| **Thị trường hưng phấn** (giao dịch ≥1,5 lần và cao hơn MA200 ≥10%) | Không | chưa |
+
+Hai dòng cuối (chạy nóng, hưng phấn) là chỉ báo kiểu đảo ngược: tin tốt dồn dập, giao dịch bùng nổ và giá chạy xa thường xuất hiện khi giá đã tăng nhiều. Backtest 2010–2026 **chưa thấy giá trị dự báo**: mã chạy nóng không tăng thấp hơn đáng kể sau 3, 6, 12 tháng (chênh −0,1; 0,0; −2,4 điểm, khoảng tin cậy chứa 0); cờ hưng phấn không dự báo lợi suất thấp và luật tạm dừng mua theo cờ này không cải thiện (−0,02 đến −0,11 điểm CAGR). Chỉ để tham khảo, không dùng để ra quyết định.
 
 ## 2. Tầng 1: lõi và phân bổ
 
@@ -37,20 +43,20 @@ Chỉ báo tham khảo (backtest cho thấy không cải thiện lợi suất so
 
 Có **20/122** mã thanh khoản qua các phép thử tự động (dòng tiền kinh doanh, phải thu và tồn kho, lãi bất thường, nợ vay, bán ròng nội bộ, cổ tức tiền thật, BCTC không quá cũ; ngân hàng có bộ riêng). Backtest dài hạn (2010–2026, 866 mã gồm cả mã đã hủy niêm yết) cho thấy lõi chọn mã **ngang** chuẩn mua đều có cổ tức, chưa có ý nghĩa thống kê: đây là danh sách theo dõi, không phải khuyến nghị mua. Chưa đánh giá: ý kiến kiểm toán thật, cầm cố/ký quỹ (không có nguồn dữ liệu).
 
-| Mã | Ngành | Điểm | ROE TB (%) | Cổ tức tiền (năm/5) | Phép thử đạt/đánh giá được |
-| --- | --- | ---: | ---: | ---: | ---: |
-| MBB | Ngân hàng | 0.85 | 20.7 | 4 | 6/6 |
-| NT2 | Điện, nước & xăng dầu khí đốt | 0.81 | 14.4 | 5 | 9/9 |
-| DHC | Tài nguyên Cơ bản | 0.77 | 17.0 | 5 | 9/9 |
-| CTG | Ngân hàng | 0.68 | 21.6 | 3 | 6/6 |
-| BID | Ngân hàng | 0.62 | 18.1 | 3 | 6/6 |
-| SHB | Ngân hàng | 0.6 | 18.2 | 2 | 6/6 |
-| ACB | Ngân hàng | 0.6 | 16.9 | 4 | 6/6 |
-| TCB | Ngân hàng | 0.58 | 15.0 | 3 | 6/6 |
-| BVH | Bảo hiểm | 0.53 | 9.6 | 5 | 8/8 |
-| DPR | Hóa chất | 0.51 | 8.8 | 6 | 9/9 |
-| GAS | Điện, nước & xăng dầu khí đốt | 0.51 | 19.0 | 5 | 9/9 |
-| ANV | Thực phẩm và đồ uống | 0.5 | 11.8 | 5 | 9/9 |
+| Mã | Ngành | Điểm | ROE TB (%) | Cổ tức tiền (năm/5) | Tăng 3 tháng | Tăng 12 tháng | Đà tăng | Phép thử đạt/đánh giá được |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | --- | ---: |
+| MBB | Ngân hàng | 0.85 | 20.7 | 4 | -13.5% | -1.8% | bình thường | 6/6 |
+| NT2 | Điện, nước & xăng dầu khí đốt | 0.81 | 14.4 | 5 | +16.0% | +2.2% | bình thường | 9/9 |
+| DHC | Tài nguyên Cơ bản | 0.77 | 17.0 | 5 | -0.1% | +24.8% | bình thường | 9/9 |
+| CTG | Ngân hàng | 0.68 | 21.6 | 3 | -7.4% | -11.2% | bình thường | 6/6 |
+| BID | Ngân hàng | 0.62 | 18.1 | 3 | -20.5% | -15.8% | bình thường | 6/6 |
+| SHB | Ngân hàng | 0.6 | 18.2 | 2 | -15.4% | -37.5% | bình thường | 6/6 |
+| ACB | Ngân hàng | 0.6 | 16.9 | 4 | -12.1% | -7.7% | bình thường | 6/6 |
+| TCB | Ngân hàng | 0.58 | 15.0 | 3 | -9.6% | -9.1% | bình thường | 6/6 |
+| BVH | Bảo hiểm | 0.53 | 9.6 | 5 | -11.9% | +4.3% | bình thường | 8/8 |
+| DPR | Hóa chất | 0.51 | 8.8 | 5 | -9.2% | -11.9% | bình thường | 9/9 |
+| GAS | Điện, nước & xăng dầu khí đốt | 0.51 | 19.0 | 5 | -11.3% | +22.3% | bình thường | 9/9 |
+| ANV | Thực phẩm và đồ uống | 0.5 | 11.8 | 5 | -9.1% | -47.0% | bình thường | 9/9 |
 
 ## 4. Dữ liệu: BCTC mới và mã chậm công bố
 
@@ -61,9 +67,9 @@ Có **20/122** mã thanh khoản qua các phép thử tự động (dòng tiền
 
 ## 5. Lời bình
 
-Báo cáo đầu tư dài hạn ngày 27/11/2026 cho thấy VN-Index đang ở mức 1653.9 điểm. Chỉ số này nằm dưới đường trung bình động 200 ngày (MA200) là 1781.3 điểm, với khoảng cách -7.15%. Đây là phiên thứ 46 liên tiếp VN-Index duy trì dưới MA200, phản ánh xu hướng giảm đã kéo dài.
+Báo cáo ngày 27/11/2026 cho thấy VNIndex ở mức 1653.9 điểm. Chỉ số này thấp hơn MA200 (1781.3 điểm) 7.15% và đã duy trì dưới ngưỡng này 46 phiên liên tiếp. Độ rộng thị trường trên MA200 còn hạn chế, chỉ đạt 14.8%.
 
-Độ rộng thị trường cũng khá hẹp khi chỉ có 14.8% mã cổ phiếu nằm trên MA200. VN-Index hiện cách đỉnh 52 tuần là -14.2%. Tỷ lệ biến động thị trường ghi nhận 1.15. Có 20 mã cổ phiếu đạt tiêu chí lọc và 122 mã có thanh khoản. Số thay đổi so với lần trước là 0. Tỷ lệ tiền mặt: không có dữ liệu.
+Thị trường không có dấu hiệu hưng phấn, với tỷ lệ mã chạy nóng chỉ 0.8%. Biến động thị trường ở mức 1.15. Khoảng cách so với đỉnh 52 tuần của VNIndex là -14.2%. Tỷ lệ giao dịch đạt 1.01. Có 20 mã đạt lọc và 122 mã có thanh khoản, số thay đổi so với lần trước là 0. Tỷ lệ tiền mặt: không có dữ liệu.
 
 ## 6. Tình trạng các tầng
 
