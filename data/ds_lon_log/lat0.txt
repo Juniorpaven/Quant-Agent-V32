@@ -1,0 +1,19 @@
+lát 0/6: 146 mã
+  1/146 AAA
+HTTP 500 https://apiweb.cafef.vn/api/v2/BCTC/GetReportCDKT?symbol=AMY&pageIndex=1&pageSize=20&reportType=ALL&TypeTime=NAM
+HTTP 500 https://apiweb.cafef.vn/api/v2/BCTC/GetReportCDKT?symbol=AMY&pageIndex=1&pageSize=20&reportType=ALL&TypeTime=NAM
+  11/146 BII
+  21/146 CLW
+  31/146 DMS
+  41/146 FLC
+  51/146 HHP
+  61/146 IJC
+  71/146 LIX
+  81/146 NHH
+  91/146 PMB
+  101/146 SAM
+  111/146 SPC
+  121/146 TET
+  131/146 TXM
+  141/146 VOC
+thiếu: {'gia': 4, 'bctc': 3, 'noibo': 11, 'cafef': 2}
