@@ -71,5 +71,18 @@ class TestKhung(unittest.TestCase):
             self.assertAlmostEqual(a, b)
 
 
+
+class TestNhapModule(unittest.TestCase):
+    """Mọi module trong v34 phải nhập được và không có tác dụng phụ (không tải dữ liệu khi nhập)."""
+    def test_nhap_tat_ca(self):
+        import importlib, glob
+        goc = os.path.join(os.path.dirname(__file__), "..", "v34")
+        for f in sorted(glob.glob(os.path.join(goc, "*.py"))):
+            ten = os.path.basename(f)[:-3]
+            if ten.startswith(("chay_", "kiem_thu", "tham_do", "chan_doan")): continue   # script chạy một lần, có thể có vòng chạy ở cấp module
+            with self.subTest(module=ten):
+                importlib.import_module(ten)
+
+
 if __name__ == "__main__":
     unittest.main()

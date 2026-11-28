@@ -31,15 +31,20 @@ def bao_cao(ma, loai):
         if len(ds) >= (v.get("count") or 0): break
         trang += 1
     return {"templace": tpl if ds else None, "data": ds}
-ma_ds = [os.path.basename(f)[:-5] for f in sorted(glob.glob("data/bctc/[A-Z]*.json"))]
-da_co = {os.path.basename(f)[:-5] for f in glob.glob("data/cafef/[A-Z]*.json")}
-for ma in ma_ds:
-    if bi_chan: break
-    if ma in da_co and os.environ.get("LAM_MOI") != "1": continue
-    out = {"kqkd": bao_cao(ma, "KQKD"), "cdkt": c2.bao_cao(ma, "cdkt"), "lctt": c2.bao_cao(ma, "lctt")}
-    out["cdkt"]["loai_dung"] = out["lctt"]["loai_dung"] = 2
-    if c2.bi_chan: break
-    j = lay(CT + ma); time.sleep(0.6)
-    out["co_tuc"] = (j or {}).get("Data") if isinstance(j, dict) else None
-    json.dump(out, open(f"data/cafef/{ma}.json", "w"), ensure_ascii=False)
-    print("cafef", ma, {k: (len(v["data"]) if isinstance(v, dict) else (len(v) if v else 0)) for k, v in out.items()}, flush=True)
+def _chay():
+    ma_ds = [os.path.basename(f)[:-5] for f in sorted(glob.glob("data/bctc/[A-Z]*.json"))]
+    da_co = {os.path.basename(f)[:-5] for f in glob.glob("data/cafef/[A-Z]*.json")}
+    for ma in ma_ds:
+        if bi_chan: break
+        if ma in da_co and os.environ.get("LAM_MOI") != "1": continue
+        out = {"kqkd": bao_cao(ma, "KQKD"), "cdkt": c2.bao_cao(ma, "cdkt"), "lctt": c2.bao_cao(ma, "lctt")}
+        out["cdkt"]["loai_dung"] = out["lctt"]["loai_dung"] = 2
+        if c2.bi_chan: break
+        j = lay(CT + ma); time.sleep(0.6)
+        out["co_tuc"] = (j or {}).get("Data") if isinstance(j, dict) else None
+        json.dump(out, open(f"data/cafef/{ma}.json", "w"), ensure_ascii=False)
+        print("cafef", ma, {k: (len(v["data"]) if isinstance(v, dict) else (len(v) if v else 0)) for k, v in out.items()}, flush=True)
+
+
+if __name__ == "__main__":
+    _chay()

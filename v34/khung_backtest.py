@@ -18,8 +18,8 @@ MIEN_THANH_KHOAN = {"E1VFVN30"}  # ETF: nạp tiền nhỏ, không cần lọc t
 def nap_gia(thu_muc):
     """Trả về dict ma -> DataFrame (index Date, cột Open High Low Close Volume). Giá nghìn đồng như Entrade."""
     out = {}
-    for f in sorted(glob.glob(os.path.join(thu_muc, "*.csv"))):
-        ma = os.path.basename(f)[:-4]
+    for f in sorted(glob.glob(os.path.join(thu_muc, "*.csv")) + glob.glob(os.path.join(thu_muc, "*.csv.gz"))):
+        ma = os.path.basename(f).split(".")[0]
         df = pd.read_csv(f, parse_dates=["Date"]).drop_duplicates("Date").set_index("Date").sort_index()
         out[ma] = df
     return out

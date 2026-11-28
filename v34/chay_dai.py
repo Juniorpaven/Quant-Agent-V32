@@ -14,8 +14,8 @@ from tang3_mo_rong import LoiChiBao
 
 def nap_dai():
     gia = {}
-    for f in sorted(glob.glob("data/gia_dai/[A-Z]*.csv")):
-        ma = os.path.basename(f)[:-4]; df = pd.read_csv(f, parse_dates=["Date"]).drop_duplicates("Date").set_index("Date").sort_index()
+    for f in sorted(glob.glob("data/gia_dai/[A-Z]*.csv") + glob.glob("data/gia_dai/[A-Z]*.csv.gz")):
+        ma = os.path.basename(f).split(".")[0]; df = pd.read_csv(f, parse_dates=["Date"]).drop_duplicates("Date").set_index("Date").sort_index()
         gia[ma] = df
     cu = pd.read_csv("data/tham_do5/VNINDEX_truoc_2015.csv", parse_dates=["Date"]); moi = pd.read_csv("data/gia/VNINDEX.csv", parse_dates=["Date"])
     vn = pd.concat([cu, moi]).drop_duplicates("Date").sort_values("Date").set_index("Date"); vn = vn[vn.Close > 0]

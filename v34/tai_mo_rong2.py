@@ -5,7 +5,8 @@ import json, os, sys, time
 import pandas as pd, requests
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import tai_du_lieu as td
-from tien_ich import ghi_bctc, tai_mo_rong as mr
+from tien_ich import ghi_bctc_manh, ghi_noibo
+import tai_mo_rong as mr
 
 THEM2 = ("AAA BCM BSR BWE CMG CRE CSV CTR CTS DBC DGW DHC DPR DXS EVF FCN FRT FTS HAG HHV HT1 HUT IJC IMP KDC KOS LHG NAB NLG NTL PAN PPC PVT "
          "QCG SBT SCS SHS SJS SSB TCM TDM TLG TNH VCG VCS VDS VOS VPG VSC VTP YEG BAF DRC HVN PGV PET SGT HVG TCR VIS TNG PGD GEG ELC HID "
@@ -26,10 +27,10 @@ def mo_rong():
         for khoa, sec in (("kqkd", "INCOME_STATEMENT"), ("cdkt", "BALANCE_SHEET"), ("lctt", "CASH_FLOW")):
             out[khoa] = td.tai_iq(f"{td.IQ}/company/{ma}/financial-statement?section={sec}"); time.sleep(0.3)
         out["chi_so"] = td.tai_iq(f"{td.IQ}/company/{ma}/statistics-financial"); time.sleep(0.3)
-        if out["kqkd"]: ghi_bctc(f"{td.DATA}/bctc/{ma}.json", out); ok["bctc"].append(ma)
+        if out["kqkd"]: ghi_bctc_manh(f"{td.DATA}/bctc/{ma}.json", out); ok["bctc"].append(ma)
         else: loi["bctc"].append(ma)
         ev = mr.tai_noi_bo(ma)
-        if ev: json.dump(ev, open(f"{td.DATA}/noibo/{ma}.json", "w"), ensure_ascii=False); ok["noibo"].append(ma)
+        if ev: ghi_noibo(f"{td.DATA}/noibo/{ma}.json", ev); ok["noibo"].append(ma)
         else: loi["noibo"].append(ma)
         print("ok", ma, len(df), flush=True)
     json.dump({"ok": ok, "loi": loi}, open(f"{td.DATA}/_trang_thai_mo_rong2.json", "w"), ensure_ascii=False, indent=1)

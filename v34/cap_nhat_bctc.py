@@ -6,7 +6,8 @@ from datetime import datetime, timedelta, timezone
 import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import tai_du_lieu as td
-from tien_ich import ghi_bctc, tai_mo_rong as mr
+from tien_ich import ghi_bctc_manh, ghi_noibo
+import tai_mo_rong as mr
 
 DATA = td.DATA
 
@@ -46,13 +47,13 @@ def main():
             for khoa, sec in (("cdkt", "BALANCE_SHEET"), ("lctt", "CASH_FLOW")): out[khoa] = td.tai_iq(f"{td.IQ}/company/{ma}/financial-statement?section={sec}"); time.sleep(0.3)
             out["chi_so"] = td.tai_iq(f"{td.IQ}/company/{ma}/statistics-financial"); time.sleep(0.3)
             if out["cdkt"] and out["lctt"]:
-                ghi_bctc(f, out)
+                ghi_bctc_manh(f, out)
                 moi.append({"ma": ma, "ky": f"Q{ky_m[1]}/{ky_m[0]}", "cong_bo": ky_m[2], "truoc": f"Q{ky_cu[1]}/{ky_cu[0]}" if ky_cu else None})
                 ky_cu = ky_m
         if niem_yet and ky_kv and ky_cu and ky_cu[:2] < ky_kv: cham.append({"ma": ma, "ky_cuoi": f"Q{ky_cu[1]}/{ky_cu[0]}" if ky_cu else None, "ky_ky_vong": f"Q{ky_kv[1]}/{ky_kv[0]}"})
         if thu_hai or any(m["ma"] == ma for m in moi):
             ev = mr.tai_noi_bo(ma)
-            if ev: json.dump(ev, open(f"{DATA}/noibo/{ma}.json", "w"), ensure_ascii=False)
+            if ev: ghi_noibo(f"{DATA}/noibo/{ma}.json", ev)
             time.sleep(0.3)
     f_ls = f"{DATA}/_bctc_moi.json"
     ls = json.load(open(f_ls)).get("lich_su", []) if os.path.exists(f_ls) else []
