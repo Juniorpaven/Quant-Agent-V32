@@ -8,7 +8,8 @@ NGAY_RA_SOAT = {2: 15, 5: 15, 8: 15, 11: 15}  # tháng: ngày (sau mùa BCTC: qu
 
 
 class LoiTang2:
-    def __init__(self, dl, n=12, ma_etf="E1VFVN30", chan_ma200=False, ds_ma=None, max_ngan_hang=None, ty_le_loi=1.0, xep="diem", seed=0, loc_fn=None):
+    def __init__(self, dl, n=12, ma_etf="E1VFVN30", chan_ma200=False, ds_ma=None, max_ngan_hang=None, ty_le_loi=1.0, xep="diem", seed=0, loc_fn=None, max_nganh=None, nganh=None):
+        self.max_ng, self.ng = max_nganh, nganh or {}
         self.loc = loc_fn or loc
         self.xep, self.rng = xep, __import__("numpy").random.default_rng(seed)
         self.dl, self.n, self.etf, self.chan = dl, n, ma_etf, chan_ma200
@@ -41,6 +42,7 @@ class LoiTang2:
                 else: thu_tu = list(bang.index)
                 for m in thu_tu:
                     if len(self.giu) >= self.n: break
+                    if self.max_ng is not None and sum(self.ng.get(x) == self.ng.get(m) for x in self.giu) >= self.max_ng: continue
                     if self.max_nh is not None and m in NGAN_HANG and sum(x in NGAN_HANG for x in self.giu) >= self.max_nh: continue
                     self.giu.append(m)
         self.nhat_ky_chon.append((d.date(), list(self.giu), thoat))
