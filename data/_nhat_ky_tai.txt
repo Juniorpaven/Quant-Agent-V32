@@ -1,0 +1,249 @@
+tu_dien tu_dien_1 200 75146
+tu_dien tu_dien_2 404 192
+tu_dien tu_dien_3 200 147073
+bctc VCB {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc BID {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc CTG {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc TCB {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 39}
+bctc MBB {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc ACB {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc VPB {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc STB {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc HDB {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc TPB {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 39}
+bctc VIB {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc SSI {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc VND {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc VCI {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc HCM {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc VHM {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 39}
+bctc VIC {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc VRE {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc HPG {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc HSG {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc NKG {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc PVD {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc PVS {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc DGC {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc DCM {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc DPM {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc VHC {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc ANV {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc PTB {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc MWG {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc PNJ {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc FPT {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc REE {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc GAS {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc NT2 {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc VSH {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc VNM {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc SAB {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc KBC {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc SZC {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 35}
+bctc IDC {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 37}
+bctc VGC {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc DIG {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc NVL {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc PDR {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc DXG {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc KDH {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc SMC {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc SIP {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 32}
+bctc DTD {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 39}
+bctc NTC {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 41}
+bctc PHR {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc GVR {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 36}
+bctc BMP {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc DHG {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc PC1 {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc POW {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc PLX {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc BVH {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc MSN {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc VJC {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc GMD {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc HAH {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc CTD {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc HDG {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc VPI {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc TCH {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc CII {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc LPB {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc SHB {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc EIB {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 40}
+bctc MSB {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 27}
+bctc OCB {'kqkd': ['years', 'quarters'], 'cdkt': ['years', 'quarters'], 'lctt': ['years', 'quarters'], 'chi_so': 25}
+gia FLC 3543 2011-10-05 2025-12-30
+bctc FLC
+gia ROS 1502 2016-09-01 2022-08-31
+bctc ROS
+gia HAI 3914 2010-04-20 2025-12-30
+bctc HAI
+gia AMD 2772 2014-11-11 2025-12-30
+bctc AMD
+thiếu giá GTN
+gia ITA 4986 2006-11-15 2026-11-27
+bctc ITA
+gia HQC 4019 2010-10-20 2026-11-27
+bctc HQC
+gia TTF 4685 2008-02-18 2026-11-27
+bctc TTF
+gia LDG 2824 2015-08-12 2026-11-27
+bctc LDG
+gia OGC 4138 2010-05-04 2026-11-27
+bctc OGC
+gia SCR 4000 2010-11-09 2026-11-27
+bctc SCR
+gia HNG 2833 2015-07-20 2026-11-27
+bctc HNG
+gia GAB 1613 2019-07-11 2025-12-30
+bctc GAB
+gia KLF 3058 2013-09-23 2025-12-30
+bctc KLF
+gia ART 2315 2017-08-02 2026-11-27
+bctc ART
+gia FIT 3326 2013-07-26 2026-11-27
+bctc FIT
+gia TGG 2118 2018-05-25 2026-11-27
+bctc TGG
+gia DLG 4103 2010-06-22 2026-11-27
+bctc DLG
+gia HBC 4955 2006-12-27 2026-11-27
+bctc HBC
+gia TNT 4125 2010-05-21 2026-11-27
+bctc TNT
+gia SJF 2341 2017-07-05 2026-11-27
+bctc SJF
+gia ASM 4206 2010-01-18 2026-11-27
+bctc ASM
+gia TDH 4972 2006-12-14 2026-11-27
+bctc TDH
+gia HDC 4772 2007-10-08 2026-11-27
+bctc HDC
+gia CEO 3039 2014-09-29 2026-11-27
+bctc CEO
+gia LCG 4499 2008-11-18 2026-11-27
+bctc LCG
+gia ITC 4270 2009-10-19 2026-11-27
+bctc ITC
+gia DRH 4079 2010-07-26 2026-11-27
+bctc DRH
+gia FIR 2024 2018-10-18 2026-11-27
+bctc FIR
+gia EVG 2368 2017-06-08 2026-11-27
+bctc EVG
+gia VIX 4212 2009-12-29 2026-11-27
+bctc VIX
+gia BCG 2767 2015-07-16 2026-08-18
+bctc BCG
+gia GEX 2768 2015-10-26 2026-11-27
+bctc GEX
+noibo VCB 29
+noibo BID 17
+noibo CTG 28
+noibo TCB 122
+noibo MBB 402
+noibo ACB 127
+noibo VPB 169
+noibo STB 170
+noibo HDB 89
+noibo TPB 53
+noibo VIB 154
+noibo SSI 320
+noibo VND 54
+noibo VCI 99
+noibo HCM 189
+noibo VHM 39
+noibo VIC 111
+noibo VRE 27
+noibo HPG 236
+noibo HSG 336
+noibo NKG 118
+noibo PVD 217
+noibo PVS 194
+noibo DGC 170
+noibo DCM 39
+noibo DPM 137
+noibo VHC 178
+noibo ANV 76
+noibo PTB 142
+noibo MWG 348
+noibo PNJ 453
+noibo FPT 273
+noibo REE 177
+noibo GAS 76
+noibo NT2 78
+noibo VSH 105
+noibo VNM 397
+noibo SAB 22
+noibo KBC 183
+noibo SZC 30
+noibo IDC 75
+noibo VGC 119
+noibo DIG 320
+noibo NVL 201
+noibo PDR 157
+noibo DXG 594
+noibo KDH 372
+noibo SMC 117
+noibo SIP 63
+noibo DTD 40
+noibo NTC 54
+noibo PHR 77
+noibo GVR 33
+noibo BMP 98
+noibo DHG 149
+noibo PC1 85
+noibo POW 34
+noibo PLX 20
+noibo BVH 61
+noibo MSN 94
+noibo VJC 64
+noibo GMD 380
+noibo HAH 286
+noibo CTD 117
+noibo HDG 188
+noibo VPI 13
+noibo TCH 33
+noibo CII 367
+noibo LPB 166
+noibo SHB 106
+noibo EIB 37
+noibo MSB 57
+noibo OCB 39
+noibo FLC 73
+noibo ROS 24
+noibo HAI 89
+noibo AMD 13
+noibo GTN 91
+noibo ITA 123
+noibo HQC 103
+noibo TTF 137
+noibo LDG 54
+noibo OGC 88
+noibo SCR 123
+noibo HNG 51
+noibo KLF 51
+noibo ART 7
+noibo FIT 71
+noibo TGG 34
+noibo DLG 71
+noibo HBC 244
+noibo TNT 81
+noibo SJF 30
+noibo ASM 60
+noibo TDH 208
+noibo HDC 232
+noibo CEO 61
+noibo LCG 116
+noibo ITC 89
+noibo DRH 48
+noibo FIR 37
+noibo EVG 24
+noibo VIX 116
+noibo BCG 118
+noibo GEX 184
+/home/runner/work/Quant-Agent-V32/Quant-Agent-V32/v34/tai_mo_rong.py:65: Pandas4Warning: Timestamp.utcnow is deprecated and will be removed in a future version. Use Timestamp.now('UTC') instead.
+  json.dump({"cap_nhat": pd.Timestamp.utcnow().isoformat(), "loi": loi}, open(f"{DATA}/_trang_thai_mo_rong.json", "w"), ensure_ascii=False, indent=1)
+LỖI {'gia': ['GTN'], 'bctc': ['GTN'], 'noibo': ['GAB']}

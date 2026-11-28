@@ -1,0 +1,50 @@
+name: Lam moi du lieu nen V34
+on:
+  schedule:
+    - cron: '0 2 5 * *' # ngày 5 hằng tháng: làm mới BCTC năm và cổ tức (CafeF), hồ sơ ngành
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  cafef:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        lat: [0, 1, 2, 3, 4, 5]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install pandas requests
+      - name: CafeF (BCTC nam, co tuc)
+        timeout-minutes: 90
+        run: python -u v34/tai_ds_lon.py ${{ matrix.lat }} 6 cafef 2>&1 | tee cafef_${{ matrix.lat }}.txt
+      - name: Commit
+        if: always()
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add data/cafef
+          git commit -m "Làm mới CafeF, lát ${{ matrix.lat }} [skip ci]" || echo "Không có thay đổi"
+          for i in 1 2 3 4 5 6; do git pull --rebase origin ${{ github.ref_name }} && git push origin HEAD:${{ github.ref_name }} && break; sleep $((RANDOM % 20 + 5)); done
+  ho-so:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install pandas requests
+      - name: Ho so nganh
+        timeout-minutes: 40
+        run: python -u v34/tai_ho_so.py 2>&1 | tee ho_so_nhat_ky.txt
+      - name: Commit
+        if: always()
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add data/ho_so data/_trang_thai_ho_so.json
+          git commit -m "Làm mới hồ sơ ngành [skip ci]" || echo "Không có thay đổi"
+          for i in 1 2 3 4 5 6; do git pull --rebase origin ${{ github.ref_name }} && git push origin HEAD:${{ github.ref_name }} && break; sleep $((RANDOM % 20 + 5)); done

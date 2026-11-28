@@ -1,0 +1,17 @@
+lát 3/6: 146 mã
+  1/146 AAT
+  11/146 BKH
+  21/146 CMS
+  31/146 DNC
+  41/146 FRT
+  51/146 HHV
+  61/146 INC
+  71/146 LSS
+  81/146 NKG
+  91/146 PMP
+  101/146 SBA
+  111/146 SQC
+  121/146 THD
+  131/146 UNI
+  141/146 VPD
+thiếu: {'gia': 1, 'bctc': 1, 'noibo': 9, 'cafef': 3}

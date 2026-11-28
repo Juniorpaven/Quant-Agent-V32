@@ -1,0 +1,35 @@
+# Báo cáo Quant V34 – dữ liệu phiên 2026-11-27
+
+## 1. Luật thị trường (tầng 3)
+
+- VN-Index: **1653.9**, MA200: **1781.3** (-7.15%).
+- Hướng dẫn: **VN-Index dưới MA200: tạm dừng mua thêm lõi (giữ tiền mặt), không bán. Mua lại khi VN-Index vượt MA200.**
+
+## 2. Vị thế và tiền mặt
+
+Chưa có `data/vi_the.json` nên không có số liệu vị thế (không có dữ liệu).
+
+## 3. Danh sách chất lượng (chỉ theo dõi)
+
+Có 21 mã qua các phép thử tự động. Backtest 2021–2026 cho thấy lõi chọn mã **chưa thắng** mua đều E1VFVN30, nên đây không phải khuyến nghị mua. Phép thử 4 và 5 (bên liên quan, kiểm toán) chưa có dữ liệu tự động; phép thử 7 chỉ xét giao dịch bán ròng của người nội bộ.
+
+| Mã | Điểm nhân tố | ROE bình quân (%) | Số phép thử chưa đánh giá được |
+| --- | ---: | ---: | ---: |
+| MBB | 0.87 | 20.7 | 1 |
+| CTG | 0.71 | 21.6 | 1 |
+| IDC | 0.7 | 25.6 | 2 |
+| ACB | 0.68 | 16.9 | 1 |
+| TCB | 0.65 | 15.0 | 1 |
+| VGC | 0.63 | 13.8 | 2 |
+| BVH | 0.61 | 8.9 | 3 |
+| BID | 0.6 | 18.1 | 1 |
+| SHB | 0.59 | 18.2 | 1 |
+| HAH | 0.58 | 19.8 | 2 |
+| PC1 | 0.52 | 6.2 | 2 |
+| GAS | 0.5 | 18.9 | 2 |
+
+## 4. Lời bình
+
+Không có lời bình (không có khóa Gemini hoặc lỗi gọi mô hình).
+
+_Công cụ nghiên cứu cá nhân, không phải tư vấn đầu tư._

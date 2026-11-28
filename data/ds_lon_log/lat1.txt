@@ -1,0 +1,17 @@
+lát 1/6: 146 mã
+  1/146 AAM
+  11/146 BKC
+  21/146 CMC
+  31/146 DMX
+  41/146 FMC
+  51/146 HHR
+  61/146 ILB
+  71/146 LPB
+  81/146 NHP
+  91/146 PMC
+  101/146 SAP
+  111/146 SPM
+  121/146 TFC
+  131/146 TYA
+  141/146 VOS
+thiếu: {'gia': 5, 'bctc': 4, 'noibo': 13, 'cafef': 3}

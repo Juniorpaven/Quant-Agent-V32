@@ -1,0 +1,31 @@
+name: Kiem thu bao cao V34
+on:
+  workflow_dispatch:
+  push:
+    branches: [nang-cap-v34]
+    paths: ['v34/kich_hoat_kiem_bao_cao.txt']
+permissions:
+  contents: write
+jobs:
+  kiem-thu:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install pandas numpy requests markdown
+      - name: Chay bao cao that, khong gui mail, khong goi Gemini
+        timeout-minutes: 15
+        run: python -u v34/bao_cao_v34.py --khong-gui --bo-qua-kiem-tra-phien 2>&1 | tee bao_cao_kiem_thu.txt
+      - name: Luu ket qua kiem thu
+        if: always()
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          mkdir -p data/kiem_bao_cao && cp bao_cao_kiem_thu.txt data/kiem_bao_cao/_ket_qua.txt || true
+          git checkout -- data/gia || true
+          git add data/kiem_bao_cao
+          git commit -m "Kết quả kiểm thử báo cáo V34 [skip ci]" || echo "Không có thay đổi"
+          git pull --rebase origin ${{ github.ref_name }} || true
+          git push origin HEAD:${{ github.ref_name }}

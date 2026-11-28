@@ -1,0 +1,32 @@
+name: Tai du lieu V34
+on:
+  workflow_dispatch:
+  push:
+    branches: [nang-cap-v34]
+    paths: ['v34/kich_hoat_tai.txt']
+permissions:
+  contents: write
+jobs:
+  tai:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install pandas requests
+      - name: Tai du lieu
+        timeout-minutes: 40
+        run: |
+          python -u v34/tai_du_lieu.py bctc 2>&1 | tee data_nhat_ky.txt
+          python -u v34/tai_mo_rong.py 2>&1 | tee -a data_nhat_ky.txt
+      - name: Commit du lieu
+        if: always()
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          mkdir -p data && cp data_nhat_ky.txt data/_nhat_ky_tai.txt || true
+          git add data
+          git commit -m "Cập nhật dữ liệu giá và BCTC [skip ci]" || echo "Không có thay đổi"
+          git pull --rebase origin ${{ github.ref_name }} || true
+          git push origin HEAD:${{ github.ref_name }}

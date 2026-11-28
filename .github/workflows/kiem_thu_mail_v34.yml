@@ -1,0 +1,42 @@
+name: Kiem thu mail va Gemini V34
+on:
+  workflow_dispatch:
+  push:
+    branches: [nang-cap-v34]
+    paths: ['v34/kich_hoat_mail.txt']
+permissions:
+  contents: write
+jobs:
+  kiem-thu:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements.txt google-generativeai
+      - name: Chay bao cao that, gui mail kiem thu, goi Gemini that
+        timeout-minutes: 20
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          EMAIL_NHAN: ${{ secrets.EMAIL_NHAN }}
+          TIEN_TO_TIEU_DE: '[KIEM THU] '
+        run: python -u v34/bao_cao_v34.py --bo-qua-kiem-tra-phien 2>&1 | tee mail_kiem_thu.txt
+      - name: Luu ket qua (khong luu khoa, khong luu dia chi)
+        if: always()
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git checkout -- data 2>/dev/null || true
+          mkdir -p data/kiem_mail
+          grep -E "Đã gửi|Bỏ qua gửi|Lỗi gửi|Gemini|Không có lời bình|## 5. Lời bình" mail_kiem_thu.txt | sed -E 's/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+/[email]/g' > data/kiem_mail/_ket_qua.txt || true
+          [ -n "$GEMINI_API_KEY" ] && echo "co_khoa_gemini=true" >> data/kiem_mail/_ket_qua.txt || echo "co_khoa_gemini=false" >> data/kiem_mail/_ket_qua.txt
+          git add data/kiem_mail
+          git commit -m "Kết quả kiểm thử mail và Gemini [skip ci]" || echo "Không có thay đổi"
+          for i in 1 2 3; do git pull --rebase origin ${{ github.ref_name }} && git push origin HEAD:${{ github.ref_name }} && break; sleep 5; done
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

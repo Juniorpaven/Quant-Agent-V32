@@ -1,0 +1,4 @@
+# File mẫu. Đổi tên thành data/lai_suat_lnh.csv; nhập lãi suất liên ngân hàng qua đêm (%/năm) theo tuần, từ 2015 trở đi
+ngay,lai_suat_qua_dem_pct
+2024-01-02,0.50
+2024-01-09,0.55

@@ -1,0 +1,19 @@
+| Tên                                              | CAGR (XIRR)   | MDD     |   Sharpe |   NAV cuối (triệu) |   Tổng nạp (triệu)
+|:-------------------------------------------------|:--------------|:--------|---------:|-------------------:|-------------------:|:--------
+| Mua đều E1VFVN30                                 | 9.88%         | -42.28% |     0.38 |             883.9  |                670 | 0.0% 
+| Lõi E1VFVN30 90% + vệ tinh Wyckoff 10%           | 9.65%         | -41.25% |     0.38 |             878.43 |                670 | 0.92%
+| Lõi E1VFVN30 80% + vệ tinh Wyckoff 20%           | 9.84%         | -40.95% |     0.37 |             882.99 |                670 | 10.46
+| Lõi E1VFVN30 75% + vệ tinh Wyckoff 25%           | 9.65%         | -40.95% |     0.38 |             878.26 |                670 | 14.51
+| Lõi E1VFVN30 70% + vệ tinh Wyckoff 30%           | 9.74%         | -40.86% |     0.39 |             880.55 |                670 | 18.29
+| Lõi T2 phân vị pha 50% 90% + vệ tinh Wyckoff 10% | 8.57%         | -40.28% |     0.45 |             852.24 |                670 | 24
+| Lõi T2 phân vị pha 50% 80% + vệ tinh Wyckoff 20% | 9.15%         | -39.2%  |     0.45 |             866.07 |                670 | 30
+| Lõi T2 phân vị pha 50% 75% + vệ tinh Wyckoff 25% | 9.04%         | -38.28% |     0.47 |             863.47 |                670 | 33
+| Lõi T2 phân vị pha 50% 70% + vệ tinh Wyckoff 30% | 9.26%         | -38.56% |     0.47 |             868.73 |                670 | 35
+  Lõi E1VFVN30 90% + vệ tinh Wyckoff 10%: chủ động -0.05%/năm, CI95 [-0.5, +0.4]
+  Lõi E1VFVN30 80% + vệ tinh Wyckoff 20%: chủ động -0.45%/năm, CI95 [-1.7, +0.5]
+  Lõi E1VFVN30 75% + vệ tinh Wyckoff 25%: chủ động -0.10%/năm, CI95 [-0.7, +0.5]
+  Lõi E1VFVN30 70% + vệ tinh Wyckoff 30%: chủ động +0.00%/năm, CI95 [-0.6, +0.7]
+  Lõi T2 phân vị pha 50% 90% + vệ tinh Wyckoff 10%: chủ động +0.64%/năm, CI95 [-3.6, +4.7]
+  Lõi T2 phân vị pha 50% 80% + vệ tinh Wyckoff 20%: chủ động +0.54%/năm, CI95 [-3.4, +4.3]
+  Lõi T2 phân vị pha 50% 75% + vệ tinh Wyckoff 25%: chủ động +1.00%/năm, CI95 [-2.8, +4.7]
+  Lõi T2 phân vị pha 50% 70% + vệ tinh Wyckoff 30%: chủ động +0.95%/năm, CI95 [-2.5, +4.2]
