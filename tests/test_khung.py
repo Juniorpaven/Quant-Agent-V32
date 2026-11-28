@@ -123,5 +123,35 @@ class TestDuLieuThuCong(unittest.TestCase):
         self.assertFalse(bool(s.loc["2024-10-01":"2024-11-30"].all()))         # giai đoạn tăng mạnh: có lúc tạm dừng
 
 
+
+class TestChatLuongDuLieu(unittest.TestCase):
+    """Dữ liệu trong repo phải nạp được và hợp lý (bắt bản ghi rác của nguồn)."""
+    def setUp(self):
+        goc = os.path.join(os.path.dirname(__file__), "..")
+        os.chdir(goc)
+        if not os.path.isdir("data/cafef") or not os.path.isdir("data/bctc"): self.skipTest("không có dữ liệu")
+
+    def test_nap_bo_du_lieu_dai(self):
+        from du_lieu_dai import DuLieuDai
+        dl = DuLieuDai()
+        self.assertGreater(len(dl.nam), 100)
+        for ma, ds in dl.nam.items():
+            for y in ds: self.assertTrue(1990 <= y <= 2100, f"{ma} năm {y}")
+
+    def test_gia_hop_le(self):
+        import glob
+        n = 0
+        for f in glob.glob("data/gia_dai/[A-Z]*.csv.gz")[:80]:
+            df = pd.read_csv(f, parse_dates=["Date"])
+            self.assertTrue((df.Close > 0).all(), f); self.assertTrue(df.Date.is_monotonic_increasing, f); self.assertFalse(df.Date.duplicated().any(), f); n += 1
+        self.assertGreater(n, 10)
+
+    def test_bctc_cau_truc(self):
+        import glob, json
+        for f in glob.glob("data/bctc/[A-Z]*.json")[:100]:
+            d = json.load(open(f))
+            self.assertIn("kqkd", d, f)
+
+
 if __name__ == "__main__":
     unittest.main()

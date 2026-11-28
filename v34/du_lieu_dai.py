@@ -12,6 +12,7 @@ def _bang(v):
     for x in (v or {}).get("data", []) or []:
         try: y = int(x["year"])
         except Exception: continue
+        if not 1990 <= y <= 2100: continue        # bản ghi rác của nguồn (ví dụ năm 0)
         out[y] = {"ma": {c["code"]: c["value"] for c in x.get("data", []) if c.get("value") is not None}, "kt": x.get("content") or ""}
     return out
 
@@ -23,6 +24,7 @@ def _bang_sec(v):
         for p in sec.get("data") or []:
             try: y = int(p["year"])
             except Exception: continue
+            if not 1990 <= y <= 2100: continue
             o = out.setdefault(y, {"ma": {}, "kt": p.get("content") or ""})
             for c in p.get("data") or []:
                 if c.get("value") is not None: o["ma"][c["code"]] = c["value"]
