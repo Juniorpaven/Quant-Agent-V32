@@ -172,4 +172,4 @@ if __name__ == "__main__":
         print(f"Hôm nay {sl['hom_nay']} không có phiên giao dịch (dữ liệu mới nhất {sl['ngay_du_lieu']}). Không gửi báo cáo."); sys.exit(0)
     bc = dung_markdown(sl, viet_loi_binh(sl))
     print(bc)
-    if not khong_gui: gui_mail(f"Quant V34 – {sl['ngay_du_lieu']}", bc)
+    if not khong_gui: gui_mail(os.environ.get("TIEN_TO_TIEU_DE", "") + f"Quant V34 – {sl['ngay_du_lieu']}", bc)
