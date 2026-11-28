@@ -1,0 +1,33 @@
+name: Cap nhat BCTC V34
+on:
+  schedule:
+    - cron: '0 3 * * *' # 10:00 giờ Việt Nam hằng ngày; chỉ tải đầy đủ khi có kỳ báo cáo mới
+  workflow_dispatch:
+  push:
+    branches: [nang-cap-v34]
+    paths: ['v34/kich_hoat_cap_nhat.txt']
+permissions:
+  contents: write
+concurrency:
+  group: quant-v34-du-lieu
+  cancel-in-progress: false
+jobs:
+  cap-nhat:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install pandas requests
+      - name: Cap nhat
+        timeout-minutes: 30
+        run: python -u v34/cap_nhat_bctc.py 2>&1 | tee cap_nhat_nhat_ky.txt
+      - name: Commit
+        if: always()
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add data/bctc data/noibo data/_bctc_moi.json
+          git commit -m "Cập nhật BCTC gia tăng [skip ci]" || echo "Không có thay đổi"
+          for i in 1 2 3; do git pull --rebase origin ${{ github.ref_name }} && git push origin HEAD:${{ github.ref_name }} && break; sleep 5; done
