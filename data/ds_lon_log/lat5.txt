@@ -1,0 +1,17 @@
+lát 5/6: 145 mã
+  1/145 ABS
+  11/145 BLW
+  21/145 CMX
+  31/145 DPD
+  41/145 GAB
+  51/145 HIG
+  61/145 INN
+  71/145 LWS
+  81/145 NNC
+  91/145 PNC
+  101/145 SBT
+  111/145 SRC
+  121/145 THI
+  131/145 VAT
+  141/145 VPH
+thiếu: {'gia': 1, 'bctc': 1, 'noibo': 16, 'cafef': 0}
