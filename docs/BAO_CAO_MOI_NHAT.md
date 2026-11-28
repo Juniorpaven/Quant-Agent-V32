@@ -1,10 +1,17 @@
 # Báo cáo Quant V34 – dữ liệu phiên 2026-11-27
 
-Xem trực tuyến: https://github.com/Juniorpaven/Quant-Agent-V32/blob/main/docs/BAO_CAO_MOI_NHAT.md
+Xem trực tuyến: https://github.com/Juniorpaven/Quant-Agent-V32/blob/main/docs/BAO_CAO_MOI_NHAT.md | Cách đọc báo cáo: https://github.com/Juniorpaven/Quant-Agent-V32/blob/main/docs/CACH_DOC_BAO_CAO.md
+
+## Tóm tắt nhanh
+
+- **Việc cần làm hôm nay:** **Tạm dừng mua thêm E1VFVN30** (giữ tiền mặt, không bán phần đã có).
+- **Thay đổi so với lần trước:** không có.
+- **Cần chú ý:** 4 mã chậm công bố BCTC (mục 4); độ rộng thị trường yếu (14.8% mã trên MA200); biến động bình thường.
+- Danh sách mã chất lượng (mục 3) chỉ để tham khảo, không phải khuyến nghị mua.
 
 ## 0. Thay đổi so với báo cáo trước
 
-Đây là báo cáo đầu tiên có theo dõi thay đổi; từ lần sau sẽ so sánh với báo cáo này.
+Không có thay đổi: tín hiệu MA200, danh sách đạt lọc và tình trạng BCTC giữ nguyên.
 
 ## 1. Tầng 3: luật thị trường
 
@@ -13,12 +20,12 @@ Xem trực tuyến: https://github.com/Juniorpaven/Quant-Agent-V32/blob/main/doc
 
 Chỉ báo tham khảo (backtest cho thấy không cải thiện lợi suất so với luật MA200, không dùng để ra quyết định):
 
-| Chỉ báo | Giá trị |
-| --- | ---: |
-| Độ rộng: % mã trên MA200 (122 mã thanh khoản) | 14.8% |
-| Độ rộng: % mã trên MA50 | 19.7% |
-| Biến động 20 phiên (năm hóa) | 19.4% (gấp 1.15 lần trung vị 1 năm) |
-| Cách đỉnh 52 tuần | -14.2% |
+| Chỉ báo | Giá trị | Cách hiểu |
+| --- | ---: | --- |
+| Độ rộng: % mã trên MA200 (122 mã thanh khoản) | 14.8% | yếu |
+| Độ rộng: % mã trên MA50 | 19.7% | yếu |
+| Biến động 20 phiên (năm hóa) | 19.4% (gấp 1.15 lần trung vị 1 năm) | bình thường |
+| Cách đỉnh 52 tuần | -14.2% | điều chỉnh vừa |
 
 ## 2. Tầng 1: lõi và phân bổ
 
@@ -54,11 +61,9 @@ Có **20/122** mã thanh khoản qua các phép thử tự động (dòng tiền
 
 ## 5. Lời bình
 
-Dựa trên dữ liệu ngày 27/11/2026, VN-Index đang ở mức 1653.9 điểm. Chỉ số này nằm dưới đường MA200 (1781.3 điểm) 7.15%, duy trì trạng thái này trong 46 phiên liên tiếp.
+Báo cáo đầu tư dài hạn ngày 27/11/2026 cho thấy VN-Index đang ở mức 1653.9 điểm. Chỉ số này nằm dưới đường trung bình động 200 ngày (MA200) là 1781.3 điểm, với khoảng cách -7.15%. Đây là phiên thứ 46 liên tiếp VN-Index duy trì dưới MA200, phản ánh xu hướng giảm đã kéo dài.
 
-Thị trường cho thấy sự điều chỉnh đáng kể khi VN-Index cách đỉnh 52 tuần -14.2%. Độ rộng thị trường yếu, với chỉ 14.8% số mã cổ phiếu giữ được trên MA200 của mình. Tỷ lệ biến động là 1.15.
-
-Báo cáo ghi nhận 20 mã cổ phiếu đạt tiêu chí lọc trong tổng số 122 mã có thanh khoản, không có sự thay đổi nào so với lần trước. Tỷ lệ tiền mặt hiện không có dữ liệu. Tổng quan, thị trường đang trong giai đoạn điều chỉnh với độ rộng yếu, gợi ý sự thận trọng cho các chiến lược đầu tư dài hạn.
+Độ rộng thị trường cũng khá hẹp khi chỉ có 14.8% mã cổ phiếu nằm trên MA200. VN-Index hiện cách đỉnh 52 tuần là -14.2%. Tỷ lệ biến động thị trường ghi nhận 1.15. Có 20 mã cổ phiếu đạt tiêu chí lọc và 122 mã có thanh khoản. Số thay đổi so với lần trước là 0. Tỷ lệ tiền mặt: không có dữ liệu.
 
 ## 6. Tình trạng các tầng
 
