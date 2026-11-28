@@ -150,7 +150,7 @@ class TestBaoCao(unittest.TestCase):
     def test_dung_markdown_day_du_cac_tang(self):
         import bao_cao_v34 as bc
         sl = {"ngay_du_lieu": "2026-11-27", "tang3": {"vnindex": 1, "ma200": 2, "tren_ma200": False, "cach_ma200_pct": -1.0, "so_phien_cung_phia": 3, "do_rong_ma200_pct": 10.0, "do_rong_ma50_pct": 20.0, "do_rong_so_ma": 5,
-              "bien_dong_20p_pct": 18.0, "bien_dong_ty_le": 1.1, "cach_dinh_52t_pct": -5.0}, "so_ma_dat_loc": 1, "so_ma_thanh_khoan": 5, "danh_sach_chat_luong": [{"ma": "AAA", "nganh": "X", "diem": 0.5, "roe_tb": 10.0, "co_tuc_tien_5nam": 4, "dat": 6, "danh_gia": 6}],
+              "bien_dong_20p_pct": 18.0, "bien_dong_ty_le": 1.1, "cach_dinh_52t_pct": -5.0, "gd_ty_le": 1.0, "hung_phan": False, "nong_so_ma": 0, "nong_pct": 0.0}, "so_ma_dat_loc": 1, "so_ma_thanh_khoan": 5, "danh_sach_chat_luong": [{"ma": "AAA", "nganh": "X", "diem": 0.5, "roe_tb": 10.0, "co_tuc_tien_5nam": 4, "dat": 6, "danh_gia": 6, "tang_3t": 5.0, "tang_12t": 20.0, "nong": False}],
               "gia_moi": 1, "gia_cu": 0, "so_ma_theo_doi": 5, "vi_the": None}
         md = bc.dung_markdown(sl, None, [], False, "https://x", "https://huongdan")
         for muc in ("## Tóm tắt nhanh", "https://huongdan", "Cách hiểu", "## 0.", "## 1. Tầng 3", "## 2. Tầng 1", "## 3. Tầng 2", "## 4. Dữ liệu", "## 5. Lời bình", "## 6. Tình trạng các tầng", "https://x", "AAA"): self.assertIn(muc, md)
@@ -170,6 +170,32 @@ class TestNhanGiaiNghia(unittest.TestCase):
         self.assertIn("Mua đều E1VFVN30 như bình thường", " ".join(bc.tom_tat_nhanh({"tang3": t3, "bctc_cham": []}, [], False)))
         t3["tren_ma200"] = False
         self.assertIn("Tạm dừng mua thêm", " ".join(bc.tom_tat_nhanh({"tang3": t3, "bctc_cham": [{"ma": "A"}]}, ["x"], False)))
+
+
+
+class TestChiBaoNong(unittest.TestCase):
+    def test_tang_gan_va_la_nong(self):
+        import bao_cao_v34 as bc
+        c = pd.Series(np.linspace(100, 100, 300)); self.assertFalse(bc.la_nong(c))
+        c2 = pd.Series(np.r_[np.full(237, 100.0), np.linspace(100, 140, 63)]); self.assertTrue(bc.la_nong(c2))          # tăng 40% trong 63 phiên
+        c3 = pd.Series(np.linspace(100, 300, 300)); self.assertTrue(bc.la_nong(c3))                                      # tăng > 100% trong 250 phiên
+        self.assertTrue(np.isnan(bc.tang_gan(pd.Series([1.0, 2.0]), 63)))
+
+    def test_hung_phan_khi_giao_dich_va_gia_deu_cao(self):
+        import bao_cao_v34 as bc
+        ng = pd.bdate_range("2023-01-01", periods=330)
+        vn = np.concatenate([np.full(200, 1000.0), np.linspace(1000, 1300, 130)])          # kéo xa MA200
+        vol = np.concatenate([np.full(300, 1e6), np.full(30, 3e6)])                        # giao dịch bùng nổ 30 phiên cuối
+        mk = lambda c, v: pd.DataFrame({"Open": c, "High": c, "Low": c, "Close": c, "Volume": v}, index=ng)
+        t = bc.chi_bao_tang3({"VNINDEX": mk(vn, vol)}, [])
+        self.assertGreaterEqual(t["gd_ty_le"], 1.5); self.assertGreaterEqual(t["cach_ma200_pct"], 10); self.assertTrue(t["hung_phan"])
+        yen = bc.chi_bao_tang3({"VNINDEX": mk(vn, np.full(330, 1e6))}, [])
+        self.assertFalse(yen["hung_phan"])
+
+    def test_nhan_moi(self):
+        import bao_cao_v34 as bc
+        self.assertEqual(bc.nhan_gd(1.0), "bình thường"); self.assertEqual(bc.nhan_gd(1.5), "sôi động"); self.assertEqual(bc.nhan_gd(2.5), "rất sôi động")
+        self.assertEqual(bc.nhan_nong(5), "ít"); self.assertEqual(bc.nhan_nong(15), "nhiều"); self.assertEqual(bc.nhan_nong(40), "rất nhiều")
 
 
 if __name__ == "__main__":
