@@ -1,0 +1,3 @@
+## 5. Lời bình
+📧 Đã gửi báo cáo V34 đến 1 địa chỉ.
+co_khoa_gemini=true
