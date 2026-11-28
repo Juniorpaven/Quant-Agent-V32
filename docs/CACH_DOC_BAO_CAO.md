@@ -16,14 +16,17 @@ Hệ thống chỉ đưa ra một quyết định duy nhất: mua đều hay t�
 
 **Mục 1. Tầng 3, luật thị trường.**
 - **MA200:** trung bình giá đóng cửa 200 phiên gần nhất của VN-Index. VN-Index **dưới** MA200 nghĩa là thị trường đang trong xu hướng giảm dài hạn, hệ thống tạm dừng mua; **trên** MA200 thì mua bình thường. Báo cáo cũng cho biết đã ở phía hiện tại bao nhiêu phiên liên tiếp (số phiên càng ít càng dễ đổi chiều).
-- Bảng **chỉ báo tham khảo** (độ rộng, biến động, cách đỉnh) cho bức tranh thị trường nhưng **không dùng để ra quyết định**, vì backtest cho thấy chúng không cải thiện lợi suất:
+- Bảng **chỉ báo tham khảo** (độ rộng, biến động, cách đỉnh, giao dịch, mã chạy nóng, hưng phấn) cho bức tranh thị trường nhưng **không dùng để ra quyết định**, vì backtest cho thấy chúng không cải thiện lợi suất:
   - *Độ rộng*: tỷ lệ cổ phiếu thanh khoản đang nằm trên đường trung bình của chính nó. Dưới 30% là yếu (phần lớn cổ phiếu đang giảm), 30–60% trung bình, trên 60% mạnh.
   - *Biến động*: mức dao động của VN-Index so với trung vị một năm. Dưới 1,3 lần là bình thường, 1,3–2 lần là cao, trên 2 lần là rất cao.
   - *Cách đỉnh 52 tuần*: VN-Index đang thấp hơn đỉnh một năm bao nhiêu phần trăm.
+  - *Giá trị giao dịch thị trường*: giao dịch 20 phiên so với trung vị một năm. Dưới 1,3 lần bình thường, 1,3–2 lần sôi động, trên 2 lần rất sôi động.
+  - *Mã chạy nóng*: mã tăng từ 30% trong 3 tháng hoặc từ 100% trong 12 tháng; báo cáo cho biết tỷ lệ mã nóng toàn thị trường (dưới 10% ít, 10–25% nhiều, trên 25% rất nhiều).
+  - *Thị trường hưng phấn*: giao dịch từ 1,5 lần trung vị và VN-Index cao hơn MA200 từ 10%. Đây là ý "tin tốt dồn dập khi giá đã chạy xa": cờ này chỉ để thận trọng. Backtest 2010–2026 không thấy nó dự báo được lợi suất thấp, nên không dùng để quyết định.
 
 **Mục 2. Tầng 1, lõi và phân bổ.** Lõi là 100% E1VFVN30 (quỹ ETF theo VN30), mua đều hằng tháng. Nếu bạn khai `data/vi_the.json` thì có bảng vị thế và tỷ lệ tiền mặt; không thì mục này không có số liệu.
 
-**Mục 3. Tầng 2, danh sách chất lượng (chỉ theo dõi).** Các mã qua một loạt phép thử tự động về chất lượng doanh nghiệp.
+**Mục 3. Tầng 2, danh sách chất lượng (chỉ theo dõi).** Có thêm cột *Tăng 3 tháng*, *Tăng 12 tháng* và *Đà tăng* ("nóng" nếu mã đã chạy mạnh): mã nóng nghĩa là giá đã đi trước, nên thận trọng thay vì đuổi theo. Các mã qua một loạt phép thử tự động về chất lượng doanh nghiệp.
 - *Điểm*: xếp hạng trung bình về chất lượng và đà tăng giá, từ 0 đến 1; không phải xác suất lãi.
 - *ROE TB*: lợi nhuận trên vốn chủ sở hữu bình quân các năm gần đây.
 - *Cổ tức tiền (năm/5)*: trong 5 năm gần nhất có mấy năm chia cổ tức bằng tiền.
@@ -55,3 +58,6 @@ Hệ thống chỉ đưa ra một quyết định duy nhất: mua đều hay t�
 ## Giới hạn cần nhớ
 - Hệ thống không đánh giá lãi suất liên ngân hàng, ý kiến kiểm toán thật và cầm cố/ký quỹ (không có nguồn dữ liệu tự động đáng tin).
 - Kết quả backtest là quá khứ, không đảm bảo tương lai; luật MA200 giúp giảm mức sụt giảm ở các đợt giảm lớn nhưng không ngăn được sụt giảm.
+
+## Về thông tin người nội bộ
+Các giao dịch của người nội bộ đều công khai, nên thị trường có thể đã phản ứng. Hệ thống dùng *ngày công bố* (không nhìn trước), và dùng nó như một cờ cảnh báo chứ không để đi trước thị trường. Kiểm chứng 2010–2026 cho thấy mã bị cờ bán ròng nội bộ **không** tăng thấp hơn có ý nghĩa thống kê, và bỏ phép thử này khỏi lõi tầng 2 chỉ đổi lợi suất trong khoảng nhiễu (+0,20 và −0,45 điểm). Vì vậy đừng coi cờ nội bộ là dấu hiệu đáng sợ hay đáng mua; chỉ coi là một thông tin tham khảo.

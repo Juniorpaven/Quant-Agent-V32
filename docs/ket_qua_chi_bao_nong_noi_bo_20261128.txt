@@ -1,0 +1,23 @@
+=== (a) Phép thử nội bộ: lợi suất 12 tháng sau (ngày xét: đầu tháng 2, 5, 8, 11) ===
+  số mã trung bình mỗi mốc: đạt các phép thử khác và không bị cờ nội bộ 7.0; bị cờ nội bộ 2.3
+  Trong số mã đạt các phép thử khác: không cờ nội bộ +7.9% | bị cờ nội bộ +16.5% | chênh -7.51 điểm, CI95 [-18.4, +3.6], p(chênh<=0)=0.90, 49 mốc
+  Toàn bộ mã thanh khoản: không cờ nội bộ +10.1% | bị cờ nội bộ +8.4% | chênh +1.70 điểm, CI95 [-4.3, +7.6], p(chênh<=0)=0.29, 56 mốc
+
+=== (b) Mã 'chạy nóng' (tăng 3 tháng >= 30% hoặc 12 tháng >= 100%): lợi suất sau đó (đầu mỗi tháng) ===
+  Sau 3 tháng: mã chạy nóng +0.6% | mã còn lại +1.5% | chênh -0.13 điểm, CI95 [-2.3, +1.9], p(chênh<=0)=0.55, 148 mốc
+  Sau 6 tháng: mã chạy nóng +3.2% | mã còn lại +3.4% | chênh +0.02 điểm, CI95 [-3.2, +3.5], p(chênh<=0)=0.51, 148 mốc
+  Sau 12 tháng: mã chạy nóng +6.2% | mã còn lại +7.8% | chênh -2.41 điểm, CI95 [-7.7, +3.1], p(chênh<=0)=0.81, 147 mốc
+
+=== (c) Thị trường hưng phấn: VN-Index sau các ngày có cờ (từ 2010) ===
+  Hưng phấn (giao dịch >=1,5 lần và cao hơn MA200 >=10%) [đặt trước]: 378 ngày, 12 đợt | sau 60 phiên: có cờ +1.4% (n=378) so với mọi ngày +2.3% | sau 120 phiên: có cờ +7.2% (n=378) so với mọi ngày +4.7% | sau 250 phiên: có cờ +9.4% (n=378) so với mọi ngày +10.6%
+  Chỉ giao dịch >= 2 lần trung vị: 195 ngày, 7 đợt | sau 60 phiên: có cờ -0.1% (n=195) so với mọi ngày +2.3% | sau 120 phiên: có cờ +3.2% (n=195) so với mọi ngày +4.7% | sau 250 phiên: có cờ +13.6% (n=195) so với mọi ngày +10.6%
+  Chỉ cao hơn MA200 >= 15%: 468 ngày, 9 đợt | sau 60 phiên: có cờ +2.9% (n=468) so với mọi ngày +2.3% | sau 120 phiên: có cờ +4.5% (n=468) so với mọi ngày +4.7% | sau 250 phiên: có cờ +5.6% (n=428) so với mọi ngày +10.6%
+  Chỉ cao hơn MA200 >= 10%: 923 ngày, 14 đợt | sau 60 phiên: có cờ +2.6% (n=923) so với mọi ngày +2.3% | sau 120 phiên: có cờ +4.4% (n=923) so với mọi ngày +4.7% | sau 250 phiên: có cờ +4.8% (n=844) so với mọi ngày +10.6%
+
+=== (c2) Luật tạm dừng mua khi thị trường hưng phấn (DCA trên chỉ số giả lập, có phí) ===
+  2010-05-01→: không luật CAGR 8.96% MDD -45.3% | MA200 8.75% | tạm dừng khi hưng phấn 8.93% MDD -45.3% (-0.02 điểm so với không luật)
+  2015-01-01→: không luật CAGR 8.64% MDD -45.3% | MA200 8.47% | tạm dừng khi hưng phấn 8.53% MDD -45.3% (-0.11 điểm so với không luật)
+
+=== (a2) Bỏ phép thử nội bộ khỏi lõi tầng 2 (N=12, tập mã đầy đủ) ===
+  2010-05-01→: có phép thử nội bộ CAGR 12.67% MDD -41.6% | bỏ phép thử CAGR 12.47% MDD -41.3% (+0.20 điểm nhờ phép thử)
+  2015-01-01→: có phép thử nội bộ CAGR 13.70% MDD -41.8% | bỏ phép thử CAGR 14.15% MDD -40.9% (-0.45 điểm nhờ phép thử)

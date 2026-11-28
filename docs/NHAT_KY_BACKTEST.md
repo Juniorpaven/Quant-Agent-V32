@@ -144,3 +144,10 @@ Chi tiết ở `docs/BAO_CAO_DANH_GIA_V34.md`. Tóm tắt:
 ## 28/11/2026 – Thử nguồn cho ba mục còn thiếu, nâng cấp báo cáo
 - Lãi suất liên ngân hàng: FRED hết thời gian chờ từ runner, HNX lỗi SSL (không tắt kiểm tra TLS), SBV chỉ là khung cổng, Investing chặn; TradingEconomics là dịch vụ dữ liệu thương mại nên không quét. Ý kiến kiểm toán: không có endpoint ở Vietcap và CafeF. Cầm cố/ký quỹ: trang ký quỹ CafeF không có dữ liệu thật. **Cả ba bỏ khỏi đánh giá**; gỡ luồng nhập CSV; giữ phép thử kiểm toán thay thế (đã kiểm toán, chênh lệch 4 quý).
 - Báo cáo hằng ngày nâng cấp: đủ các tầng, chỉ báo tầng 3 tham khảo (độ rộng, biến động, độ sâu), bảng chất lượng có ngành và cổ tức tiền, phần thay đổi so với lần trước, trang `docs/BAO_CAO_MOI_NHAT.md`; giá tải trực tiếp từ Entrade cho các mã thanh khoản thay vì lưu hằng ngày.
+
+## 28/11/2026 – Chỉ báo 'chạy nóng', 'hưng phấn' và giá trị của phép thử nội bộ
+Chi tiết: `docs/ket_qua_chi_bao_nong_noi_bo_20261128.txt` (script `v34/kiem_chung_nong.py`; ngưỡng đặt trước).
+- Mã chạy nóng (tăng 3 tháng ≥30% hoặc 12 tháng ≥100%): lợi suất sau 3, 6, 12 tháng chênh −0,13; +0,02; −2,41 điểm so với mã còn lại, khoảng tin cậy chứa 0. Không có giá trị dự báo.
+- Thị trường hưng phấn (giao dịch ≥1,5 lần trung vị 250 phiên và VN-Index cao hơn MA200 ≥10%): 12 đợt, lợi suất 60/120/250 phiên sau +1,4/+7,2/+9,4% so với +2,3/+4,7/+10,6% của mọi ngày; tạm dừng mua theo cờ này đổi CAGR −0,02 (2010→) và −0,11 điểm (2015→). Không có giá trị.
+- Phép thử nội bộ: nhóm bị cờ không tăng thấp hơn (đạt các phép thử khác: +16,5% so với +7,9%; toàn bộ mã: +8,4% so với +10,1%, khoảng tin cậy chứa 0); bỏ phép thử khỏi lõi tầng 2 đổi CAGR +0,20 (2010→) và −0,45 điểm (2015→). Không chứng minh được giá trị; chưa đổi bộ lọc.
+- Báo cáo hằng ngày thêm tăng 3T/12T/cờ nóng cho từng mã, tỷ lệ mã chạy nóng, giá trị giao dịch thị trường, mức kéo xa MA200 và cờ hưng phấn, ghi rõ chỉ tham khảo.

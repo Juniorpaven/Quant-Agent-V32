@@ -20,6 +20,8 @@ MA_LOI = "E1VFVN30"
 MODELS = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-1.5-flash"]
 NGUONG_TK_TUYEN = 3e9       # lọc sơ bộ theo giá trị giao dịch dữ liệu đã lưu (đồng/phiên)
 NGUONG_TK_LOC = 10e9        # ngưỡng thanh khoản của danh sách chất lượng (đồng/phiên, 20 phiên)
+NONG_3T, NONG_12T = 0.30, 1.0          # mã "chạy nóng": tăng >= 30% trong 3 tháng hoặc >= 100% trong 12 tháng
+HUNG_PHAN_GD, HUNG_PHAN_XA = 1.5, 10.0   # thị trường "hưng phấn": giao dịch 20 phiên >= 1,5 lần trung vị 250 phiên và VN-Index cao hơn MA200 >= 10%
 FILE_TRANG_THAI = os.path.join(DATA, "_trang_thai_bao_cao.json")
 FILE_TRANG = os.path.join(GOC, "docs", "BAO_CAO_MOI_NHAT.md")
 
@@ -86,6 +88,15 @@ def tai_gia_tat_ca(ds, cap_nhat):
 
 
 # ---------------------------------------------------------------- chỉ báo tầng 3
+def tang_gan(c, phien):
+    return float(c.iloc[-1] / c.iloc[-1 - phien] - 1) if len(c) > phien and c.iloc[-1 - phien] > 0 else float("nan")
+
+
+def la_nong(c):
+    """Mã chạy nóng: tăng >= 30% trong 3 tháng (63 phiên) hoặc >= 100% trong 12 tháng (250 phiên)."""
+    return bool(tang_gan(c, 63) >= NONG_3T or tang_gan(c, 250) >= NONG_12T)
+
+
 def chi_bao_tang3(gia, ds_thanh_khoan):
     """VN-Index so với MA200 (luật) và các chỉ báo tham khảo: độ rộng, biến động, độ sâu so với đỉnh 52 tuần, số phiên liên tiếp cùng phía MA200."""
     vn = gia["VNINDEX"].Close
@@ -102,14 +113,19 @@ def chi_bao_tang3(gia, ds_thanh_khoan):
     out["bien_dong_20p_pct"] = round(float(v20.iloc[-1]) * 100, 1) if np.isfinite(v20.iloc[-1]) else None
     out["bien_dong_ty_le"] = round(float(v20.iloc[-1] / med.iloc[-1]), 2) if np.isfinite(med.iloc[-1]) and med.iloc[-1] > 0 else None
     out["cach_dinh_52t_pct"] = round(float(vn.iloc[-1] / vn.tail(250).max() - 1) * 100, 1)
-    tren200 = tren50 = n = 0
+    v20 = gia["VNINDEX"].Volume.rolling(20).mean(); vmed = v20.rolling(250, min_periods=120).median()
+    out["gd_ty_le"] = round(float(v20.iloc[-1] / vmed.iloc[-1]), 2) if np.isfinite(vmed.iloc[-1]) and vmed.iloc[-1] > 0 else None
+    out["hung_phan"] = bool(out["gd_ty_le"] is not None and out["gd_ty_le"] >= HUNG_PHAN_GD and out["cach_ma200_pct"] >= HUNG_PHAN_XA)
+    tren200 = tren50 = n = nong = nn = 0
     for m in ds_thanh_khoan:
         c = gia[m].Close if m in gia else None
         if c is None or len(c) < 210: continue
         n += 1; tren200 += bool(c.iloc[-1] > c.tail(200).mean()); tren50 += bool(c.iloc[-1] > c.tail(50).mean())
+        if len(c) >= 252: nn += 1; nong += bool(la_nong(c))
     out["do_rong_ma200_pct"] = round(100 * tren200 / n, 1) if n else None
     out["do_rong_ma50_pct"] = round(100 * tren50 / n, 1) if n else None
     out["do_rong_so_ma"] = n
+    out["nong_so_ma"], out["nong_pct"] = nong, (round(100 * nong / nn, 1) if nn else None)
     return out
 
 
@@ -145,7 +161,8 @@ def lap_bao_cao(cap_nhat=True):
     for m in top.index:
         kq = loc_ttm(dl, m, d)[1]; ct = dl.co_tuc.get(m)
         so_nam_ct = int(ct[(ct.loai == "tien") & (ct.ngay <= d) & (ct.ngay > d - pd.Timedelta(days=365 * 5))].ngay.dt.year.nunique()) if ct is not None and len(ct) else None
-        dong.append({"ma": m, "nganh": nganh.get(m, ""), "diem": round(float(top.loc[m, "diem"]), 2), "roe_tb": round(float(top.loc[m, "roe"]) * 100, 1), "co_tuc_tien_5nam": so_nam_ct,
+        cm = gia[m].Close; t3, t12 = tang_gan(cm, 63), tang_gan(cm, 250)
+        dong.append({"ma": m, "nganh": nganh.get(m, ""), "tang_3t": (round(t3 * 100, 1) if np.isfinite(t3) else None), "tang_12t": (round(t12 * 100, 1) if np.isfinite(t12) else None), "nong": la_nong(cm), "diem": round(float(top.loc[m, "diem"]), 2), "roe_tb": round(float(top.loc[m, "roe"]) * 100, 1), "co_tuc_tien_5nam": so_nam_ct,
                      "dat": sum(1 for v in kq.values() if v is True), "danh_gia": sum(1 for v in kq.values() if v != CHUA_DANH_GIA)})
     sl["danh_sach_chat_luong"], sl["tat_ca_dat_loc"], sl["so_ma_dat_loc"], sl["so_ma_thanh_khoan"] = dong, sorted(dat), len(dat), len(thanh_khoan)
     f_moi = os.path.join(DATA, "_bctc_moi.json")
@@ -212,6 +229,14 @@ def nhan_cach_dinh(x):
     return "gần đỉnh" if x > -5 else ("điều chỉnh vừa" if x > -15 else ("giảm sâu" if x > -30 else "giảm rất sâu"))
 
 
+def nhan_gd(x):
+    return "bình thường" if x < 1.3 else ("sôi động" if x < 2 else "rất sôi động")
+
+
+def nhan_nong(x):
+    return "ít" if x < 10 else ("nhiều" if x < 25 else "rất nhiều")
+
+
 def tom_tat_nhanh(sl, thay_doi, lan_dau):
     t3 = sl["tang3"]
     hanh_dong = "**Mua đều E1VFVN30 như bình thường** (vào phiên đầu tháng)." if t3["tren_ma200"] else "**Tạm dừng mua thêm E1VFVN30** (giữ tiền mặt, không bán phần đã có)."
@@ -223,8 +248,17 @@ def tom_tat_nhanh(sl, thay_doi, lan_dau):
     if cham: chu_y.append(f"{cham} mã chậm công bố BCTC (mục 4)")
     chu_y.append(f"độ rộng thị trường {nhan_do_rong(t3['do_rong_ma200_pct'])} ({t3['do_rong_ma200_pct']}% mã trên MA200)")
     chu_y.append(f"biến động {nhan_bien_dong(t3['bien_dong_ty_le'])}" if t3.get("bien_dong_ty_le") else "biến động không có dữ liệu")
+    if t3.get("hung_phan"): chu_y.append("**thị trường đang hưng phấn** (giao dịch sôi động và VN-Index kéo xa MA200): thận trọng với tin tức tích cực dồn dập")
+    if t3.get("nong_pct") is not None and t3["nong_pct"] >= 10: chu_y.append(f"{t3['nong_pct']}% mã thanh khoản đang chạy nóng")
+    nong_ds = [r["ma"] for r in sl.get("danh_sach_chat_luong", []) if r.get("nong")]
+    if nong_ds: chu_y.append("mã trong danh sách đã chạy nóng: " + ", ".join(nong_ds))
     return ["## Tóm tắt nhanh", "", f"- **Việc cần làm hôm nay:** {hanh_dong}", f"- **Thay đổi so với lần trước:** {thay}", "- **Cần chú ý:** " + "; ".join(chu_y) + ".",
             "- Danh sách mã chất lượng (mục 3) chỉ để tham khảo, không phải khuyến nghị mua.", ""]
+
+
+BANG_CHUNG_NONG = ("Hai dòng cuối (chạy nóng, hưng phấn) là chỉ báo kiểu đảo ngược: tin tốt dồn dập, giao dịch bùng nổ và giá chạy xa thường xuất hiện khi giá đã tăng nhiều. "
+                   "Backtest 2010–2026 **chưa thấy giá trị dự báo**: mã chạy nóng không tăng thấp hơn đáng kể sau 3, 6, 12 tháng (chênh −0,1; 0,0; −2,4 điểm, khoảng tin cậy chứa 0); "
+                   "cờ hưng phấn không dự báo lợi suất thấp và luật tạm dừng mua theo cờ này không cải thiện (−0,02 đến −0,11 điểm CAGR). Chỉ để tham khảo, không dùng để ra quyết định.")
 
 
 def huong_dan_ngan(t3):
@@ -254,7 +288,12 @@ def dung_markdown(sl, loi_binh, thay_doi, lan_dau, link=None, link_dan=None):
           f"| Độ rộng: % mã trên MA200 ({t3['do_rong_so_ma']} mã thanh khoản) | {t3['do_rong_ma200_pct']}% | {nhan_do_rong(t3['do_rong_ma200_pct'])} |",
           f"| Độ rộng: % mã trên MA50 | {t3['do_rong_ma50_pct']}% | {nhan_do_rong(t3['do_rong_ma50_pct'])} |",
           f"| Biến động 20 phiên (năm hóa) | {t3['bien_dong_20p_pct']}% (gấp {t3['bien_dong_ty_le']} lần trung vị 1 năm) | {nhan_bien_dong(t3['bien_dong_ty_le']) if t3.get('bien_dong_ty_le') else '–'} |",
-          f"| Cách đỉnh 52 tuần | {t3['cach_dinh_52t_pct']:+.1f}% | {nhan_cach_dinh(t3['cach_dinh_52t_pct'])} |", ""]
+          f"| Cách đỉnh 52 tuần | {t3['cach_dinh_52t_pct']:+.1f}% | {nhan_cach_dinh(t3['cach_dinh_52t_pct'])} |",
+          f"| Giá trị giao dịch thị trường (20 phiên) | gấp {t3['gd_ty_le']} lần trung vị 1 năm | {nhan_gd(t3['gd_ty_le']) if t3.get('gd_ty_le') else '–'} |",
+          f"| Mức kéo xa MA200 | {t3['cach_ma200_pct']:+.1f}% | {'kéo xa' if t3['cach_ma200_pct'] >= HUNG_PHAN_XA else 'không kéo xa'} |",
+          f"| Mã đang chạy nóng (tăng ≥30% trong 3 tháng hoặc ≥100% trong 12 tháng) | {t3['nong_pct']}% ({t3['nong_so_ma']} mã) | {nhan_nong(t3['nong_pct']) if t3.get('nong_pct') is not None else '–'} |",
+          f"| **Thị trường hưng phấn** (giao dịch ≥1,5 lần và cao hơn MA200 ≥10%) | {'CÓ' if t3['hung_phan'] else 'Không'} | {'thận trọng' if t3['hung_phan'] else 'chưa'} |", "",
+          BANG_CHUNG_NONG, ""]
     d += ["## 2. Tầng 1: lõi và phân bổ", "",
           "- Lõi **100% E1VFVN30** (mua đều hằng tháng). Vệ tinh đã bỏ vì backtest không cải thiện (xem mục 6).", f"- {huong_dan(t3)}"]
     if sl.get("vi_the"):
@@ -267,8 +306,9 @@ def dung_markdown(sl, loi_binh, thay_doi, lan_dau, link=None, link_dan=None):
           f"Có **{sl['so_ma_dat_loc']}/{sl['so_ma_thanh_khoan']}** mã thanh khoản qua các phép thử tự động (dòng tiền kinh doanh, phải thu và tồn kho, lãi bất thường, nợ vay, bán ròng nội bộ, cổ tức tiền thật, BCTC không quá cũ; ngân hàng có bộ riêng). "
           "Backtest dài hạn (2010–2026, 866 mã gồm cả mã đã hủy niêm yết) cho thấy lõi chọn mã **ngang** chuẩn mua đều có cổ tức, chưa có ý nghĩa thống kê: đây là danh sách theo dõi, không phải khuyến nghị mua. Chưa đánh giá: ý kiến kiểm toán thật, cầm cố/ký quỹ (không có nguồn dữ liệu).", ""]
     if sl["danh_sach_chat_luong"]:
-        d += ["| Mã | Ngành | Điểm | ROE TB (%) | Cổ tức tiền (năm/5) | Phép thử đạt/đánh giá được |", "| --- | --- | ---: | ---: | ---: | ---: |"]
-        d += [f"| {r['ma']} | {r['nganh']} | {r['diem']} | {r['roe_tb']} | {r['co_tuc_tien_5nam'] if r['co_tuc_tien_5nam'] is not None else '–'} | {r['dat']}/{r['danh_gia']} |" for r in sl["danh_sach_chat_luong"]]
+        d += ["| Mã | Ngành | Điểm | ROE TB (%) | Cổ tức tiền (năm/5) | Tăng 3 tháng | Tăng 12 tháng | Đà tăng | Phép thử đạt/đánh giá được |", "| --- | --- | ---: | ---: | ---: | ---: | ---: | --- | ---: |"]
+        pc = lambda x: f"{x:+.1f}%" if x is not None else "–"
+        d += [f"| {r['ma']} | {r['nganh']} | {r['diem']} | {r['roe_tb']} | {min(r['co_tuc_tien_5nam'], 5) if r['co_tuc_tien_5nam'] is not None else '–'} | {pc(r.get('tang_3t'))} | {pc(r.get('tang_12t'))} | {'**nóng**' if r.get('nong') else 'bình thường'} | {r['dat']}/{r['danh_gia']} |" for r in sl["danh_sach_chat_luong"]]
     d += ["", "## 4. Dữ liệu: BCTC mới và mã chậm công bố", ""]
     if "bctc_moi_7_ngay" in sl:
         moi = sl["bctc_moi_7_ngay"]
@@ -301,7 +341,7 @@ def viet_loi_binh(sl, thay_doi):
     t3 = sl["tang3"]
     tom_tat = {"ngay_du_lieu": sl["ngay_du_lieu"], "vnindex": t3["vnindex"], "ma200": t3["ma200"], "tren_ma200": t3["tren_ma200"], "cach_ma200_pct": t3["cach_ma200_pct"],
                "so_phien_cung_phia_ma200": t3["so_phien_cung_phia"], "do_rong_ma200_pct": t3["do_rong_ma200_pct"], "bien_dong_ty_le": t3["bien_dong_ty_le"], "cach_dinh_52t_pct": t3["cach_dinh_52t_pct"],
-               "so_ma_dat_loc": sl["so_ma_dat_loc"], "so_ma_thanh_khoan": sl["so_ma_thanh_khoan"], "so_thay_doi_so_voi_lan_truoc": len(thay_doi), "ty_le_tien_mat_pct": sl.get("ty_le_tien_mat_pct")}
+               "gd_ty_le": t3.get("gd_ty_le"), "hung_phan": t3.get("hung_phan"), "ty_le_ma_chay_nong_pct": t3.get("nong_pct"), "so_ma_dat_loc": sl["so_ma_dat_loc"], "so_ma_thanh_khoan": sl["so_ma_thanh_khoan"], "so_thay_doi_so_voi_lan_truoc": len(thay_doi), "ty_le_tien_mat_pct": sl.get("ty_le_tien_mat_pct")}
     prompt = ("Viết lời bình ngắn (tối đa 130 từ, tiếng Việt có dấu) cho báo cáo đầu tư dài hạn. CHỈ dùng các số liệu trong JSON sau; "
               "không tìm kiếm, không thêm số liệu hay tin tức nào khác; trường nào là null thì ghi 'không có dữ liệu'. Không khuyến nghị mua bán cụ thể.\n" + json.dumps(tom_tat, ensure_ascii=False))
     for m in MODELS:
