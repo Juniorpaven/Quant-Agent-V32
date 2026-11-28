@@ -146,12 +146,13 @@ def loc(dl, ma, ngay):
     return dat, kq, nt
 
 
-def diem_nhan_to(dl, gia_dong, vol, ds_ma, ngay, i):
+def diem_nhan_to(dl, gia_dong, vol, ds_ma, ngay, i, loc_fn=None):
     """Xếp hạng trung bình 3 nhân tố: chất lượng (ROE, OCF/LN), giá trị (suất sinh lời LN/vốn hóa), động lượng 12-1 và 6-1 tháng.
     gia_dong: DataFrame giá đóng cửa (nghìn đồng); i: chỉ số phiên."""
     hang = []
     for ma in ds_ma:
-        dat, kq, nt = loc(dl, ma, ngay)
+        dat, kq, nt = (loc_fn or loc)(dl, ma, ngay)
+        if nt is None: continue
         c = gia_dong[ma]
         if i < 260 or not np.isfinite(c.iloc[i]) or not np.isfinite(c.iloc[i - 21]) or not np.isfinite(c.iloc[i - 252]):
             continue

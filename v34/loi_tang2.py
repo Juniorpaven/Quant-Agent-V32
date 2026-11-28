@@ -8,7 +8,8 @@ NGAY_RA_SOAT = {2: 15, 5: 15, 8: 15, 11: 15}  # tháng: ngày (sau mùa BCTC: qu
 
 
 class LoiTang2:
-    def __init__(self, dl, n=12, ma_etf="E1VFVN30", chan_ma200=False, ds_ma=None, max_ngan_hang=None, ty_le_loi=1.0, xep="diem", seed=0):
+    def __init__(self, dl, n=12, ma_etf="E1VFVN30", chan_ma200=False, ds_ma=None, max_ngan_hang=None, ty_le_loi=1.0, xep="diem", seed=0, loc_fn=None):
+        self.loc = loc_fn or loc
         self.xep, self.rng = xep, __import__("numpy").random.default_rng(seed)
         self.dl, self.n, self.etf, self.chan = dl, n, ma_etf, chan_ma200
         self.max_nh, self.ty_le = max_ngan_hang, ty_le_loi
@@ -27,14 +28,14 @@ class LoiTang2:
         dl = self.dl
         con_lai = []
         for ma in self.giu:
-            dat, _, _ = loc(dl, ma, d)
+            dat, _, _ = self.loc(dl, ma, d)
             if dat: con_lai.append(ma)
         thoat = [m for m in self.giu if m not in con_lai]
         self.giu = con_lai
         if len(self.giu) < self.n:
-            ung = [m for m in self.ds_ma if m in eng.close.columns and m not in self.giu and loc(dl, m, d)[0] and eng.dat_duoc(m, i)]
+            ung = [m for m in self.ds_ma if m in eng.close.columns and m not in self.giu and self.loc(dl, m, d)[0] and eng.dat_duoc(m, i)]
             if ung:
-                bang = diem_nhan_to(dl, eng.close_full, eng.vol, ung, d, i + eng.off)
+                bang = diem_nhan_to(dl, eng.close_full, eng.vol, ung, d, i + eng.off, loc_fn=self.loc)
                 if self.xep == "ngau_nhien": thu_tu = list(bang.index); self.rng.shuffle(thu_tu)
                 elif self.xep in ("roe", "gia_tri", "mom"): thu_tu = list(bang.sort_values(self.xep, ascending=False).index)
                 else: thu_tu = list(bang.index)
