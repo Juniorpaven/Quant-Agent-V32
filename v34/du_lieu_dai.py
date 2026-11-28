@@ -3,8 +3,6 @@ Hiệu lực: báo cáo năm Y dùng sau cuối năm Y +90 ngày. Cổ tức: ch
 import glob, json, os, re
 import numpy as np, pandas as pd
 from tang2_chon_ma import DuLieuCoBan, NGAN_HANG, CHUA_DANH_GIA, _phep_thu_noi_bo
-from du_lieu_thu_cong import DuLieuThuCong
-_TC = DuLieuThuCong()
 
 
 def _bang(v):
@@ -118,8 +116,6 @@ def loc_dai(dl, ma, ngay):
     kq["5_kiem_toan"] = bool(all(("kiểm toán" in k.lower() and "chưa" not in k.lower()) for k in co)) if co else CHUA_DANH_GIA   # trường trống = không đánh giá được
     kq["7_noi_bo"] = _noi_bo(dl, ma, ngay, df.lnst.iloc[-1], df.eps.iloc[-1])
     kq["8_co_tuc_tien_mat"] = bool(dl.so_nam_co_tuc_tien(ma, ngay) >= 4) if ngay >= pd.Timestamp(2018, 1, 1) else CHUA_DANH_GIA   # lịch sử cổ tức CafeF thưa trước 2013
-    for ten, v in (("5b_y_kien_kiem_toan", _TC.kiem_toan(ma, ngay)), ("7b_cam_co", _TC.cam_co(ma, ngay))):
-        if v is not None: kq[ten] = bool(v)
     roe = (n4.lnst / n4.vcsh).mean() if (n4.vcsh > 0).all() else np.nan
     nt = {"roe": roe, "ocf_ln": n4.ocf.sum() / ln if (ln > 0 and ocf_ok) else np.nan, "lnst": df.lnst.iloc[-1], "eps": df.eps.iloc[-1]}
     return all(v is True for v in kq.values() if v != CHUA_DANH_GIA), kq, nt

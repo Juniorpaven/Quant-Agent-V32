@@ -85,45 +85,6 @@ class TestNhapModule(unittest.TestCase):
 
 
 
-class TestDuLieuThuCong(unittest.TestCase):
-    """Luồng nhập tay: ý kiến kiểm toán, cầm cố, lãi suất liên ngân hàng (dữ liệu giả)."""
-    def setUp(self):
-        import tempfile; self.d = tempfile.mkdtemp()
-        from du_lieu_thu_cong import DuLieuThuCong
-        self.cls = DuLieuThuCong
-
-    def _ghi(self, ten, noi_dung):
-        open(os.path.join(self.d, ten), "w").write(noi_dung)
-
-    def test_khong_co_file_thi_khong_danh_gia(self):
-        t = self.cls(self.d)
-        self.assertIsNone(t.kiem_toan("AAA", pd.Timestamp("2025-06-01"))); self.assertIsNone(t.cam_co("AAA", pd.Timestamp("2025-06-01")))
-        self.assertIsNone(t.tin_hieu_lai_suat(pd.bdate_range("2024-01-01", periods=50)))
-
-    def test_y_kien_ngoai_tru_bi_loai(self):
-        self._ghi("kiem_toan_y_kien.csv", "ma,nam,y_kien\nAAA,2023,chấp nhận toàn phần\nAAA,2024,ngoại trừ\nBBB,2024,chấp nhận toàn phần\n")
-        t = self.cls(self.d)
-        self.assertFalse(t.kiem_toan("AAA", pd.Timestamp("2025-06-01")))      # FY2024 mới nhất đã công bố, có ý kiến ngoại trừ
-        self.assertTrue(t.kiem_toan("BBB", pd.Timestamp("2025-06-01")))
-        self.assertIsNone(t.kiem_toan("CCC", pd.Timestamp("2025-06-01")))     # không có dữ liệu cho mã
-        self.assertTrue(t.kiem_toan("AAA", pd.Timestamp("2025-02-01")))       # trước tháng 4: FY2024 chưa công bố, FY2023 sạch
-
-    def test_cam_co_vuot_nguong(self):
-        self._ghi("cam_co.csv", "ma,ngay,ty_le_pct\nAAA,2025-01-10,10\nAAA,2025-05-01,45\nBBB,2024-01-01,50\n")
-        t = self.cls(self.d)
-        self.assertFalse(t.cam_co("AAA", pd.Timestamp("2025-06-01")))         # mới nhất 45% >= 30%
-        self.assertTrue(t.cam_co("AAA", pd.Timestamp("2025-03-01")))          # lúc đó mới nhất 10%
-        self.assertIsNone(t.cam_co("BBB", pd.Timestamp("2025-06-01")))        # quá 12 tháng, không đánh giá
-
-    def test_lai_suat_tang_manh_thi_tam_dung(self):
-        ng = pd.date_range("2024-01-01", periods=60, freq="W"); gt = [1.0] * 30 + list(np.linspace(1.0, 3.5, 10)) + [3.5] * 20
-        self._ghi("lai_suat_lnh.csv", "ngay,lai_suat_qua_dem_pct\n" + "\n".join(f"{d.date()},{v}" for d, v in zip(ng, gt)))
-        t = self.cls(self.d); s = t.tin_hieu_lai_suat(pd.bdate_range("2024-01-01", "2025-02-28"))
-        self.assertTrue(bool(s.iloc[10]))                                      # đầu kỳ lãi suất phẳng: được giải ngân
-        self.assertFalse(bool(s.loc["2024-10-01":"2024-11-30"].all()))         # giai đoạn tăng mạnh: có lúc tạm dừng
-
-
-
 class TestChatLuongDuLieu(unittest.TestCase):
     """Dữ liệu trong repo phải nạp được và hợp lý (bắt bản ghi rác của nguồn)."""
     def setUp(self):
@@ -151,6 +112,48 @@ class TestChatLuongDuLieu(unittest.TestCase):
         for f in glob.glob("data/bctc/[A-Z]*.json")[:100]:
             d = json.load(open(f))
             self.assertIn("kqkd", d, f)
+
+
+
+class TestBaoCao(unittest.TestCase):
+    """Chỉ báo tầng 3 và so sánh thay đổi của báo cáo hằng ngày (dữ liệu giả)."""
+    def _gia(self, xu_huong):
+        ng = pd.bdate_range("2024-01-01", periods=320)
+        vn = np.concatenate([np.linspace(1000, 1500, 220), np.linspace(1500, 1500 * (1.1 if xu_huong == "len" else 0.8), 100)])
+        mk = lambda c: pd.DataFrame({"Open": c, "High": c, "Low": c, "Close": c, "Volume": np.full(len(c), 1e6)}, index=ng)
+        g = {"VNINDEX": mk(vn)}
+        for i in range(10): g[f"M{i}"] = mk(vn * (1 + 0.01 * i))
+        return g
+
+    def test_chi_bao_xuong_duoi_ma200(self):
+        import bao_cao_v34 as bc
+        g = self._gia("xuong"); t = bc.chi_bao_tang3(g, [f"M{i}" for i in range(10)])
+        self.assertFalse(t["tren_ma200"]); self.assertLess(t["cach_ma200_pct"], 0)
+        self.assertEqual(t["do_rong_so_ma"], 10); self.assertLess(t["do_rong_ma200_pct"], 50)
+        self.assertLess(t["cach_dinh_52t_pct"], 0); self.assertGreaterEqual(t["so_phien_cung_phia"], 1)
+
+    def test_chi_bao_len_tren_ma200(self):
+        import bao_cao_v34 as bc
+        t = bc.chi_bao_tang3(self._gia("len"), [f"M{i}" for i in range(10)])
+        self.assertTrue(t["tren_ma200"]); self.assertGreater(t["do_rong_ma200_pct"], 50)
+
+    def test_so_sanh_thay_doi(self):
+        import bao_cao_v34 as bc
+        sl = {"tang3": {"tren_ma200": False}, "tat_ca_dat_loc": ["AAA", "CCC"], "bctc_cham": [{"ma": "ZZZ"}], "bctc_moi_7_ngay": [{"ma": "YYY"}]}
+        cu = {"tren_ma200": True, "tat_ca_dat_loc": ["AAA", "BBB"], "bctc_cham": [], "bctc_moi": []}
+        thay, lan_dau = bc.so_sanh_trang_thai(cu, sl)
+        self.assertFalse(lan_dau); chuoi = " ".join(thay)
+        for tu in ("MA200 đổi", "CCC", "BBB", "ZZZ", "YYY"): self.assertIn(tu, chuoi)
+        self.assertEqual(bc.so_sanh_trang_thai(None, sl), ([], True))                  # lần đầu: không có so sánh
+        self.assertEqual(bc.so_sanh_trang_thai({"tren_ma200": False, "tat_ca_dat_loc": ["AAA", "CCC"], "bctc_cham": ["ZZZ"], "bctc_moi": ["YYY"]}, sl)[0], [])   # không đổi
+
+    def test_dung_markdown_day_du_cac_tang(self):
+        import bao_cao_v34 as bc
+        sl = {"ngay_du_lieu": "2026-11-27", "tang3": {"vnindex": 1, "ma200": 2, "tren_ma200": False, "cach_ma200_pct": -1.0, "so_phien_cung_phia": 3, "do_rong_ma200_pct": 10.0, "do_rong_ma50_pct": 20.0, "do_rong_so_ma": 5,
+              "bien_dong_20p_pct": 18.0, "bien_dong_ty_le": 1.1, "cach_dinh_52t_pct": -5.0}, "so_ma_dat_loc": 1, "so_ma_thanh_khoan": 5, "danh_sach_chat_luong": [{"ma": "AAA", "nganh": "X", "diem": 0.5, "roe_tb": 10.0, "co_tuc_tien_5nam": 4, "dat": 6, "danh_gia": 6}],
+              "gia_moi": 1, "gia_cu": 0, "so_ma_theo_doi": 5, "vi_the": None}
+        md = bc.dung_markdown(sl, None, [], False, "https://x")
+        for muc in ("## 0.", "## 1. Tầng 3", "## 2. Tầng 1", "## 3. Tầng 2", "## 4. Dữ liệu", "## 5. Lời bình", "## 6. Tình trạng các tầng", "https://x", "AAA"): self.assertIn(muc, md)
 
 
 if __name__ == "__main__":

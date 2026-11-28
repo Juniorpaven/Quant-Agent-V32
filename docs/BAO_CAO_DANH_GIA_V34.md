@@ -28,15 +28,15 @@ Tầng 3 (VN-Index so với MA200, tạm dừng mua): CAGR ngang chuẩn, vòng 
 
 | Tầng | Đã làm | Còn lại |
 | --- | --- | --- |
-| Dữ liệu | Giá điều chỉnh 2006→nay cho 872 mã (gồm 188 mã ngừng giao dịch); BCTC năm 2005–2025 (CafeF) và quý 2018→nay (Vietcap) cho 874 mã; cổ tức thật (CafeF); giao dịch nội bộ 2007→nay; cập nhật gia tăng hằng ngày, phát hiện mã mới công bố và mã chậm công bố; dữ liệu nén gọn (126 MB xuống 19 MB cho phần BCTC) | Lãi suất liên ngân hàng, ý kiến kiểm toán thật, cầm cố: không có nguồn tự động, đã dựng luồng nhập CSV (cần bạn cung cấp). Năm 2015 thiếu ở một số công ty là lỗi của nguồn (đã đồng ý giữ cách xử lý hiện tại) |
+| Dữ liệu | Giá điều chỉnh 2006→nay cho 872 mã (gồm 188 mã ngừng giao dịch); BCTC năm 2005–2025 (CafeF) và quý 2018→nay (Vietcap) cho 874 mã; cổ tức thật (CafeF); giao dịch nội bộ 2007→nay; cập nhật gia tăng hằng ngày, phát hiện mã mới công bố và mã chậm công bố; dữ liệu nén gọn (126 MB xuống 19 MB cho phần BCTC) | Lãi suất liên ngân hàng, ý kiến kiểm toán thật, cầm cố/ký quỹ: đã thử mọi nguồn công khai khả thi, không có nguồn tự động đáng tin nên **bỏ khỏi đánh giá** (không dùng luồng nhập tay). Năm 2015 thiếu ở một số công ty là lỗi của nguồn (đã đồng ý giữ cách xử lý hiện tại) |
 | Khung backtest | Phí, thuế, T+2,5, biên độ, lô 100, thanh khoản theo thời kỳ, trượt giá; kiểm định bootstrap theo khối; 14 kiểm thử tự động (gồm chất lượng dữ liệu, nhìn trước, nhập module); đã sửa lỗi NaN, nhìn trước và lỗi nhập module | Thuế cổ tức 5% và phí quản lý ETF chưa mô hình hóa; chuẩn VN-Index giả lập không có cổ tức (dùng thêm bản cộng 2,2%/năm) |
-| Tầng 3 | MA, độ rộng, biến động, walk-forward, chuỗi 2001→nay; chỉ báo lãi suất (có kiểm thử, chờ CSV) | Lãi suất liên ngân hàng thật |
-| Tầng 2 | Bộ lọc năm (mẫu dài) và TTM (quý); phép thử 1, 2, 3, 5 (đã/chưa kiểm toán; chênh lệch 4 quý), 6, 7 (bán ròng nội bộ), 8 (cổ tức tiền thật); phép thử 4 thay thế; lọc phân vị; giới hạn ngành; mẫu dài trên 866 mã; kiểm tra độ vững | Ý kiến kiểm toán thật và cầm cố (luồng CSV); nhân tố giá trị chưa dùng ở mẫu dài |
+| Tầng 3 | MA, độ rộng, biến động, walk-forward, chuỗi 2001→nay; | Không có lãi suất liên ngân hàng (bỏ) |
+| Tầng 2 | Bộ lọc năm (mẫu dài) và TTM (quý); phép thử 1, 2, 3, 5 (đã/chưa kiểm toán; chênh lệch 4 quý), 6, 7 (bán ròng nội bộ), 8 (cổ tức tiền thật); phép thử 4 thay thế; lọc phân vị; giới hạn ngành; mẫu dài trên 866 mã; kiểm tra độ vững | Ý kiến kiểm toán thật và cầm cố (bỏ, không có nguồn); nhân tố giá trị chưa dùng ở mẫu dài |
 | Tầng 1 | Ghép lõi/vệ tinh hai túi vốn, độ nhạy 90/10 đến 70/30 | Mô hình đa túi vốn dùng chung tiền mặt (không cần thiết khi tầng 4 bị bỏ) |
 | Tầng 4 | Wyckoff khung tuần, toàn tập mã từ 2015 (173 lệnh), 10 biến thể | Không cải thiện, quyết định bỏ |
 | Tầng 6 | Báo cáo do code tạo; mail và Gemini đã kiểm thử thật trên runner; hook khởi động phiên; workflow hằng ngày có kiểm thử trước | Lịch chạy hằng ngày có hiệu lực sau khi merge (bạn đã đồng ý) |
 
 ## 3. Việc bạn có thể làm thêm
 1. Merge PR #2 (xem `docs/HUONG_DAN_VAN_HANH_V34.md` mục 1).
-2. Tùy chọn: nhập CSV lãi suất liên ngân hàng, ý kiến kiểm toán, cầm cố (mẫu ở `data/*.mau.csv`).
+2. Tự kiểm tra thủ công rủi ro cầm cố/ký quỹ và ý kiến kiểm toán của mã quan tâm trước khi dựa vào danh sách chất lượng (hệ thống không đánh giá hai mục này).
 3. Cân nhắc nguồn dữ liệu chính thức có khóa API (DNSE, SSI) để thay API không chính thức, vì hai nguồn hiện dùng có thể đổi hoặc chặn bất kỳ lúc nào.

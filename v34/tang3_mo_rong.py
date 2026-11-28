@@ -13,10 +13,6 @@ def chuoi_tin_hieu(eng, loai, **kw):
         s = tren.mean(axis=1) >= kw.get("nguong", 0.40)
     elif loai == "bien_dong":
         r = np.log(vn).diff(); v20 = r.rolling(20).std() * np.sqrt(250); s = v20 <= kw.get("he_so", 1.5) * v20.rolling(250, min_periods=120).median()
-    elif loai == "lai_suat":
-        from du_lieu_thu_cong import DuLieuThuCong
-        t = DuLieuThuCong().tin_hieu_lai_suat(eng.close_full.index, kw.get("tang_toi_da", 1.0))
-        s = t if t is not None else pd.Series(True, index=eng.close_full.index)   # không có dữ liệu: không chặn
     elif loai == "ma_va_do_rong":
         a = chuoi_tin_hieu(eng, "ma", n=200); b = chuoi_tin_hieu(eng, "do_rong", n=200, nguong=0.40); s = a | b   # chỉ dừng khi cả hai cùng xấu
     elif loai == "ma_hoac_do_rong":
