@@ -25,7 +25,7 @@ jobs:
         run: |
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
-          mkdir -p data/tham_do9 && cp ds_nhat_ky.txt data/tham_do9/_nhat_ky.txt || true
-          git add data/tham_do9
-          git commit -m "Kết quả thăm dò danh sách mã và dữ liệu quý [skip ci]" || echo "Không có thay đổi"
+          mkdir -p data/ds_ma_nhat_ky && cp ds_nhat_ky.txt data/ds_ma_nhat_ky/_nhat_ky.txt || true
+          git add data/ds_ma_nhat_ky data/ds_ma.json
+          git commit -m "Danh sách mã niêm yết [skip ci]" || echo "Không có thay đổi"
           for i in 1 2 3; do git pull --rebase origin ${{ github.ref_name }} && git push origin HEAD:${{ github.ref_name }} && break; sleep 5; done
