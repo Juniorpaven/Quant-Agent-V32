@@ -1,6 +1,6 @@
 # Báo cáo Quant V34 – dữ liệu phiên 2026-11-27
 
-Xem trực tuyến: https://github.com/Juniorpaven/Quant-Agent-V32/blob/nang-cap-v34/docs/BAO_CAO_MOI_NHAT.md
+Xem trực tuyến: https://github.com/Juniorpaven/Quant-Agent-V32/blob/main/docs/BAO_CAO_MOI_NHAT.md
 
 ## 0. Thay đổi so với báo cáo trước
 
@@ -54,9 +54,11 @@ Có **20/122** mã thanh khoản qua các phép thử tự động (dòng tiền
 
 ## 5. Lời bình
 
-Báo cáo ngày 27/11/2026 cho thấy VN-Index đạt 1653.9 điểm, nằm dưới đường MA200 (1781.3 điểm) với khoảng cách -7.15%. Đây là phiên thứ 46 liên tiếp thị trường giao dịch dưới MA200.
+Dựa trên dữ liệu ngày 27/11/2026, VN-Index đang ở mức 1653.9 điểm. Chỉ số này nằm dưới đường MA200 (1781.3 điểm) 7.15%, duy trì trạng thái này trong 46 phiên liên tiếp.
 
-Độ rộng thị trường, với 14.8% số mã nằm trên MA200, cho thấy sự phân hóa. VN-Index đang cách đỉnh 52 tuần -14.2%, và tỷ lệ biến động ghi nhận là 1.15. Trong số 122 mã có thanh khoản, có 20 mã đạt bộ lọc, không thay đổi so với báo cáo trước. Tỷ lệ tiền mặt hiện không có dữ liệu.
+Thị trường cho thấy sự điều chỉnh đáng kể khi VN-Index cách đỉnh 52 tuần -14.2%. Độ rộng thị trường yếu, với chỉ 14.8% số mã cổ phiếu giữ được trên MA200 của mình. Tỷ lệ biến động là 1.15.
+
+Báo cáo ghi nhận 20 mã cổ phiếu đạt tiêu chí lọc trong tổng số 122 mã có thanh khoản, không có sự thay đổi nào so với lần trước. Tỷ lệ tiền mặt hiện không có dữ liệu. Tổng quan, thị trường đang trong giai đoạn điều chỉnh với độ rộng yếu, gợi ý sự thận trọng cho các chiến lược đầu tư dài hạn.
 
 ## 6. Tình trạng các tầng
 
