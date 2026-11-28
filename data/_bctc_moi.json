@@ -1,20 +1,7 @@
 {
- "cap_nhat": "2026-11-28T02:25:50.787593+00:00",
- "moi_hom_nay": [
-  {
-   "ma": "BVH",
-   "ky": "Q3/2026",
-   "cong_bo": "2026-11-27",
-   "truoc": "Q3/2026"
-  }
- ],
- "cham_cong_bo": [
-  {
-   "ma": "FUCVREIT",
-   "ky_cuoi": null,
-   "ky_ky_vong": "Q3/2026"
-  }
- ],
+ "cap_nhat": "2026-11-28T09:06:00.248043+00:00",
+ "moi_hom_nay": [],
+ "cham_cong_bo": [],
  "loi": [],
  "lich_su": [
   {
