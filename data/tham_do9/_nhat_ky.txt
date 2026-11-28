@@ -1,0 +1,24 @@
+vci_getall 200 1115892  https://trading.vietcap.com.vn/api/price/symbols/getAll
+vci_getall2 LỖI ConnectionError https://mt.vietcap.com.vn/api/price/symbols/getAll
+cafef_suggest_a 404 21  https://s.cafef.vn/Ajax/AutoSuggestSymbol.ashx?query=A
+cafef_suggest_vn 404 21  https://s.cafef.vn/Ajax/AutoSuggestSymbol.ashx?query=VN
+iq_search 200 183  https://iq.vietcap.com.vn/api/iq-insight-service/v1/company/search?keyword=FP
+iq_listing 404 192  https://iq.vietcap.com.vn/api/iq-insight-service/v1/market/listing
+hnx_root LỖI SSLError https://hnx.vn/
+hnx_ls LỖI SSLError https://hnx.vn/vi-vn/thi-truong-tp/lai-suat-lien-ngan-hang.html
+cafef_quy_kqkd_p1 200 27878  https://apiweb.cafef.vn/api/v1/BCTC/GetReportDetail?symbol=HPG&reportType=KQKD&TypeTime=QUY&pageIndex=1&pageSi
+   kỳ: [(2026, 3, 'H'), (2026, 2, 'H'), (2026, 1, 'H'), (2025, 4, 'H'), (2025, 3, 'H'), (2025, 2, 'H'), (2025, 1, 'H'), (2024, 4, 'H'), (2024, 3, 'H'), (2024, 2, 'H'), (2024, 1, 'H'), (2023, 4, 'H'), (2023, 3, 'H'), (2023, 2, 'H'), (2023, 1, 'H'), (2022, 4, 'H'), (2022, 3, 'H'), (2022, 2, 'H'), (2022, 1, 'H'), (2021, 4, 'H')] count 76
+cafef_quy_kqkd_p2 200 27908  https://apiweb.cafef.vn/api/v1/BCTC/GetReportDetail?symbol=HPG&reportType=KQKD&TypeTime=QUY&pageIndex=2&pageSi
+   kỳ: [(2021, 3, 'H'), (2021, 2, 'H'), (2021, 1, 'H'), (2020, 4, 'H'), (2020, 3, 'H'), (2020, 2, 'H'), (2020, 1, 'H'), (2019, 4, 'H'), (2019, 3, 'H'), (2019, 2, 'H'), (2019, 1, 'H'), (2018, 4, 'H'), (2018, 3, 'H'), (2018, 2, 'H'), (2018, 1, 'H'), (2017, 4, 'H'), (2017, 3, 'H'), (2017, 2, 'H'), (2017, 1, 'H'), (2016, 4, 'H')] count 76
+cafef_quy_kqkd_p3 200 27440  https://apiweb.cafef.vn/api/v1/BCTC/GetReportDetail?symbol=HPG&reportType=KQKD&TypeTime=QUY&pageIndex=3&pageSi
+   kỳ: [(2016, 3, 'H'), (2016, 2, 'H'), (2016, 1, 'H'), (2015, 2, 'H'), (2014, 4, 'H'), (2014, 3, 'H'), (2014, 2, 'H'), (2014, 1, 'H'), (2013, 4, 'H'), (2013, 3, 'H'), (2013, 2, 'H'), (2013, 1, 'H'), (2012, 4, 'H'), (2012, 3, 'H'), (2012, 2, 'H'), (2012, 1, 'H'), (2011, 4, 'H'), (2011, 3, 'H'), (2011, 2, 'H'), (2011, 1, 'H')] count 76
+cafef_quy_kqkd_p4 200 22279  https://apiweb.cafef.vn/api/v1/BCTC/GetReportDetail?symbol=HPG&reportType=KQKD&TypeTime=QUY&pageIndex=4&pageSi
+   kỳ: [(2010, 4, 'H'), (2010, 3, 'H'), (2010, 2, 'H'), (2010, 1, 'H'), (2009, 4, 'H'), (2009, 3, 'H'), (2009, 2, 'H'), (2009, 1, 'H'), (2008, 4, 'H'), (2008, 3, 'H'), (2008, 2, 'H'), (2008, 1, 'H'), (2007, 4, 'H'), (2007, 3, 'H'), (2007, 2, 'H'), (2007, 1, 'H')] count 76
+cafef_quy_kqkd_p5 200 2742  https://apiweb.cafef.vn/api/v1/BCTC/GetReportDetail?symbol=HPG&reportType=KQKD&TypeTime=QUY&pageIndex=5&pageSi
+   kỳ: [] count 76
+cafef_quy_kqkd_p6 200 2742  https://apiweb.cafef.vn/api/v1/BCTC/GetReportDetail?symbol=HPG&reportType=KQKD&TypeTime=QUY&pageIndex=6&pageSi
+   kỳ: [] count 76
+cafef_quy_cdkt_p1 200 140744  https://apiweb.cafef.vn/api/v2/BCTC/GetReportCDKT?symbol=HPG&pageIndex=1&pageSize=20&reportType=ALL&TypeTime=Q
+   CDKT quý kỳ: [(2026, 3), (2026, 2), (2026, 1), (2025, 4), (2025, 3), (2025, 2), (2025, 1), (2024, 4), (2024, 3), (2024, 2), (2024, 1), (2023, 4), (2023, 3), (2023, 2), (2023, 1), (2022, 4), (2022, 3), (2022, 2), (2022, 1), (2021, 4)]
+cafef_luyke_lctt 200 20648  https://apiweb.cafef.vn/api/v1/BCTC/GetReportLCTT?symbol=HPG&pageIndex=1&pageSize=20&reportType=ALL&TypeTime=L
+   LCTT lũy kế kỳ: [(2025, 2, '2025'), (2024, 2, '2024'), (2023, 2, '2023'), (2021, 2, '2021'), (2020, 2, '2020'), (2019, 2, '2019'), (2018, 2, '2018'), (2017, 2, '2017'), (2016, 2, '2016'), (2015, 2, '2015')]
