@@ -1,0 +1,35 @@
+name: Tai tap ma day du V34
+on:
+  workflow_dispatch:
+  push:
+    branches: [nang-cap-v34]
+    paths: ['v34/kich_hoat_ds_lon.txt']
+permissions:
+  contents: write
+jobs:
+  tai:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        lat: [0, 1, 2, 3, 4, 5]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install pandas requests
+      - name: Tai
+        timeout-minutes: 90
+        run: python -u v34/tai_ds_lon.py ${{ matrix.lat }} 6 2>&1 | tee ds_lon_${{ matrix.lat }}.txt
+      - name: Commit
+        if: always()
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          mkdir -p data/ds_lon_log && cp ds_lon_${{ matrix.lat }}.txt data/ds_lon_log/lat${{ matrix.lat }}.txt || true
+          git add data
+          git commit -m "Tải tập mã đầy đủ, lát ${{ matrix.lat }} [skip ci]" || echo "Không có thay đổi"
+          for i in 1 2 3 4 5 6; do git pull --rebase origin ${{ github.ref_name }} && git push origin HEAD:${{ github.ref_name }} && break; sleep $((RANDOM % 20 + 5)); done

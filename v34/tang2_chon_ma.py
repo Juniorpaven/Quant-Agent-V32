@@ -40,7 +40,10 @@ class DuLieuCoBan:
         for f in sorted(glob.glob(os.path.join(os.path.dirname(thu_muc), "noibo", "*.json"))):
             ma = os.path.basename(f)[:-5]
             ev = []
-            for x in json.load(open(f)):
+            dat = json.load(open(f))
+            if isinstance(dat, dict) and dat.get("v") == 2:
+                self.noibo[ma] = [(pd.Timestamp(d), float(sl)) for d, sl in dat["ev"]]; continue
+            for x in dat:
                 if x.get("tradeStatusEn") != "Done" or x.get("actionTypeEn") not in ("Buy", "Sell") or not x.get("publicDate"): continue
                 acq = x.get("shareAcquire") or 0.0
                 if x["actionTypeEn"] == "Sell":

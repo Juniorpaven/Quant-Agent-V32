@@ -31,6 +31,7 @@ jobs:
         run: |
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
+          git checkout -- data 2>/dev/null || true
           mkdir -p data/kiem_mail
           grep -E "Đã gửi|Bỏ qua gửi|Lỗi gửi|Gemini|Không có lời bình|## 5. Lời bình" mail_kiem_thu.txt | sed -E 's/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+/[email]/g' > data/kiem_mail/_ket_qua.txt || true
           [ -n "$GEMINI_API_KEY" ] && echo "co_khoa_gemini=true" >> data/kiem_mail/_ket_qua.txt || echo "co_khoa_gemini=false" >> data/kiem_mail/_ket_qua.txt

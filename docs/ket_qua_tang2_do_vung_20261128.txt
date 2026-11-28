@@ -1,0 +1,61 @@
+10 mã tăng mạnh nhất (bỏ ra trong kiểm tra): ['VIC', 'BMP', 'TLG', 'DHC', 'HPG', 'PET', 'VHC', 'FPT', 'VCS', 'TNG']
+  [2010-05-01] Mua đều VN-Index giả lập: CAGR 8.96%, MDD -45.3%, Sharpe 0.46
+  [2010-05-01] Mua đều VN-Index + 2,2%/năm (cổ tức ước lượng): CAGR 11.36%, MDD -42.9%, Sharpe 0.57
+  [2010-05-01] T2 dài N=12 (cơ sở): CAGR 13.17%, MDD -41.3%, Sharpe 0.58
+  [2010-05-01] T2 dài N=12, bỏ 10 mã tăng mạnh nhất (hậu kiến): CAGR 11.58%, MDD -41.0%, Sharpe 0.52
+  [2010-05-01] bỏ ngẫu nhiên 30% mã #0: CAGR 12.27%, MDD -39.5%, Sharpe 0.56
+  [2010-05-01] bỏ ngẫu nhiên 30% mã #1: CAGR 11.80%, MDD -41.2%, Sharpe 0.54
+  [2010-05-01] bỏ ngẫu nhiên 30% mã #2: CAGR 11.76%, MDD -40.1%, Sharpe 0.52
+  [2010-05-01] ngẫu nhiên trong mã đạt lọc #0: CAGR 13.62%, MDD -40.4%, Sharpe 0.59
+  [2010-05-01] ngẫu nhiên trong mã đạt lọc #1: CAGR 13.56%, MDD -40.4%, Sharpe 0.58
+  [2010-05-01] ngẫu nhiên trong mã đạt lọc #2: CAGR 12.73%, MDD -40.2%, Sharpe 0.56
+  [2010-05-01] T2 chỉ ROE: CAGR 11.96%, MDD -38.1%, Sharpe 0.54
+  [2010-05-01] T2 dài N=12, trượt giá 0,3%: CAGR 13.00%, MDD -41.3%, Sharpe 0.57
+  [2010-05-01] VN-Index giả lập, trượt giá 0,3%: CAGR 8.92%, MDD -45.3%, Sharpe 0.45
+
+### 2010-05-01 → nay
+
+| Tên                                             | CAGR (XIRR)   | MDD     |   Sharpe |   NAV cuối (triệu) |   Tổng nạp (triệu) | Vòng quay bán/năm   |   Tổng chi phí (triệu) |   Lệnh bị chặn |
+|:------------------------------------------------|:--------------|:--------|---------:|-------------------:|-------------------:|:--------------------|-----------------------:|---------------:|
+| Mua đều VN-Index giả lập                        | 8.96%         | -45.26% |     0.46 |            4413.85 |               1990 | 0.0%                |                   2.98 |              0 |
+| Mua đều VN-Index + 2,2%/năm (cổ tức ước lượng)  | 11.36%        | -42.86% |     0.57 |            5541.86 |               1990 | 0.0%                |                   2.98 |              0 |
+| T2 dài N=12 (cơ sở)                             | 13.17%        | -41.28% |     0.58 |            6600.68 |               1990 | 8.56%               |                  16.93 |              2 |
+| T2 dài N=12, bỏ 10 mã tăng mạnh nhất (hậu kiến) | 11.58%        | -41.04% |     0.52 |            5663.41 |               1990 | 7.86%               |                  14.3  |              2 |
+| T2 chỉ ROE                                      | 11.96%        | -38.09% |     0.54 |            5870.11 |               1990 | 11.93%              |                  21.99 |              1 |
+| T2 dài N=12, trượt giá 0,3%                     | 13.0%         | -41.32% |     0.57 |            6495.35 |               1990 | 8.59%               |                  16.79 |              2 |
+| VN-Index giả lập, trượt giá 0,3%                | 8.92%         | -45.28% |     0.45 |            4399.61 |               1990 | 0.0%                |                   2.98 |              0 |
+  bỏ ngẫu nhiên 30% mã (4 lần): CAGR trung bình 11.94% (min 11.76, max 12.27), MDD trung bình -40.3%
+  ngẫu nhiên trong mã đạt lọc (4 lần): CAGR trung bình 13.30% (min 12.73, max 13.62), MDD trung bình -40.3%
+  T2 dài N=12 (cơ sở) so với Mua đều VN-Index + 2,2%/năm (cổ tức ước lượng): chủ động +0.86%/năm, CI95 [-2.8, +4.8], p(≤0)=0.33
+  T2 dài N=12, bỏ 10 mã tăng mạnh nhất (hậu kiến) so với Mua đều VN-Index + 2,2%/năm (cổ tức ước lượng): chủ động -0.36%/năm, CI95 [-3.9, +3.5], p(≤0)=0.58
+  T2 chỉ ROE so với Mua đều VN-Index + 2,2%/năm (cổ tức ước lượng): chủ động +0.14%/năm, CI95 [-3.6, +4.2], p(≤0)=0.48
+  [2015-01-01] Mua đều VN-Index giả lập: CAGR 8.64%, MDD -45.3%, Sharpe 0.61
+  [2015-01-01] Mua đều VN-Index + 2,2%/năm (cổ tức ước lượng): CAGR 11.05%, MDD -42.8%, Sharpe 0.73
+  [2015-01-01] T2 dài N=12 (cơ sở): CAGR 14.55%, MDD -41.0%, Sharpe 0.79
+  [2015-01-01] T2 dài N=12, bỏ 10 mã tăng mạnh nhất (hậu kiến): CAGR 12.32%, MDD -42.4%, Sharpe 0.68
+  [2015-01-01] bỏ ngẫu nhiên 30% mã #0: CAGR 13.40%, MDD -39.5%, Sharpe 0.77
+  [2015-01-01] bỏ ngẫu nhiên 30% mã #1: CAGR 13.20%, MDD -39.8%, Sharpe 0.75
+  [2015-01-01] bỏ ngẫu nhiên 30% mã #2: CAGR 12.44%, MDD -39.8%, Sharpe 0.69
+  [2015-01-01] ngẫu nhiên trong mã đạt lọc #0: CAGR 12.98%, MDD -42.6%, Sharpe 0.75
+  [2015-01-01] ngẫu nhiên trong mã đạt lọc #1: CAGR 14.35%, MDD -41.2%, Sharpe 0.78
+  [2015-01-01] ngẫu nhiên trong mã đạt lọc #2: CAGR 14.23%, MDD -41.2%, Sharpe 0.78
+  [2015-01-01] T2 chỉ ROE: CAGR 12.04%, MDD -37.0%, Sharpe 0.72
+  [2015-01-01] T2 dài N=12, trượt giá 0,3%: CAGR 14.39%, MDD -40.9%, Sharpe 0.78
+  [2015-01-01] VN-Index giả lập, trượt giá 0,3%: CAGR 8.61%, MDD -45.3%, Sharpe 0.60
+
+### 2015-01-01 → nay
+
+| Tên                                             | CAGR (XIRR)   | MDD     |   Sharpe |   NAV cuối (triệu) |   Tổng nạp (triệu) | Vòng quay bán/năm   |   Tổng chi phí (triệu) |   Lệnh bị chặn |
+|:------------------------------------------------|:--------------|:--------|---------:|-------------------:|-------------------:|:--------------------|-----------------------:|---------------:|
+| Mua đều VN-Index giả lập                        | 8.64%         | -45.27% |     0.61 |            2445.56 |               1430 | 0.0%                |                   2.14 |              0 |
+| Mua đều VN-Index + 2,2%/năm (cổ tức ước lượng)  | 11.05%        | -42.85% |     0.73 |            2855.81 |               1430 | 0.0%                |                   2.14 |              0 |
+| T2 dài N=12 (cơ sở)                             | 14.55%        | -41.0%  |     0.79 |            3588.76 |               1430 | 8.93%               |                   8.78 |              3 |
+| T2 dài N=12, bỏ 10 mã tăng mạnh nhất (hậu kiến) | 12.32%        | -42.42% |     0.68 |            3101.52 |               1430 | 9.08%               |                   8.15 |              3 |
+| T2 chỉ ROE                                      | 12.04%        | -37.02% |     0.72 |            3044.54 |               1430 | 14.29%              |                  12.31 |              2 |
+| T2 dài N=12, trượt giá 0,3%                     | 14.39%        | -40.92% |     0.78 |            3552.21 |               1430 | 8.97%               |                   8.75 |              3 |
+| VN-Index giả lập, trượt giá 0,3%                | 8.61%         | -45.28% |     0.6  |            2439.67 |               1430 | 0.0%                |                   2.14 |              0 |
+  bỏ ngẫu nhiên 30% mã (4 lần): CAGR trung bình 13.01% (min 12.44, max 13.40), MDD trung bình -39.7%
+  ngẫu nhiên trong mã đạt lọc (4 lần): CAGR trung bình 13.86% (min 12.98, max 14.35), MDD trung bình -41.7%
+  T2 dài N=12 (cơ sở) so với Mua đều VN-Index + 2,2%/năm (cổ tức ước lượng): chủ động +2.70%/năm, CI95 [-2.5, +8.4], p(≤0)=0.16
+  T2 dài N=12, bỏ 10 mã tăng mạnh nhất (hậu kiến) so với Mua đều VN-Index + 2,2%/năm (cổ tức ước lượng): chủ động +0.63%/năm, CI95 [-4.7, +6.4], p(≤0)=0.42
+  T2 chỉ ROE so với Mua đều VN-Index + 2,2%/năm (cổ tức ước lượng): chủ động +1.24%/năm, CI95 [-4.0, +6.8], p(≤0)=0.32
