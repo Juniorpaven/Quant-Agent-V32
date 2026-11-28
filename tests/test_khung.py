@@ -84,5 +84,44 @@ class TestNhapModule(unittest.TestCase):
                 importlib.import_module(ten)
 
 
+
+class TestDuLieuThuCong(unittest.TestCase):
+    """Luồng nhập tay: ý kiến kiểm toán, cầm cố, lãi suất liên ngân hàng (dữ liệu giả)."""
+    def setUp(self):
+        import tempfile; self.d = tempfile.mkdtemp()
+        from du_lieu_thu_cong import DuLieuThuCong
+        self.cls = DuLieuThuCong
+
+    def _ghi(self, ten, noi_dung):
+        open(os.path.join(self.d, ten), "w").write(noi_dung)
+
+    def test_khong_co_file_thi_khong_danh_gia(self):
+        t = self.cls(self.d)
+        self.assertIsNone(t.kiem_toan("AAA", pd.Timestamp("2025-06-01"))); self.assertIsNone(t.cam_co("AAA", pd.Timestamp("2025-06-01")))
+        self.assertIsNone(t.tin_hieu_lai_suat(pd.bdate_range("2024-01-01", periods=50)))
+
+    def test_y_kien_ngoai_tru_bi_loai(self):
+        self._ghi("kiem_toan_y_kien.csv", "ma,nam,y_kien\nAAA,2023,chấp nhận toàn phần\nAAA,2024,ngoại trừ\nBBB,2024,chấp nhận toàn phần\n")
+        t = self.cls(self.d)
+        self.assertFalse(t.kiem_toan("AAA", pd.Timestamp("2025-06-01")))      # FY2024 mới nhất đã công bố, có ý kiến ngoại trừ
+        self.assertTrue(t.kiem_toan("BBB", pd.Timestamp("2025-06-01")))
+        self.assertIsNone(t.kiem_toan("CCC", pd.Timestamp("2025-06-01")))     # không có dữ liệu cho mã
+        self.assertTrue(t.kiem_toan("AAA", pd.Timestamp("2025-02-01")))       # trước tháng 4: FY2024 chưa công bố, FY2023 sạch
+
+    def test_cam_co_vuot_nguong(self):
+        self._ghi("cam_co.csv", "ma,ngay,ty_le_pct\nAAA,2025-01-10,10\nAAA,2025-05-01,45\nBBB,2024-01-01,50\n")
+        t = self.cls(self.d)
+        self.assertFalse(t.cam_co("AAA", pd.Timestamp("2025-06-01")))         # mới nhất 45% >= 30%
+        self.assertTrue(t.cam_co("AAA", pd.Timestamp("2025-03-01")))          # lúc đó mới nhất 10%
+        self.assertIsNone(t.cam_co("BBB", pd.Timestamp("2025-06-01")))        # quá 12 tháng, không đánh giá
+
+    def test_lai_suat_tang_manh_thi_tam_dung(self):
+        ng = pd.date_range("2024-01-01", periods=60, freq="W"); gt = [1.0] * 30 + list(np.linspace(1.0, 3.5, 10)) + [3.5] * 20
+        self._ghi("lai_suat_lnh.csv", "ngay,lai_suat_qua_dem_pct\n" + "\n".join(f"{d.date()},{v}" for d, v in zip(ng, gt)))
+        t = self.cls(self.d); s = t.tin_hieu_lai_suat(pd.bdate_range("2024-01-01", "2025-02-28"))
+        self.assertTrue(bool(s.iloc[10]))                                      # đầu kỳ lãi suất phẳng: được giải ngân
+        self.assertFalse(bool(s.loc["2024-10-01":"2024-11-30"].all()))         # giai đoạn tăng mạnh: có lúc tạm dừng
+
+
 if __name__ == "__main__":
     unittest.main()
