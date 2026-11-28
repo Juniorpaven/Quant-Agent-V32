@@ -14,6 +14,19 @@ def _bang(v):
     return out
 
 
+def _bang_sec(v):
+    """CDKT và LCTT của CafeF: data = danh sách phân đoạn (TN/NV, HDKD/HDDT/HDTC), mỗi phân đoạn có danh sách kỳ; gộp theo năm."""
+    out = {}
+    for sec in (v or {}).get("data") or []:
+        for p in sec.get("data") or []:
+            try: y = int(p["year"])
+            except Exception: continue
+            o = out.setdefault(y, {"ma": {}, "kt": p.get("content") or ""})
+            for c in p.get("data") or []:
+                if c.get("value") is not None: o["ma"][c["code"]] = c["value"]
+    return out
+
+
 def doc_co_tuc(ds):
     rows = []
     for e in ds or []:
@@ -35,7 +48,7 @@ class DuLieuDai:
         self.nam, self.co_tuc = {}, {}
         for f in sorted(glob.glob(os.path.join(thu_muc, "[A-Z]*.json"))):
             ma = os.path.basename(f)[:-5]; d = json.load(open(f))
-            kq, cd, lc = _bang(d.get("kqkd")), _bang(d.get("cdkt")), _bang(d.get("lctt"))
+            kq, cd, lc = _bang(d.get("kqkd")), _bang_sec(d.get("cdkt")), _bang_sec(d.get("lctt"))
             ds = {}
             for y in kq:
                 ds[y] = {"is": kq[y]["ma"], "bs": cd.get(y, {}).get("ma", {}), "cf": lc.get(y, {}).get("ma", {}), "kt": kq[y]["kt"], "hl": pd.Timestamp(y, 12, 31) + pd.Timedelta(days=90)}
@@ -67,7 +80,7 @@ def loc_dai(dl, ma, ngay):
     if len(nam) < 3: return False, {"du_lieu": "thiếu lịch sử"}, None
     df = pd.DataFrame([{"y": y, "dt": _v(v["is"], "10"), "lnst": _v(v["is"], "61") if "61" in v["is"] else _v(v["is"], "60"), "pbt": _v(v["is"], "50"),
                         "lai": abs(_v(v["is"], "24")), "khac": _v(v["is"], "40"), "eps": _v(v["is"], "70"),
-                        "ocf": _v(v["cf"], "20"), "pt": _v(v["bs"], "130"), "tk": _v(v["bs"], "140"), "ts": _v(v["bs"], "270"), "no": _v(v["bs"], "300"), "vcsh": _v(v["bs"], "400"),
+                        "ocf": _v(v["cf"], "HDKD_20"), "pt": _v(v["bs"], "130"), "tk": _v(v["bs"], "140"), "ts": _v(v["bs"], "270"), "no": _v(v["bs"], "300"), "vcsh": _v(v["bs"], "400"),
                         "kt": "kiểm toán" in v["kt"].lower() and "chưa" not in v["kt"].lower()} for y, v in nam]).set_index("y")
     n4 = df.tail(4); kq = {}
     ln = n4.lnst.sum()
