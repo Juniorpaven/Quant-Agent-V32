@@ -5,6 +5,7 @@ import numpy as np, pandas as pd
 
 NGAN_HANG = {"VCB", "BID", "CTG", "TCB", "MBB", "ACB", "VPB", "STB", "HDB", "TPB", "VIB", "LPB", "SHB", "EIB", "MSB", "OCB"}
 CHUA_DANH_GIA = "không đánh giá được"
+BO_GIA_TRI = False   # mẫu dài: EPS thời đó không so được với giá điều chỉnh về sau
 
 
 def _hieu_luc(ky_nam, cong_bo, tre_ngay):
@@ -160,8 +161,9 @@ def diem_nhan_to(dl, gia_dong, vol, ds_ma, ngay, i, loc_fn=None):
         mom6 = c.iloc[i - 21] / c.iloc[i - 126] - 1
         cs = dl.chi_so_moi_nhat(ma, ngay)
         sh = _g(cs[-1], "numberOfSharesMktCap") if cs else np.nan
+        if BO_GIA_TRI: sh = np.nan
         gia_tri = nt["lnst"] / (c.iloc[i] * 1000 * sh) if ma not in NGAN_HANG and sh and np.isfinite(sh) and nt["lnst"] == nt["lnst"] else np.nan
-        if ma in NGAN_HANG and cs:
+        if ma in NGAN_HANG and cs and not BO_GIA_TRI:
             pe = _g(cs[-1], "pe"); gia_tri = 1 / pe if pe and pe > 0 else np.nan
         hang.append({"ma": ma, "roe": nt["roe"], "ocf_ln": nt["ocf_ln"], "gia_tri": gia_tri, "mom": (mom12 + mom6) / 2})
     if not hang: return pd.DataFrame(columns=["diem"])

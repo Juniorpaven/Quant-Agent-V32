@@ -28,6 +28,7 @@ class LoiDanhSach:
 def chon_top_thanh_khoan(ds_ma, n=30):
     def f(eng, i, giu):
         g = eng.gtgd20.iloc[i]
-        ok = [m for m in ds_ma if m in g.index and np.isfinite(g[m]) and g[m] >= 10e9 and np.isfinite(eng.close[m].iloc[i])]
+        thr = eng.nguong_fn(eng.cal[i]) if getattr(eng, "nguong_fn", None) else 10e9
+        ok = [m for m in ds_ma if m in g.index and np.isfinite(g[m]) and g[m] >= thr and np.isfinite(eng.close[m].iloc[i])]
         return sorted(ok, key=lambda m: -g[m])[:n]
     return f

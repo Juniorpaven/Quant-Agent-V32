@@ -92,7 +92,8 @@ class Engine:
         """Đủ thanh khoản và có giá tại phiên i."""
         if ma in MIEN_THANH_KHOAN: return True
         v = self.gtgd20[ma].iloc[i] if ma in self.gtgd20 else np.nan
-        return np.isfinite(v) and v >= THANH_KHOAN_TOI_THIEU
+        fn = getattr(self, "nguong_fn", None)
+        return np.isfinite(v) and v >= (fn(self.cal[i]) if fn else THANH_KHOAN_TOI_THIEU)
 
     def chay(self, ten, chien_luoc, cho_phep_etf_thanh_khoan=False):
         """chien_luoc.muc_tieu(engine, i, vi_the) -> dict ma->tỷ trọng (tổng <=1, phần còn lại tiền mặt) hoặc None (không đổi).

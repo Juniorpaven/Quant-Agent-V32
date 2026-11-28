@@ -54,6 +54,10 @@ class DuLieuDai:
                 ds[y] = {"is": kq[y]["ma"], "bs": cd.get(y, {}).get("ma", {}), "cf": lc.get(y, {}).get("ma", {}), "kt": kq[y]["kt"], "hl": pd.Timestamp(y, 12, 31) + pd.Timedelta(days=90)}
             self.nam[ma] = ds; self.co_tuc[ma] = doc_co_tuc(d.get("co_tuc"))
 
+    def __getattr__(self, ten):
+        if ten in ("co_so", "nam", "co_tuc"): raise AttributeError(ten)
+        return getattr(self.co_so, ten)
+
     def cac_nam(self, ma, ngay, n=5):
         return sorted([(y, v) for y, v in self.nam.get(ma, {}).items() if v["hl"] <= ngay])[-n:]
 
@@ -74,36 +78,42 @@ def _v(d, c):
     x = d.get(c); return float(x) if x is not None else np.nan
 
 
+def _noi_bo(dl, ma, ngay, lnst, eps, nguong=0.005):
+    bn = dl.co_so.ban_rong_noi_bo(ma, ngay)
+    if bn is None or not (np.isfinite(lnst) and np.isfinite(eps) and eps > 0 and lnst > 0): return CHUA_DANH_GIA
+    return bool(bn / (lnst / eps) <= nguong)   # số cổ phiếu ~ LNST mẹ / EPS
+
+
 def loc_dai(dl, ma, ngay):
     """Trả về (đạt?, kq, nhân tố). Phi ngân hàng: các phép thử 1, 2, 3, 6, 7, 8 (cổ tức tiền thật), 5 (đã kiểm toán). Ngân hàng: ROE, cổ tức, nội bộ (chưa có nợ xấu trước 2018)."""
     nam = dl.cac_nam(ma, ngay, 5)
     if len(nam) < 3: return False, {"du_lieu": "thiếu lịch sử"}, None
-    df = pd.DataFrame([{"y": y, "dt": _v(v["is"], "10"), "lnst": _v(v["is"], "61") if "61" in v["is"] else _v(v["is"], "60"), "pbt": _v(v["is"], "50"),
+    df = pd.DataFrame([{"y": y, "dthu": _v(v["is"], "10"), "lnst": _v(v["is"], "61") if "61" in v["is"] else _v(v["is"], "60"), "pbt": _v(v["is"], "50"),
                         "lai": abs(_v(v["is"], "24")), "khac": _v(v["is"], "40"), "eps": _v(v["is"], "70"),
-                        "ocf": _v(v["cf"], "HDKD_20"), "pt": _v(v["bs"], "130"), "tk": _v(v["bs"], "140"), "ts": _v(v["bs"], "270"), "no": _v(v["bs"], "300"), "vcsh": _v(v["bs"], "400"),
-                        "kt": "kiểm toán" in v["kt"].lower() and "chưa" not in v["kt"].lower()} for y, v in nam]).set_index("y")
+                        "ocf": _v(v["cf"], "HDKD_20"), "pt": _v(v["bs"], "130"), "tk": _v(v["bs"], "140"), "ts": _v(v["bs"], "270"), "no": _v(v["bs"], "300"), "vcsh": _v(v["bs"], "400")} for y, v in nam]).set_index("y")
     n4 = df.tail(4); kq = {}
     ln = n4.lnst.sum()
     if ma in NGAN_HANG:
         roe = (n4.lnst / n4.vcsh).mean()
         kq["roe>=10%"] = bool(roe >= 0.10) if np.isfinite(roe) else CHUA_DANH_GIA
-        kq["co_tuc_5nam"] = bool(dl.so_nam_co_tuc_bat_ky(ma, ngay) >= 4)
-        kq["7_noi_bo"] = _phep_thu_noi_bo(dl.co_so, ma, ngay)
+        kq["co_tuc_5nam"] = bool(dl.so_nam_co_tuc_bat_ky(ma, ngay) >= 3) if ngay >= pd.Timestamp(2018, 1, 1) else CHUA_DANH_GIA
+        kq["7_noi_bo"] = _noi_bo(dl, ma, ngay, df.lnst.iloc[-1], df.eps.iloc[-1])
         nt = {"roe": roe, "ocf_ln": np.nan, "lnst": df.lnst.iloc[-1], "eps": df.eps.iloc[-1]}
         return all(v is True for v in kq.values() if v != CHUA_DANH_GIA), kq, nt
     ocf_ok = n4.ocf.notna().sum() >= 3
     kq["1_ocf_lnst"] = (bool(ln > 0 and n4.ocf.sum() / ln >= 0.8 and (n4.ocf < 0).sum() <= 1)) if ocf_ok else CHUA_DANH_GIA
     base, cur = df.iloc[-4] if len(df) >= 4 else df.iloc[0], df.iloc[-1]
     ts0, ts1 = base.pt + base.tk, cur.pt + cur.tk
-    kq["2_phai_thu_ton_kho"] = bool(ts1 / ts0 - 1 <= cur.dt / base.dt - 1 + 0.15) if (base.dt > 0 and ts0 > 0 and np.isfinite(ts1)) else CHUA_DANH_GIA
+    kq["2_phai_thu_ton_kho"] = bool(ts1 / ts0 - 1 <= cur.dthu / base.dthu - 1 + 0.15) if (base.dthu > 0 and ts0 > 0 and np.isfinite(ts1)) else CHUA_DANH_GIA
     ty = (n4.khac / n4.pbt).replace([np.inf, -np.inf], np.nan)
     kq["3_bat_thuong"] = bool(ty.mean() < 0.15) if ty.notna().sum() >= 2 else CHUA_DANH_GIA
     cover = (cur.pbt + cur.lai) / cur.lai if cur.lai > 0 else np.inf
     don_bay = cur.no / cur.vcsh if cur.vcsh > 0 else np.nan
     kq["6_no_vay"] = bool(cover >= 3 and don_bay <= 2.5) if np.isfinite(don_bay) else CHUA_DANH_GIA
-    kq["5_kiem_toan"] = bool(n4.kt.tail(3).all()) if (n4.kt.tail(3).any() or True) else CHUA_DANH_GIA
-    kq["7_noi_bo"] = _phep_thu_noi_bo(dl.co_so, ma, ngay)
-    kq["8_co_tuc_tien_mat"] = bool(dl.so_nam_co_tuc_tien(ma, ngay) >= 4)
+    ktr = [dl.nam[ma][y]["kt"] for y, _ in nam[-3:]]; co = [k for k in ktr if k]
+    kq["5_kiem_toan"] = bool(all(("kiểm toán" in k.lower() and "chưa" not in k.lower()) for k in co)) if co else CHUA_DANH_GIA   # trường trống = không đánh giá được
+    kq["7_noi_bo"] = _noi_bo(dl, ma, ngay, df.lnst.iloc[-1], df.eps.iloc[-1])
+    kq["8_co_tuc_tien_mat"] = bool(dl.so_nam_co_tuc_tien(ma, ngay) >= 4) if ngay >= pd.Timestamp(2018, 1, 1) else CHUA_DANH_GIA   # lịch sử cổ tức CafeF thưa trước 2013
     roe = (n4.lnst / n4.vcsh).mean() if (n4.vcsh > 0).all() else np.nan
     nt = {"roe": roe, "ocf_ln": n4.ocf.sum() / ln if (ln > 0 and ocf_ok) else np.nan, "lnst": df.lnst.iloc[-1], "eps": df.eps.iloc[-1]}
     return all(v is True for v in kq.values() if v != CHUA_DANH_GIA), kq, nt
