@@ -77,10 +77,11 @@ class Engine:
         self.gia = gia
         full = gia["VNINDEX"].index
         self.cal = gia["VNINDEX"].loc[tu:den].index
-        self.close_full = pd.DataFrame({m: d["Close"] for m, d in gia.items()}).reindex(full)
+        self.close_full = pd.DataFrame({m: d["Close"] for m, d in gia.items()}).reindex(full).ffill(limit=10)
         self.off = full.get_loc(self.cal[0])
         self.open = pd.DataFrame({m: d["Open"] for m, d in gia.items()}).reindex(self.cal)
-        self.close = pd.DataFrame({m: d["Close"] for m, d in gia.items()}).reindex(self.cal)
+        # định giá: điền giá đóng cửa gần nhất tối đa 10 phiên (mã tạm ngừng giao dịch); quá 10 phiên coi như mất hết (hủy niêm yết)
+        self.close = pd.DataFrame({m: d["Close"] for m, d in gia.items()}).reindex(full).ffill(limit=10).reindex(self.cal)
         self.vol = pd.DataFrame({m: d["Volume"] for m, d in gia.items()}).reindex(self.cal)
         self.gtgd20 = (self.close * self.vol * 1000).rolling(20, min_periods=10).mean()  # giá nghìn đồng
         self.nap = nap_hang_thang
