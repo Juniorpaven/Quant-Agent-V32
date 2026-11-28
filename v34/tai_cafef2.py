@@ -26,15 +26,11 @@ def bao_cao(ma, khoa, loai="ALL"):
         trang += 1
     return {"templace": tpl, "data": ds, **meta}
 if __name__ == "__main__":
-    # kiểm tra cấu trúc với FPT trước
-    for khoa in ("cdkt", "lctt"):
-        b = bao_cao("FPT", khoa); print("FPT", khoa, "kỳ:", len(b["data"]), "template:", [t["code"] + ":" + t["name"][:25] for t in (b["templace"] or [])[:6]], "meta:", {k: b.get(k) for k in ("count", "type")}, flush=True)
-        if b["data"]: print("  mã mẫu năm 2025:", [(c["code"], c["value"]) for c in b["data"][0]["data"][:5]], flush=True)
     for f in sorted(glob.glob("data/cafef/[A-Z]*.json")):
         if bi_chan: break
         ma = os.path.basename(f)[:-5]; d = json.load(open(f))
-        if d.get("cdkt", {}).get("loai_dung") and d.get("lctt", {}).get("loai_dung"): continue
-        d["cdkt"] = bao_cao(ma, "cdkt"); d["cdkt"]["loai_dung"] = True
-        d["lctt"] = bao_cao(ma, "lctt"); d["lctt"]["loai_dung"] = True
+        if d.get("cdkt", {}).get("loai_dung") == 2 and d.get("lctt", {}).get("loai_dung") == 2: continue
+        d["cdkt"] = bao_cao(ma, "cdkt"); d["cdkt"]["loai_dung"] = 2
+        d["lctt"] = bao_cao(ma, "lctt"); d["lctt"]["loai_dung"] = 2
         json.dump(d, open(f, "w"), ensure_ascii=False)
         print("cafef2", ma, len(d["cdkt"]["data"]), len(d["lctt"]["data"]), flush=True)
