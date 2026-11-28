@@ -37,6 +37,9 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install pandas requests
+      - name: Danh sach ma
+        timeout-minutes: 5
+        run: python -u v34/tai_ds_ma.py
       - name: Ho so nganh
         timeout-minutes: 40
         run: python -u v34/tai_ho_so.py 2>&1 | tee ho_so_nhat_ky.txt
@@ -45,6 +48,6 @@ jobs:
         run: |
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
-          git add data/ho_so data/_trang_thai_ho_so.json
+          git add data/ho_so data/_trang_thai_ho_so.json data/ds_ma.json
           git commit -m "Làm mới hồ sơ ngành [skip ci]" || echo "Không có thay đổi"
           for i in 1 2 3 4 5 6; do git pull --rebase origin ${{ github.ref_name }} && git push origin HEAD:${{ github.ref_name }} && break; sleep $((RANDOM % 20 + 5)); done

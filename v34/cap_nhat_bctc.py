@@ -33,13 +33,13 @@ def main():
     hom_nay = pd.Timestamp(datetime.now(timezone.utc).date())
     thu_hai = hom_nay.weekday() == 0
     moi, loi, cham = [], [], []
+    san = {x["ma"]: x["san"] for x in json.load(open(f"{DATA}/ds_ma.json"))} if os.path.exists(f"{DATA}/ds_ma.json") else {}
     ky_kv = ky_ky_vong(hom_nay)
     for f in sorted(glob.glob(f"{DATA}/bctc/[A-Z]*.json")):
         ma = os.path.basename(f)[:-5]
         cu = json.load(open(f)); ky_cu = ky_moi_nhat(cu.get("kqkd"))
-        gia_f = f"{DATA}/gia/{ma}.csv"
-        niem_yet = os.path.exists(gia_f) and pd.read_csv(gia_f, usecols=["Date"]).Date.max() >= str((hom_nay - pd.Timedelta(days=30)).date())
-        kq = td.tai_iq(f"{td.IQ}/company/{ma}/financial-statement?section=INCOME_STATEMENT"); time.sleep(0.3)
+        niem_yet = san.get(ma) in ("HSX", "HNX")      # đang niêm yết theo danh sách mã (làm mới hằng tháng)
+        kq = td.tai_iq(f"{td.IQ}/company/{ma}/financial-statement?section=INCOME_STATEMENT"); time.sleep(0.15)
         if kq is None: loi.append(ma); continue
         ky_m = ky_moi_nhat(kq)
         if ky_m and (not ky_cu or ky_m[:2] > ky_cu[:2] or ky_m[2] != ky_cu[2]):

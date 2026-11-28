@@ -21,7 +21,7 @@ jobs:
           python-version: '3.11'
       - run: pip install pandas requests
       - name: Cap nhat
-        timeout-minutes: 30
+        timeout-minutes: 45
         run: python -u v34/cap_nhat_bctc.py 2>&1 | tee cap_nhat_nhat_ky.txt
       - name: Commit
         if: always()
