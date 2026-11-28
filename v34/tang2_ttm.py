@@ -4,8 +4,6 @@ import glob, json, os
 import numpy as np, pandas as pd
 from tang2_chon_ma import DuLieuCoBan, NGAN_HANG, CHUA_DANH_GIA, _g, _phep_thu_noi_bo, phep_thu_ngan_hang
 from du_lieu_dai import doc_co_tuc
-from du_lieu_thu_cong import DuLieuThuCong
-_TC = DuLieuThuCong()
 
 
 def _qkey(r): return (int(r["yearReport"]), int(r["lengthReport"]))
@@ -90,8 +88,6 @@ def phep_thu_ttm(dl, ma, ngay, moi=True):
         so_nam = int(sum(1 for y, v in nam if _g(v["lctt"], "cfa32") < 0)) if nam else 0   # thay thế khi chưa có dữ liệu cổ tức
     kq["8_co_tuc_tien_mat"] = bool(so_nam >= 4)
     kq["0_bctc_moi"] = bool(cur["hl"] >= ngay - pd.Timedelta(days=200))
-    for ten, v in (("5b_y_kien_kiem_toan", _TC.kiem_toan(ma, ngay)), ("7b_cam_co", _TC.cam_co(ma, ngay))):
-        if v is not None: kq[ten] = bool(v)   # chỉ thêm khi có dữ liệu nhập tay cho mã này
     roe = (df.lnst / df.vcsh).mean()
     return kq, {"roe": roe, "ocf_ln": df.ocf.sum() / ln if ln > 0 else np.nan, "lnst": cur["lnst"], "so_nam_cotuc": so_nam, "ty_ocf": df.ocf.sum() / ln if ln > 0 else np.nan, "ty_pt": (ts1 / ts0 - 1) - (cur["isa3"] / base["isa3"] - 1) if base["isa3"] > 0 and ts0 > 0 else np.nan}
 

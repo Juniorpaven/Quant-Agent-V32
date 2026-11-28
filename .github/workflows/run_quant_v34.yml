@@ -21,17 +21,17 @@ jobs:
       - name: Kiem thu tu dong
         run: python -m unittest discover -s tests -v
       - name: Chay bao cao V34
-        timeout-minutes: 15
+        timeout-minutes: 25
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
           EMAIL_NHAN: ${{ secrets.EMAIL_NHAN }}
-        run: python v34/bao_cao_v34.py
-      - name: Luu gia moi
+        run: python v34/bao_cao_v34.py --luu-trang-thai --xuat-trang
+      - name: Luu trang thai va trang bao cao
         run: |
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
-          git add data/gia
-          git commit -m "Cập nhật giá hằng ngày [skip ci]" || echo "Không có thay đổi"
+          git add data/_trang_thai_bao_cao.json docs/BAO_CAO_MOI_NHAT.md
+          git commit -m "Cập nhật báo cáo và trạng thái hằng ngày [skip ci]" || echo "Không có thay đổi"
           for i in 1 2 3; do git pull --rebase origin ${{ github.ref_name }} && git push origin HEAD:${{ github.ref_name }} && break; sleep 5; done
