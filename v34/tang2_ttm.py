@@ -27,7 +27,10 @@ class DuLieuTTM(DuLieuCoBan):
                 tt = lambda f: sum(_g(qi[k], f) for k in ky)
                 ytd = lambda f: _g(qc[(y, q)], f) + _g(nc[y - 1], f) - _g(qc[(y - 1, q)], f)
                 b = qb[(y, q)]
-                hl = max(pd.Timestamp(r["publicDate"]) if r.get("publicDate") else pd.Timestamp(0), pd.Timestamp(y, q * 3, 1) + pd.offsets.MonthEnd(0) + pd.Timedelta(days=30))
+                cuoi_q = pd.Timestamp(y, q * 3, 1) + pd.offsets.MonthEnd(0)
+                pub = pd.Timestamp(r["publicDate"]) if r.get("publicDate") else None
+                # ngày công bố sau cuối quý hơn 120 ngày là công bố lại/điều chỉnh: dùng ngày theo quy tắc (quý +45 ngày), không dùng ngày điều chỉnh
+                hl = cuoi_q + pd.Timedelta(days=45) if (pub is None or pub > cuoi_q + pd.Timedelta(days=120)) else max(pub, cuoi_q + pd.Timedelta(days=30))
                 snap[(y, q)] = {"hl": hl, "isa3": tt("isa3"), "lnst": tt("isa22"), "pbt": tt("isa16"), "lai": tt("isa8"), "tn_khac": tt("isa14"),
                                 "ocf": ytd("cfa18"), "pt": _g(b, "bsa8"), "tk": _g(b, "bsa15"), "vcsh": _g(b, "bsa78"),
                                 "vay": np.nansum([_g(b, "bsa56"), _g(b, "bsa71")]), "tong_ts": _g(b, "bsa53"),
@@ -46,7 +49,7 @@ class DuLieuTTM(DuLieuCoBan):
         if not ds: return None
         y, q = ds[-1]
         ks = [(y - i, q) for i in range(n)]
-        return [s[k] for k in reversed(ks) if k in s]
+        return [s[k] for k in reversed(ks) if k in s and s[k]["hl"] <= ngay]
 
 
 def phep_thu_ttm(dl, ma, ngay, moi=True):
