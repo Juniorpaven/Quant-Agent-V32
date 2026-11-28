@@ -1,0 +1,32 @@
+name: Tai ho so cong ty V34
+on:
+  workflow_dispatch:
+  push:
+    branches: [nang-cap-v34]
+    paths: ['v34/kich_hoat_ho_so.txt']
+permissions:
+  contents: write
+jobs:
+  tai:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install pandas requests
+      - name: Tai ho so
+        timeout-minutes: 25
+        run: python -u v34/tai_ho_so.py 2>&1 | tee ho_so_nhat_ky.txt
+      - name: Commit
+        if: always()
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          mkdir -p data/ho_so && cp ho_so_nhat_ky.txt data/ho_so/_nhat_ky.txt || true
+          git add data/ho_so data/_trang_thai_ho_so.json
+          git commit -m "Cập nhật hồ sơ công ty [skip ci]" || echo "Không có thay đổi"
+          git pull --rebase origin ${{ github.ref_name }} || true
+          git push origin HEAD:${{ github.ref_name }}
