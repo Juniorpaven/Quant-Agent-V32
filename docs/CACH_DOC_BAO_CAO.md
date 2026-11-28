@@ -61,3 +61,8 @@ Hệ thống chỉ đưa ra một quyết định duy nhất: mua đều hay t�
 
 ## Về thông tin người nội bộ
 Các giao dịch của người nội bộ đều công khai, nên thị trường có thể đã phản ứng. Hệ thống dùng *ngày công bố* (không nhìn trước), và dùng nó như một cờ cảnh báo chứ không để đi trước thị trường. Kiểm chứng 2010–2026 cho thấy mã bị cờ bán ròng nội bộ **không** tăng thấp hơn có ý nghĩa thống kê, và bỏ phép thử này khỏi lõi tầng 2 chỉ đổi lợi suất trong khoảng nhiễu (+0,20 và −0,45 điểm). Vì vậy đừng coi cờ nội bộ là dấu hiệu đáng sợ hay đáng mua; chỉ coi là một thông tin tham khảo.
+
+## Cập nhật 28/11/2026
+- **Phép thử nội bộ chỉ còn là cờ cảnh báo ⚠** cạnh mã trong danh sách chất lượng, không còn loại mã (kiểm chứng không thấy giá trị; xem `docs/ket_qua_chi_bao_nong_noi_bo_20261128.txt`). Công tắc: `NOI_BO_CHI_CANH_BAO` trong `v34/tang2_ttm.py`.
+- **Phân kỳ độ rộng**: chỉ số cách đỉnh 52 tuần không quá 3% nhưng dưới 40% mã nằm trên MA50, nghĩa là chỉ số được ít mã nâng đỡ. Chỉ để tham khảo, chưa kiểm chứng giá trị dự báo.
+- Chưa làm: bán ròng nội bộ toàn thị trường và dòng tiền khối ngoại (cần thêm dữ liệu chưa lưu).

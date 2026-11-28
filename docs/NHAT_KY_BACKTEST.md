@@ -151,3 +151,6 @@ Chi tiết: `docs/ket_qua_chi_bao_nong_noi_bo_20261128.txt` (script `v34/kiem_ch
 - Thị trường hưng phấn (giao dịch ≥1,5 lần trung vị 250 phiên và VN-Index cao hơn MA200 ≥10%): 12 đợt, lợi suất 60/120/250 phiên sau +1,4/+7,2/+9,4% so với +2,3/+4,7/+10,6% của mọi ngày; tạm dừng mua theo cờ này đổi CAGR −0,02 (2010→) và −0,11 điểm (2015→). Không có giá trị.
 - Phép thử nội bộ: nhóm bị cờ không tăng thấp hơn (đạt các phép thử khác: +16,5% so với +7,9%; toàn bộ mã: +8,4% so với +10,1%, khoảng tin cậy chứa 0); bỏ phép thử khỏi lõi tầng 2 đổi CAGR +0,20 (2010→) và −0,45 điểm (2015→). Không chứng minh được giá trị; chưa đổi bộ lọc.
 - Báo cáo hằng ngày thêm tăng 3T/12T/cờ nóng cho từng mã, tỷ lệ mã chạy nóng, giá trị giao dịch thị trường, mức kéo xa MA200 và cờ hưng phấn, ghi rõ chỉ tham khảo.
+
+## 28/11/2026 – Hạ phép thử nội bộ thành cờ cảnh báo
+Theo kết quả kiểm chứng cùng ngày (bỏ phép thử đổi CAGR +0,20 và −0,45 điểm, trong nhiễu) và đồng ý của người dùng, `loc_ttm` không còn loại mã vì phép thử 7; báo cáo hiện ⚠ cạnh mã bị bán ròng. Thêm cờ phân kỳ độ rộng (chỉ để tham khảo). Backtest cũ trong nhật ký giữ nguyên số liệu với bộ lọc cứng.
