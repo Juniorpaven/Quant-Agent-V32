@@ -114,7 +114,7 @@ def dung_markdown(sl, loi_binh):
     else:
         d.append("Chưa có `data/vi_the.json` nên không có số liệu vị thế (không có dữ liệu).")
     d += ["", "## 3. Danh sách chất lượng (chỉ theo dõi)", "",
-          f"Có {sl['so_ma_dat_loc']} mã qua các phép thử tự động. Backtest 2021–2026 cho thấy lõi chọn mã **chưa thắng** mua đều E1VFVN30, nên đây không phải khuyến nghị mua. Phép thử 4 và 5 (bên liên quan, kiểm toán) chưa có dữ liệu tự động; phép thử 7 chỉ xét giao dịch bán ròng của người nội bộ.", ""]
+          f"Có {sl['so_ma_dat_loc']} mã qua các phép thử tự động. Backtest dài hạn (2010–2026, 866 mã gồm cả mã đã hủy niêm yết) cho thấy lõi chọn mã **ngang** chuẩn mua đều có cổ tức, chưa có ý nghĩa thống kê, nên đây không phải khuyến nghị mua. Phép thử 4 và 5 (bên liên quan, kiểm toán) chưa có dữ liệu tự động; phép thử 7 chỉ xét giao dịch bán ròng của người nội bộ.", ""]
     if sl["danh_sach_chat_luong"]:
         d += ["| Mã | Điểm nhân tố | ROE bình quân (%) | Số phép thử chưa đánh giá được |", "| --- | ---: | ---: | ---: |"]
         d += [f"| {r['ma']} | {r['diem']} | {r['roe_tb']} | {r['chua_danh_gia']} |" for r in sl["danh_sach_chat_luong"]]

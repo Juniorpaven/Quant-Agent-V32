@@ -1,7 +1,5 @@
 name: Tai du lieu V34
 on:
-  schedule:
-    - cron: '0 3 20 2,5,8,11 *' # làm mới BCTC sau mùa công bố (quý +45 ngày)
   workflow_dispatch:
   push:
     branches: [nang-cap-v34]

@@ -24,6 +24,22 @@ def kqkd_cafef(ma):
 def co(ma, thu_muc, duoi): return os.path.exists(f"{thu_muc}/{ma}{duoi}")
 
 
+def lam_moi_cafef(lat, tong):
+    """Làm mới BCTC năm và cổ tức CafeF (ghi đè) cho các mã đã có data/cafef; chạy theo lát."""
+    ma_ds = sorted(os.path.basename(f)[:-5] for f in glob.glob("data/cafef/[A-Z]*.json"))
+    ma_ds = [m for i, m in enumerate(ma_ds) if i % tong == lat]
+    print(f"làm mới CafeF, lát {lat}/{tong}: {len(ma_ds)} mã", flush=True)
+    thieu = []
+    for k, ma in enumerate(ma_ds):
+        if c2.bi_chan: print("dừng do bị chặn", flush=True); break
+        out = {"kqkd": kqkd_cafef(ma), "cdkt": c2.bao_cao(ma, "cdkt"), "lctt": c2.bao_cao(ma, "lctt")}
+        j = c2.lay(CT + ma); time.sleep(0.5); out["co_tuc"] = (j or {}).get("Data") if isinstance(j, dict) else None
+        if out["kqkd"]["data"]: ghi_cafef(f"data/cafef/{ma}.json", out)
+        else: thieu.append(ma)
+        if k % 10 == 0: print(f"  {k+1}/{len(ma_ds)} {ma}", flush=True)
+    print("thiếu:", len(thieu), thieu[:20], flush=True)
+
+
 def main(lat, tong):
     ds = json.load(open("data/ds_ma.json"))
     ma_ds = sorted({x["ma"] for x in ds if x["loai"] == "STOCK" and x["san"] in ("HSX", "HNX", "DELISTED") and x["ma"] and x["ma"].isalpha() and len(x["ma"]) == 3})
@@ -58,4 +74,5 @@ def main(lat, tong):
 
 
 if __name__ == "__main__":
-    main(int(sys.argv[1]), int(sys.argv[2]))
+    if len(sys.argv) > 3 and sys.argv[3] == "cafef": lam_moi_cafef(int(sys.argv[1]), int(sys.argv[2]))
+    else: main(int(sys.argv[1]), int(sys.argv[2]))
