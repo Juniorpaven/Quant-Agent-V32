@@ -3,6 +3,15 @@ on:
   schedule:
     - cron: '0 9 * * 1-5' # 16:00 giờ Việt Nam, chỉ thứ Hai đến thứ Sáu; ngày lễ script tự bỏ qua vì không có phiên
   workflow_dispatch:
+    inputs:
+      bo_qua_phien:
+        description: 'Chay ca ngay khong co phien giao dich'
+        type: boolean
+        default: false
+      khong_gui:
+        description: 'Khong gui mail (chi cap nhat trang bao cao va trang thai)'
+        type: boolean
+        default: false
 permissions:
   contents: write
 concurrency:
@@ -27,7 +36,7 @@ jobs:
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
           EMAIL_NHAN: ${{ secrets.EMAIL_NHAN }}
-        run: python v34/bao_cao_v34.py --luu-trang-thai --xuat-trang
+        run: python v34/bao_cao_v34.py --luu-trang-thai --xuat-trang ${{ inputs.bo_qua_phien && '--bo-qua-kiem-tra-phien' || '' }} ${{ inputs.khong_gui && '--khong-gui' || '' }}
       - name: Luu trang thai va trang bao cao
         run: |
           git config user.email "github-actions[bot]@users.noreply.github.com"

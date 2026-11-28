@@ -9,23 +9,21 @@ Công cụ nghiên cứu cá nhân, không phải tư vấn đầu tư. Cấu tr
 3. **Vị thế (tùy chọn):** đổi tên `data/vi_the.mau.json` thành `data/vi_the.json` và khai số thật (`tien_mat` bằng đồng; `co_phieu` là số lượng). Báo cáo sẽ có bảng vị thế và tỷ lệ tiền mặt.
 4. **Chạy tay một lần** workflow `Run Quant V34 Daily` (Actions → Run workflow) để kiểm tra mail trước khi để lịch tự chạy.
 
-## 2. Dữ liệu bạn có thể bổ sung (CSV, không bắt buộc)
+## 2. Xem báo cáo
 
-Chưa có file thì phép thử tương ứng ghi "không đánh giá được", không tự gán "đạt". Mẫu nằm ở `data/*.mau.csv`; đổi tên bỏ `.mau`.
+- **Mail:** mỗi ngày có phiên giao dịch, lúc 16:00 giờ Việt Nam.
+- **Trang xem trực tuyến** (làm mới mỗi lần chạy): https://github.com/Juniorpaven/Quant-Agent-V32/blob/main/docs/BAO_CAO_MOI_NHAT.md
+- Báo cáo có 7 mục: thay đổi so với lần trước; tầng 3 (luật MA200 và chỉ báo tham khảo); tầng 1 (lõi, vị thế); tầng 2 (danh sách chất lượng); dữ liệu (BCTC mới, mã chậm công bố); lời bình; tình trạng các tầng.
+- Phần "thay đổi so với lần trước" báo: đổi tín hiệu MA200, mã vào hoặc rời danh sách chất lượng, mã mới chậm công bố, BCTC mới. Trạng thái được lưu ở `data/_trang_thai_bao_cao.json`.
+- Làm mới trang không gửi mail (kể cả ngày không giao dịch): Actions → Run Quant V34 Daily → Run workflow, chọn "bo_qua_phien" và "khong_gui".
 
-| File | Cột | Dùng cho |
-| --- | --- | --- |
-| `data/lai_suat_lnh.csv` | `ngay`, `lai_suat_qua_dem_pct` (theo tuần, từ 2015) | Tầng 3: tạm dừng mua khi lãi suất qua đêm (trung bình 4 tuần) tăng từ 1 điểm % trở lên so với 13 tuần trước |
-| `data/kiem_toan_y_kien.csv` | `ma`, `nam`, `y_kien` (`chấp nhận toàn phần`, `ngoại trừ`, `từ chối`, `không thể đưa ra ý kiến`) | Bộ lọc: loại mã có ý kiến ngoại trừ hoặc từ chối trong 3 năm tài chính gần nhất |
-| `data/cam_co.csv` | `ma`, `ngay`, `ty_le_pct` (% cổ phần lưu hành bị cầm cố) | Bộ lọc: loại mã có tỷ lệ cầm cố mới nhất (12 tháng) từ 30% trở lên |
-
-Chạy thử tác động của lãi suất: `python v34/chay_tang3_mo_rong.py` (thêm luật `("lai_suat", ...)` vào danh sách `RULES`).
+Không dùng dữ liệu nhập tay: lãi suất liên ngân hàng, ý kiến kiểm toán thật và cầm cố/ký quỹ không có nguồn dữ liệu tự động đáng tin (đã thử các nguồn công khai), nên **không được đưa vào đánh giá**. Bộ lọc dùng thay thế cho kiểm toán: trạng thái đã kiểm toán và chênh lệch giữa tổng bốn quý với số năm đã kiểm toán.
 
 ## 3. Các workflow
 
 | Workflow | Khi nào chạy | Việc làm |
 | --- | --- | --- |
-| `run_quant_v34.yml` | Thứ Hai đến thứ Sáu, 16:00 giờ Việt Nam | Chạy kiểm thử, cập nhật giá, lập báo cáo, gửi mail (tự bỏ qua ngày không có phiên) |
+| `run_quant_v34.yml` | Thứ Hai đến thứ Sáu, 16:00 giờ Việt Nam | Chạy kiểm thử, tải giá mới (không lưu giá), lập báo cáo, gửi mail, lưu trạng thái và trang báo cáo (tự bỏ qua ngày không có phiên) |
 | `cap_nhat_bctc_v34.yml` | Hằng ngày 10:00 | Hỏi 1 lệnh kết quả kinh doanh cho mỗi mã; chỉ tải lại khi có kỳ mới; phát hiện mã chậm công bố |
 | `lam_moi_du_lieu_v34.yml` | Ngày 5 hằng tháng | Làm mới BCTC năm và cổ tức (CafeF), hồ sơ ngành |
 | `tai_du_lieu_v34.yml` | Chạy tay | Tải lại toàn bộ BCTC và dữ liệu mở rộng (Vietcap) |
@@ -39,9 +37,9 @@ Mỗi workflow có thể chạy tay: Actions → chọn workflow → Run workflo
 ## 4. Kiểm thử
 
 ```
-python -m unittest discover -s tests -v      # 11 kiểm thử, khoảng 6 giây, không cần mạng
+python -m unittest discover -s tests -v      # 14 kiểm thử, khoảng 35 giây, không cần mạng
 ```
-Gồm: bảo toàn giá trị, phí và thuế, T+2,5, giá trần chặn mua, không nhìn trước BCTC và dữ liệu nội bộ, nhập được mọi module, và logic ba luồng nhập tay. Workflow hằng ngày chạy bộ kiểm thử này trước khi lập báo cáo; kiểm thử lỗi thì báo cáo không chạy.
+Gồm: bảo toàn giá trị, phí và thuế, T+2,5, giá trần chặn mua, không nhìn trước BCTC và dữ liệu nội bộ, nhập được mọi module, chất lượng dữ liệu, chỉ báo tầng 3, so sánh thay đổi và đủ các mục của báo cáo. Workflow hằng ngày chạy bộ kiểm thử này trước khi lập báo cáo; kiểm thử lỗi thì báo cáo không chạy.
 
 Chạy thử báo cáo không mạng và không gửi mail:
 ```
@@ -66,6 +64,6 @@ python v34/bao_cao_v34.py --khong-gui --khong-mang --bo-qua-kiem-tra-phien
 
 ## 7. Giới hạn cần nhớ
 
-- Không có nguồn tự động cho lãi suất liên ngân hàng, ý kiến kiểm toán thật và cầm cố cổ phiếu (xem mục 2).
+- Không có nguồn dữ liệu tự động cho lãi suất liên ngân hàng, ý kiến kiểm toán thật và cầm cố/ký quỹ nên các mục này không được đánh giá (xem mục 2); rủi ro cầm cố và ý kiến kiểm toán cần tự kiểm tra trước khi dựa vào danh sách chất lượng.
 - Backtest dùng giá đã điều chỉnh; chuẩn VN-Index giả lập không có cổ tức, nên so sánh dùng thêm phiên bản cộng 2,2%/năm (ước lượng).
 - Kết quả tầng 2 chưa có ý nghĩa thống kê rõ rệt; đây là danh sách theo dõi chứ không phải khuyến nghị mua.

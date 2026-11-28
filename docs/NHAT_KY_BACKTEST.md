@@ -140,3 +140,7 @@ Chi tiết ở `docs/BAO_CAO_DANH_GIA_V34.md`. Tóm tắt:
 - Sửa lỗi dữ liệu: bản ghi rác "năm 0" của CafeF; thêm kiểm thử chất lượng dữ liệu.
 - Kết quả (2010-05→nay): tầng 2 N=12 12,67% so với chuẩn có cổ tức 11,36% (+0,52, khoảng tin cậy 95% [−3,4; +4,7], p≈0,40); bỏ 10 mã thắng lớn nhất vẫn 12,32%; chọn ngẫu nhiên trong mã đạt lọc 12,56% (giá trị ở bộ lọc, không ở xếp hạng); rổ top 30 không lọc 0,90%. 2015→nay: 13,70% so với 11,05% (+1,76, [−3,7; +7,7]); có tạm dừng MA200 14,0%, MDD −39,5%, Sharpe 0,77. Chi tiết: `docs/ket_qua_tap_ma_day_du_20261128.txt`.
 - **Kết luận:** tầng 2 ngang chuẩn có cổ tức, chưa chứng minh được lợi thế có ý nghĩa thống kê; giữ lõi E1VFVN30 và danh sách chất lượng để theo dõi. Chi tiết và trạng thái từng tầng: `docs/BAO_CAO_DANH_GIA_V34.md`.
+
+## 28/11/2026 – Thử nguồn cho ba mục còn thiếu, nâng cấp báo cáo
+- Lãi suất liên ngân hàng: FRED hết thời gian chờ từ runner, HNX lỗi SSL (không tắt kiểm tra TLS), SBV chỉ là khung cổng, Investing chặn; TradingEconomics là dịch vụ dữ liệu thương mại nên không quét. Ý kiến kiểm toán: không có endpoint ở Vietcap và CafeF. Cầm cố/ký quỹ: trang ký quỹ CafeF không có dữ liệu thật. **Cả ba bỏ khỏi đánh giá**; gỡ luồng nhập CSV; giữ phép thử kiểm toán thay thế (đã kiểm toán, chênh lệch 4 quý).
+- Báo cáo hằng ngày nâng cấp: đủ các tầng, chỉ báo tầng 3 tham khảo (độ rộng, biến động, độ sâu), bảng chất lượng có ngành và cổ tức tiền, phần thay đổi so với lần trước, trang `docs/BAO_CAO_MOI_NHAT.md`; giá tải trực tiếp từ Entrade cho các mã thanh khoản thay vì lưu hằng ngày.
