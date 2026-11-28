@@ -1,0 +1,37 @@
+=== (1) Chỉ báo dẫn trước hoàn hảo cho luật MA200 (cận trên lợi ích của lãi suất liên ngân hàng) ===
+ đợt       đỉnh ngày cắt MA200        đáy  % giảm đã xảy ra tại ngày cắt  % giảm đến đáy
+2008 2007-03-12     2007-08-03 2009-02-24                          -23.7           -79.9
+2011 2011-02-09     2011-02-22 2012-01-06                          -10.1           -35.6
+2018 2018-04-09     2018-05-28 2018-10-30                          -22.6           -26.2
+2020 2020-01-22     2020-01-30 2020-03-24                           -3.2           -33.5
+2022 2022-04-04     2022-04-19 2022-11-15                           -7.8           -40.2
+
+--- 2001-01-01 → nay (chuẩn không luật: CAGR 8.49%, MDD -79.9%)
+  MA200 biết trước 0 phiên: CAGR 8.62% (+0.13 điểm so với không luật), MDD -78.1%
+  MA200 biết trước 20 phiên: CAGR 9.02% (+0.53 điểm so với không luật), MDD -78.0%
+  MA200 biết trước 40 phiên: CAGR 9.10% (+0.61 điểm so với không luật), MDD -77.8%
+  MA200 biết trước 60 phiên: CAGR 9.05% (+0.56 điểm so với không luật), MDD -78.2%
+  MA200 biết trước 120 phiên: CAGR 9.00% (+0.51 điểm so với không luật), MDD -78.7%
+
+--- 2010-05-01 → nay (chuẩn không luật: CAGR 8.96%, MDD -45.3%)
+  MA200 biết trước 0 phiên: CAGR 8.75% (-0.20 điểm so với không luật), MDD -45.2%
+  MA200 biết trước 20 phiên: CAGR 9.20% (+0.24 điểm so với không luật), MDD -44.8%
+  MA200 biết trước 40 phiên: CAGR 9.18% (+0.22 điểm so với không luật), MDD -44.7%
+  MA200 biết trước 60 phiên: CAGR 9.15% (+0.20 điểm so với không luật), MDD -44.4%
+  MA200 biết trước 120 phiên: CAGR 9.18% (+0.22 điểm so với không luật), MDD -44.9%
+
+--- 2015-01-01 → nay (chuẩn không luật: CAGR 8.64%, MDD -45.3%)
+  MA200 biết trước 0 phiên: CAGR 8.47% (-0.18 điểm so với không luật), MDD -45.1%
+  MA200 biết trước 20 phiên: CAGR 8.92% (+0.27 điểm so với không luật), MDD -44.0%
+  MA200 biết trước 40 phiên: CAGR 8.85% (+0.21 điểm so với không luật), MDD -43.8%
+  MA200 biết trước 60 phiên: CAGR 8.95% (+0.30 điểm so với không luật), MDD -43.0%
+  MA200 biết trước 120 phiên: CAGR 9.00% (+0.36 điểm so với không luật), MDD -44.2%
+
+=== (2) Chi phí các vụ sụp đổ của mã đã giữ trong lõi tầng 2 (N=12, 2010→nay, tập mã đầy đủ) ===
+T2 N=12: CAGR 12.66%, MDD -41.6%
+Số lượt giữ (mã × lần vào): 51 | mã khác nhau: 46 | lượt kết thúc lỗ ≥50% hoặc ngừng giao dịch: 2 (3.9%) | lượt lỗ ≥30%: 3
+ ma        vao         ra  loi_suat  sut_giam_toi_da  ngung_giao_dich
+DGC 2024-05-15 2026-05-15 -0.562134        -0.592742            False
+HHS 2015-05-15 2016-05-16 -0.509261        -0.544288            False
+Chi phí gần đúng của các vụ sụp đổ: ≈ -0.54% NAV mỗi năm (tỷ trọng 1/12 mỗi mã), tức tối đa 0.54 điểm %/năm mà ý kiến kiểm toán và cầm cố có thể giúp tránh (cận trên, nếu chặn được toàn bộ)
+Với mốc 'lỗ ≥30%': ≈ -0.70% NAV/năm
