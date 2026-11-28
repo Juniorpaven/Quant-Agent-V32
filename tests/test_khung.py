@@ -152,8 +152,24 @@ class TestBaoCao(unittest.TestCase):
         sl = {"ngay_du_lieu": "2026-11-27", "tang3": {"vnindex": 1, "ma200": 2, "tren_ma200": False, "cach_ma200_pct": -1.0, "so_phien_cung_phia": 3, "do_rong_ma200_pct": 10.0, "do_rong_ma50_pct": 20.0, "do_rong_so_ma": 5,
               "bien_dong_20p_pct": 18.0, "bien_dong_ty_le": 1.1, "cach_dinh_52t_pct": -5.0}, "so_ma_dat_loc": 1, "so_ma_thanh_khoan": 5, "danh_sach_chat_luong": [{"ma": "AAA", "nganh": "X", "diem": 0.5, "roe_tb": 10.0, "co_tuc_tien_5nam": 4, "dat": 6, "danh_gia": 6}],
               "gia_moi": 1, "gia_cu": 0, "so_ma_theo_doi": 5, "vi_the": None}
-        md = bc.dung_markdown(sl, None, [], False, "https://x")
-        for muc in ("## 0.", "## 1. Tầng 3", "## 2. Tầng 1", "## 3. Tầng 2", "## 4. Dữ liệu", "## 5. Lời bình", "## 6. Tình trạng các tầng", "https://x", "AAA"): self.assertIn(muc, md)
+        md = bc.dung_markdown(sl, None, [], False, "https://x", "https://huongdan")
+        for muc in ("## Tóm tắt nhanh", "https://huongdan", "Cách hiểu", "## 0.", "## 1. Tầng 3", "## 2. Tầng 1", "## 3. Tầng 2", "## 4. Dữ liệu", "## 5. Lời bình", "## 6. Tình trạng các tầng", "https://x", "AAA"): self.assertIn(muc, md)
+
+
+
+class TestNhanGiaiNghia(unittest.TestCase):
+    def test_nhan(self):
+        import bao_cao_v34 as bc
+        self.assertEqual(bc.nhan_do_rong(10), "yếu"); self.assertEqual(bc.nhan_do_rong(45), "trung bình"); self.assertEqual(bc.nhan_do_rong(80), "mạnh")
+        self.assertEqual(bc.nhan_bien_dong(1.1), "bình thường"); self.assertEqual(bc.nhan_bien_dong(1.6), "cao"); self.assertEqual(bc.nhan_bien_dong(2.5), "rất cao")
+        self.assertEqual(bc.nhan_cach_dinh(-2), "gần đỉnh"); self.assertEqual(bc.nhan_cach_dinh(-10), "điều chỉnh vừa"); self.assertEqual(bc.nhan_cach_dinh(-20), "giảm sâu"); self.assertEqual(bc.nhan_cach_dinh(-40), "giảm rất sâu")
+
+    def test_tom_tat_theo_tin_hieu(self):
+        import bao_cao_v34 as bc
+        t3 = {"tren_ma200": True, "do_rong_ma200_pct": 70.0, "bien_dong_ty_le": 1.0}
+        self.assertIn("Mua đều E1VFVN30 như bình thường", " ".join(bc.tom_tat_nhanh({"tang3": t3, "bctc_cham": []}, [], False)))
+        t3["tren_ma200"] = False
+        self.assertIn("Tạm dừng mua thêm", " ".join(bc.tom_tat_nhanh({"tang3": t3, "bctc_cham": [{"ma": "A"}]}, ["x"], False)))
 
 
 if __name__ == "__main__":
