@@ -1,0 +1,31 @@
+name: Tai cafef2 V34
+on:
+  workflow_dispatch:
+  push:
+    branches: [nang-cap-v34]
+    paths: ['v34/kich_hoat_cafef2.txt']
+permissions:
+  contents: write
+jobs:
+  tai:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install pandas requests
+      - name: Tai
+        timeout-minutes: 45
+        run: python -u v34/tai_cafef2.py 2>&1 | tee cafef2_nhat_ky.txt
+      - name: Commit
+        if: always()
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          mkdir -p data/cafef && cp cafef2_nhat_ky.txt data/cafef/_nhat_ky.txt || true
+          git add data/cafef
+          git commit -m "Cập nhật dữ liệu cafef2 [skip ci]" || echo "Không có thay đổi"
+          for i in 1 2 3; do git pull --rebase origin ${{ github.ref_name }} && git push origin HEAD:${{ github.ref_name }} && break; sleep 5; done
