@@ -92,10 +92,14 @@ def phep_thu_ttm(dl, ma, ngay, moi=True):
     return kq, {"roe": roe, "ocf_ln": df.ocf.sum() / ln if ln > 0 else np.nan, "lnst": cur["lnst"], "so_nam_cotuc": so_nam, "ty_ocf": df.ocf.sum() / ln if ln > 0 else np.nan, "ty_pt": (ts1 / ts0 - 1) - (cur["isa3"] / base["isa3"] - 1) if base["isa3"] > 0 and ts0 > 0 else np.nan}
 
 
+# Kiểm chứng 2010–2026 (docs/ket_qua_chi_bao_nong_noi_bo_20261128.txt) không thấy giá trị của phép thử nội bộ: chỉ hiển thị cảnh báo, không loại mã.
+NOI_BO_CHI_CANH_BAO = True
+
+
 def loc_ttm(dl, ma, ngay):
     if ma in NGAN_HANG:
         kq, nt = phep_thu_ngan_hang(dl, ma, ngay)
     else:
         kq, nt = phep_thu_ttm(dl, ma, ngay)
     if kq is None: return False, {"du_lieu": "thiếu lịch sử"}, None
-    return all(v is True for v in kq.values() if v != CHUA_DANH_GIA), kq, nt
+    return all(v is True for k, v in kq.items() if v != CHUA_DANH_GIA and not (NOI_BO_CHI_CANH_BAO and k == "7_noi_bo")), kq, nt

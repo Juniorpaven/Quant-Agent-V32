@@ -125,6 +125,7 @@ def chi_bao_tang3(gia, ds_thanh_khoan):
     out["do_rong_ma200_pct"] = round(100 * tren200 / n, 1) if n else None
     out["do_rong_ma50_pct"] = round(100 * tren50 / n, 1) if n else None
     out["do_rong_so_ma"] = n
+    out["phan_ky_do_rong"] = bool(out["cach_dinh_52t_pct"] >= -3.0 and out["do_rong_ma50_pct"] is not None and out["do_rong_ma50_pct"] < 40.0)
     out["nong_so_ma"], out["nong_pct"] = nong, (round(100 * nong / nn, 1) if nn else None)
     return out
 
@@ -163,7 +164,7 @@ def lap_bao_cao(cap_nhat=True):
         so_nam_ct = int(ct[(ct.loai == "tien") & (ct.ngay <= d) & (ct.ngay > d - pd.Timedelta(days=365 * 5))].ngay.dt.year.nunique()) if ct is not None and len(ct) else None
         cm = gia[m].Close; t3, t12 = tang_gan(cm, 63), tang_gan(cm, 250)
         dong.append({"ma": m, "nganh": nganh.get(m, ""), "tang_3t": (round(t3 * 100, 1) if np.isfinite(t3) else None), "tang_12t": (round(t12 * 100, 1) if np.isfinite(t12) else None), "nong": la_nong(cm), "diem": round(float(top.loc[m, "diem"]), 2), "roe_tb": round(float(top.loc[m, "roe"]) * 100, 1), "co_tuc_tien_5nam": so_nam_ct,
-                     "dat": sum(1 for v in kq.values() if v is True), "danh_gia": sum(1 for v in kq.values() if v != CHUA_DANH_GIA)})
+                     "canh_bao_noi_bo": kq.get("7_noi_bo") is False, "dat": sum(1 for v in kq.values() if v is True), "danh_gia": sum(1 for v in kq.values() if v != CHUA_DANH_GIA)})
     sl["danh_sach_chat_luong"], sl["tat_ca_dat_loc"], sl["so_ma_dat_loc"], sl["so_ma_thanh_khoan"] = dong, sorted(dat), len(dat), len(thanh_khoan)
     f_moi = os.path.join(DATA, "_bctc_moi.json")
     if os.path.exists(f_moi):
@@ -292,6 +293,7 @@ def dung_markdown(sl, loi_binh, thay_doi, lan_dau, link=None, link_dan=None):
           f"| Giá trị giao dịch thị trường (20 phiên) | gấp {t3['gd_ty_le']} lần trung vị 1 năm | {nhan_gd(t3['gd_ty_le']) if t3.get('gd_ty_le') else '–'} |",
           f"| Mức kéo xa MA200 | {t3['cach_ma200_pct']:+.1f}% | {'kéo xa' if t3['cach_ma200_pct'] >= HUNG_PHAN_XA else 'không kéo xa'} |",
           f"| Mã đang chạy nóng (tăng ≥30% trong 3 tháng hoặc ≥100% trong 12 tháng) | {t3['nong_pct']}% ({t3['nong_so_ma']} mã) | {nhan_nong(t3['nong_pct']) if t3.get('nong_pct') is not None else '–'} |",
+          f"| Phân kỳ độ rộng (chỉ số gần đỉnh 52 tuần nhưng dưới 40% mã trên MA50) | {'CÓ' if t3.get('phan_ky_do_rong') else 'Không'} | {'chỉ số đang được ít mã nâng đỡ' if t3.get('phan_ky_do_rong') else 'chưa'} |",
           f"| **Thị trường hưng phấn** (giao dịch ≥1,5 lần và cao hơn MA200 ≥10%) | {'CÓ' if t3['hung_phan'] else 'Không'} | {'thận trọng' if t3['hung_phan'] else 'chưa'} |", "",
           BANG_CHUNG_NONG, ""]
     d += ["## 2. Tầng 1: lõi và phân bổ", "",
@@ -303,12 +305,12 @@ def dung_markdown(sl, loi_binh, thay_doi, lan_dau, link=None, link_dan=None):
     else:
         d.append("- Chưa có `data/vi_the.json` nên không có bảng vị thế và tỷ lệ tiền mặt (không có dữ liệu).")
     d += ["", "## 3. Tầng 2: danh sách chất lượng (chỉ theo dõi)", "",
-          f"Có **{sl['so_ma_dat_loc']}/{sl['so_ma_thanh_khoan']}** mã thanh khoản qua các phép thử tự động (dòng tiền kinh doanh, phải thu và tồn kho, lãi bất thường, nợ vay, bán ròng nội bộ, cổ tức tiền thật, BCTC không quá cũ; ngân hàng có bộ riêng). "
+          f"Có **{sl['so_ma_dat_loc']}/{sl['so_ma_thanh_khoan']}** mã thanh khoản qua các phép thử tự động (dòng tiền kinh doanh, phải thu và tồn kho, lãi bất thường, nợ vay, cổ tức tiền thật, BCTC không quá cũ; bán ròng nội bộ chỉ là cờ cảnh báo ⚠, không loại mã; ngân hàng có bộ riêng). "
           "Backtest dài hạn (2010–2026, 866 mã gồm cả mã đã hủy niêm yết) cho thấy lõi chọn mã **ngang** chuẩn mua đều có cổ tức, chưa có ý nghĩa thống kê: đây là danh sách theo dõi, không phải khuyến nghị mua. Chưa đánh giá: ý kiến kiểm toán thật, cầm cố/ký quỹ (không có nguồn dữ liệu).", ""]
     if sl["danh_sach_chat_luong"]:
         d += ["| Mã | Ngành | Điểm | ROE TB (%) | Cổ tức tiền (năm/5) | Tăng 3 tháng | Tăng 12 tháng | Đà tăng | Phép thử đạt/đánh giá được |", "| --- | --- | ---: | ---: | ---: | ---: | ---: | --- | ---: |"]
         pc = lambda x: f"{x:+.1f}%" if x is not None else "–"
-        d += [f"| {r['ma']} | {r['nganh']} | {r['diem']} | {r['roe_tb']} | {min(r['co_tuc_tien_5nam'], 5) if r['co_tuc_tien_5nam'] is not None else '–'} | {pc(r.get('tang_3t'))} | {pc(r.get('tang_12t'))} | {'**nóng**' if r.get('nong') else 'bình thường'} | {r['dat']}/{r['danh_gia']} |" for r in sl["danh_sach_chat_luong"]]
+        d += [f"| {r['ma']}{' ⚠' if r.get('canh_bao_noi_bo') else ''} | {r['nganh']} | {r['diem']} | {r['roe_tb']} | {min(r['co_tuc_tien_5nam'], 5) if r['co_tuc_tien_5nam'] is not None else '–'} | {pc(r.get('tang_3t'))} | {pc(r.get('tang_12t'))} | {'**nóng**' if r.get('nong') else 'bình thường'} | {r['dat']}/{r['danh_gia']} |" for r in sl["danh_sach_chat_luong"]]
     d += ["", "## 4. Dữ liệu: BCTC mới và mã chậm công bố", ""]
     if "bctc_moi_7_ngay" in sl:
         moi = sl["bctc_moi_7_ngay"]
