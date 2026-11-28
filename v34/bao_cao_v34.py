@@ -200,6 +200,33 @@ def luu_trang_thai(sl):
 
 
 # ---------------------------------------------------------------- dựng báo cáo
+def nhan_do_rong(x):
+    return "yếu" if x < 30 else ("trung bình" if x < 60 else "mạnh")
+
+
+def nhan_bien_dong(x):
+    return "bình thường" if x < 1.3 else ("cao" if x < 2 else "rất cao")
+
+
+def nhan_cach_dinh(x):
+    return "gần đỉnh" if x > -5 else ("điều chỉnh vừa" if x > -15 else ("giảm sâu" if x > -30 else "giảm rất sâu"))
+
+
+def tom_tat_nhanh(sl, thay_doi, lan_dau):
+    t3 = sl["tang3"]
+    hanh_dong = "**Mua đều E1VFVN30 như bình thường** (vào phiên đầu tháng)." if t3["tren_ma200"] else "**Tạm dừng mua thêm E1VFVN30** (giữ tiền mặt, không bán phần đã có)."
+    if lan_dau: thay = "đây là báo cáo đầu tiên có theo dõi thay đổi."
+    elif thay_doi: thay = f"có {len(thay_doi)} thay đổi, xem mục 0."
+    else: thay = "không có."
+    chu_y = []
+    cham = len(sl.get("bctc_cham", []))
+    if cham: chu_y.append(f"{cham} mã chậm công bố BCTC (mục 4)")
+    chu_y.append(f"độ rộng thị trường {nhan_do_rong(t3['do_rong_ma200_pct'])} ({t3['do_rong_ma200_pct']}% mã trên MA200)")
+    chu_y.append(f"biến động {nhan_bien_dong(t3['bien_dong_ty_le'])}" if t3.get("bien_dong_ty_le") else "biến động không có dữ liệu")
+    return ["## Tóm tắt nhanh", "", f"- **Việc cần làm hôm nay:** {hanh_dong}", f"- **Thay đổi so với lần trước:** {thay}", "- **Cần chú ý:** " + "; ".join(chu_y) + ".",
+            "- Danh sách mã chất lượng (mục 3) chỉ để tham khảo, không phải khuyến nghị mua.", ""]
+
+
 def huong_dan_ngan(t3):
     return "giải ngân lõi như bình thường" if t3["tren_ma200"] else "tạm dừng mua thêm lõi"
 
@@ -210,10 +237,11 @@ def huong_dan(t3):
     return "VN-Index dưới MA200: tạm dừng mua thêm lõi (giữ tiền mặt), không bán. Mua lại khi VN-Index vượt MA200."
 
 
-def dung_markdown(sl, loi_binh, thay_doi, lan_dau, link=None):
+def dung_markdown(sl, loi_binh, thay_doi, lan_dau, link=None, link_dan=None):
     t3 = sl["tang3"]
     d = [f"# Báo cáo Quant V34 – dữ liệu phiên {sl['ngay_du_lieu']}", ""]
-    if link: d += [f"Xem trực tuyến: {link}", ""]
+    if link: d += [f"Xem trực tuyến: {link}" + (f" | Cách đọc báo cáo: {link_dan}" if link_dan else ""), ""]
+    d += tom_tat_nhanh(sl, thay_doi, lan_dau)
     d += ["## 0. Thay đổi so với báo cáo trước", ""]
     if lan_dau: d.append("Đây là báo cáo đầu tiên có theo dõi thay đổi; từ lần sau sẽ so sánh với báo cáo này.")
     elif thay_doi: d += [f"- {x}" for x in thay_doi]
@@ -222,11 +250,11 @@ def dung_markdown(sl, loi_binh, thay_doi, lan_dau, link=None):
           f"- VN-Index **{t3['vnindex']}**, MA200 **{t3['ma200']}** ({t3['cach_ma200_pct']:+.2f}%), đã {'trên' if t3['tren_ma200'] else 'dưới'} MA200 {t3['so_phien_cung_phia']} phiên liên tiếp.",
           f"- **Hướng dẫn: {huong_dan(t3)}**", "",
           "Chỉ báo tham khảo (backtest cho thấy không cải thiện lợi suất so với luật MA200, không dùng để ra quyết định):", "",
-          "| Chỉ báo | Giá trị |", "| --- | ---: |",
-          f"| Độ rộng: % mã trên MA200 ({t3['do_rong_so_ma']} mã thanh khoản) | {t3['do_rong_ma200_pct']}% |",
-          f"| Độ rộng: % mã trên MA50 | {t3['do_rong_ma50_pct']}% |",
-          f"| Biến động 20 phiên (năm hóa) | {t3['bien_dong_20p_pct']}% (gấp {t3['bien_dong_ty_le']} lần trung vị 1 năm) |",
-          f"| Cách đỉnh 52 tuần | {t3['cach_dinh_52t_pct']:+.1f}% |", ""]
+          "| Chỉ báo | Giá trị | Cách hiểu |", "| --- | ---: | --- |",
+          f"| Độ rộng: % mã trên MA200 ({t3['do_rong_so_ma']} mã thanh khoản) | {t3['do_rong_ma200_pct']}% | {nhan_do_rong(t3['do_rong_ma200_pct'])} |",
+          f"| Độ rộng: % mã trên MA50 | {t3['do_rong_ma50_pct']}% | {nhan_do_rong(t3['do_rong_ma50_pct'])} |",
+          f"| Biến động 20 phiên (năm hóa) | {t3['bien_dong_20p_pct']}% (gấp {t3['bien_dong_ty_le']} lần trung vị 1 năm) | {nhan_bien_dong(t3['bien_dong_ty_le']) if t3.get('bien_dong_ty_le') else '–'} |",
+          f"| Cách đỉnh 52 tuần | {t3['cach_dinh_52t_pct']:+.1f}% | {nhan_cach_dinh(t3['cach_dinh_52t_pct'])} |", ""]
     d += ["## 2. Tầng 1: lõi và phân bổ", "",
           "- Lõi **100% E1VFVN30** (mua đều hằng tháng). Vệ tinh đã bỏ vì backtest không cải thiện (xem mục 6).", f"- {huong_dan(t3)}"]
     if sl.get("vi_the"):
@@ -287,6 +315,11 @@ def link_trang():
     return f"https://github.com/{repo}/blob/{nhanh}/docs/BAO_CAO_MOI_NHAT.md" if repo and nhanh else None
 
 
+def link_huong_dan():
+    repo, nhanh = os.environ.get("GITHUB_REPOSITORY"), os.environ.get("GITHUB_REF_NAME")
+    return f"https://github.com/{repo}/blob/{nhanh}/docs/CACH_DOC_BAO_CAO.md" if repo and nhanh else None
+
+
 def gui_mail(tieu_de, noi_dung):
     user, pw = os.environ.get("EMAIL_USER", ""), os.environ.get("EMAIL_PASS", "")
     nhan = [x.strip() for x in (os.environ.get("EMAIL_NHAN") or user).split(",") if x.strip()]
@@ -310,7 +343,7 @@ if __name__ == "__main__":
     if sl["ngay_du_lieu"] != sl["hom_nay"] and "--bo-qua-kiem-tra-phien" not in sys.argv:
         print(f"Hôm nay {sl['hom_nay']} không có phiên giao dịch (dữ liệu mới nhất {sl['ngay_du_lieu']}). Không gửi báo cáo."); sys.exit(0)
     thay, lan_dau = so_sanh_trang_thai(doc_trang_thai(), sl)
-    bc = dung_markdown(sl, viet_loi_binh(sl, thay), thay, lan_dau, link_trang())
+    bc = dung_markdown(sl, viet_loi_binh(sl, thay), thay, lan_dau, link_trang(), link_huong_dan())
     print(bc)
     if "--xuat-trang" in sys.argv:
         os.makedirs(os.path.dirname(FILE_TRANG), exist_ok=True); open(FILE_TRANG, "w").write(bc + "\n")

@@ -13,7 +13,8 @@ Công cụ nghiên cứu cá nhân, không phải tư vấn đầu tư. Cấu tr
 
 - **Mail:** mỗi ngày có phiên giao dịch, lúc 16:00 giờ Việt Nam.
 - **Trang xem trực tuyến** (làm mới mỗi lần chạy): https://github.com/Juniorpaven/Quant-Agent-V32/blob/main/docs/BAO_CAO_MOI_NHAT.md
-- Báo cáo có 7 mục: thay đổi so với lần trước; tầng 3 (luật MA200 và chỉ báo tham khảo); tầng 1 (lõi, vị thế); tầng 2 (danh sách chất lượng); dữ liệu (BCTC mới, mã chậm công bố); lời bình; tình trạng các tầng.
+- **Cách đọc báo cáo (có ví dụ và từ điển):** `docs/CACH_DOC_BAO_CAO.md`.
+- Báo cáo có phần Tóm tắt nhanh và 7 mục: thay đổi so với lần trước; tầng 3 (luật MA200 và chỉ báo tham khảo); tầng 1 (lõi, vị thế); tầng 2 (danh sách chất lượng); dữ liệu (BCTC mới, mã chậm công bố); lời bình; tình trạng các tầng.
 - Phần "thay đổi so với lần trước" báo: đổi tín hiệu MA200, mã vào hoặc rời danh sách chất lượng, mã mới chậm công bố, BCTC mới. Trạng thái được lưu ở `data/_trang_thai_bao_cao.json`.
 - Làm mới trang không gửi mail (kể cả ngày không giao dịch): Actions → Run Quant V34 Daily → Run workflow, chọn "bo_qua_phien" và "khong_gui".
 
