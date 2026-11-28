@@ -134,3 +134,9 @@ Chi tiết ở `docs/BAO_CAO_DANH_GIA_V34.md`. Tóm tắt:
 - Tầng 1 ghép (hai túi vốn độc lập, nạp 75%/25%, 2021-05→nay): lõi T2 + Wyckoff 7,05%; lõi E1VFVN30 + Wyckoff 9,60%; lõi T2 + E1VFVN30 7,37%. Quyết định không đổi.
 - Kiểm thử báo cáo V34 trên runner (mạng thật, không gửi mail, không Gemini): đúng.
 - Độ phủ: 105 mã có BCTC; số mã đạt lọc 7 → 27 từ 2021-06 đến 2026-11; phép thử 1 loại 57/89 và phép thử 2 loại 53/89 mã phi ngân hàng (2024-06).
+
+## 28/11/2026 – Tập mã đầy đủ và kết luận cuối
+- Danh sách mã từ Vietcap (`getAll`): 3.896 mã, trong đó 412 cổ phiếu HSX, 299 HNX và 240 cổ phiếu đã hủy niêm yết. Tải toàn bộ cổ phiếu HSX, HNX và đã hủy niêm yết (874 mã có BCTC): giá điều chỉnh, BCTC, giao dịch nội bộ, BCTC năm và cổ tức CafeF. Tập mã cuối: 866 mã có BCTC và giá, 22% đã ngừng giao dịch (so với 5% của tập chọn tay).
+- Sửa lỗi dữ liệu: bản ghi rác "năm 0" của CafeF; thêm kiểm thử chất lượng dữ liệu.
+- Kết quả (2010-05→nay): tầng 2 N=12 12,67% so với chuẩn có cổ tức 11,36% (+0,52, khoảng tin cậy 95% [−3,4; +4,7], p≈0,40); bỏ 10 mã thắng lớn nhất vẫn 12,32%; chọn ngẫu nhiên trong mã đạt lọc 12,56% (giá trị ở bộ lọc, không ở xếp hạng); rổ top 30 không lọc 0,90%. 2015→nay: 13,70% so với 11,05% (+1,76, [−3,7; +7,7]); có tạm dừng MA200 14,0%, MDD −39,5%, Sharpe 0,77. Chi tiết: `docs/ket_qua_tap_ma_day_du_20261128.txt`.
+- **Kết luận:** tầng 2 ngang chuẩn có cổ tức, chưa chứng minh được lợi thế có ý nghĩa thống kê; giữ lõi E1VFVN30 và danh sách chất lượng để theo dõi. Chi tiết và trạng thái từng tầng: `docs/BAO_CAO_DANH_GIA_V34.md`.
