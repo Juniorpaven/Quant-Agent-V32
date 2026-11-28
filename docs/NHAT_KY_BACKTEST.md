@@ -124,3 +124,13 @@ Vẫn không có nguồn tự động: phép thử 4 (bên liên quan), 5 (kiể
 
 ### Kết luận sau mở rộng dữ liệu
 Giảm thiên lệch người sống sót và thêm phép thử 7 không đổi kết luận: không tầng nào thêm vào thắng mua đều E1VFVN30 sau phí. Hạn chế còn lại: chỉ ~4,5 năm dữ liệu BCTC, một chế độ thị trường, thiếu phép thử 4 và 5, cổ tức dùng thay thế từ lưu chuyển tiền tệ, danh sách mã vẫn do chọn tay (chưa có lịch sử thành phần chỉ số).
+
+## 28/11/2026 – Rà soát lại các tầng
+Chi tiết ở `docs/BAO_CAO_DANH_GIA_V34.md`. Tóm tắt:
+- Sửa khung: giá phiên trống khi định giá (12 mã). Chạy lại tầng 2: số liệu không đổi.
+- Kiểm tra nhất quán giá (14 mã): Entrade khớp giá điều chỉnh của Vietcap IQ (lệch ≤ 2,6%). Đính chính ghi chú trước: giá đã điều chỉnh theo quyền, không phải "chưa điều chỉnh"; chưa tách được cổ tức tiền mặt.
+- Chuẩn E1VFVN30 từ 2024 bị VIC chi phối (VIC +968%, VHM +185%, không đạt lọc ở mốc nào), nên kết luận "tầng 2 thua" ở đoạn 2024–nay kém chắc chắn hơn đã nêu.
+- Chẩn đoán tầng 2 (2021-05→nay, chuẩn 9,88%): điểm tổng hợp 6,19%; chỉ ROE 5,94%; chỉ giá trị 6,81%; chỉ động lượng 0,91%; đều tay mọi mã đạt lọc (N=30) 7,10%; ngẫu nhiên trong mã đạt lọc 5,25% trung bình (2,05–8,94%, 8 lần).
+- Tầng 1 ghép (hai túi vốn độc lập, nạp 75%/25%, 2021-05→nay): lõi T2 + Wyckoff 7,05%; lõi E1VFVN30 + Wyckoff 9,60%; lõi T2 + E1VFVN30 7,37%. Quyết định không đổi.
+- Kiểm thử báo cáo V34 trên runner (mạng thật, không gửi mail, không Gemini): đúng.
+- Độ phủ: 105 mã có BCTC; số mã đạt lọc 7 → 27 từ 2021-06 đến 2026-11; phép thử 1 loại 57/89 và phép thử 2 loại 53/89 mã phi ngân hàng (2024-06).
